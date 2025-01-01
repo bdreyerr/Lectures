@@ -17,7 +17,7 @@ struct CustomTabBar: View {
     case home = 0
     case trends
     case search
-    case profile
+    case settings
   }
   
   struct TabItem {
@@ -29,7 +29,7 @@ struct CustomTabBar: View {
     TabItem(imageName: "house", type: .home),
     TabItem(imageName: "book.pages", type: .trends),
     TabItem(imageName: "magnifyingglass", type: .search),
-    TabItem(imageName: "gearshape", type: .profile)
+    TabItem(imageName: "gearshape", type: .settings)
   ]
   
   @Binding var selectedTab: TabItemKind

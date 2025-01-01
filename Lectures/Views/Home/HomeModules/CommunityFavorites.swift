@@ -8,28 +8,51 @@
 import SwiftUI
 
 struct CommunityFavorites: View {
+    @EnvironmentObject var homeController: HomeController
+    
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Community Favorites")
-                .font(.system(size: 20, design: .serif))
-                .bold()
+            HStack {
+                Text("Community Favorites")
+                    .font(.system(size: 20, design: .serif))
+                    .bold()
+                
+                Spacer()
+                
+                NavigationLink(destination: CommunityFavoritesFullList()) {
+                    Text("View All")
+                        .font(.system(size: 12, design: .serif))
+                        .opacity(0.6)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    NavigationLink(destination: CourseView()) {
-                        FeaturedCourse(image: "mit2", courseTitle: "Emotional Intelligence", courseDescriptor: "MIT - Marvin Minsky", length: "1hr 6min", numViews: "2.5M")
-                    }
-                    .buttonStyle(PlainButtonStyle())
                     
-                    NavigationLink(destination: CourseView()) {
-                        FeaturedCourse(image: "stanford", courseTitle: "Machine Learning", courseDescriptor: "MIT - Marvin Minsky", length: "1hr 6min", numViews: "2.5M")
+                    ForEach(homeController.communityFavorites, id: \.id) { course in
+                        NavigationLink(destination: CourseView()) {
+                            NewLectureView()
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .onTapGesture {
+                            homeController.focusCourse(course: course)
+                        }
                     }
-                    .buttonStyle(PlainButtonStyle())
-                    
-                    NavigationLink(destination: CourseView()) {
-                        FeaturedCourse(image: "mit2", courseTitle: "Calculus I", courseDescriptor: "MIT - Marvin Minsky", length: "1hr 6min", numViews: "2.5M")
-                    }
-                    .buttonStyle(PlainButtonStyle())
+//                    NavigationLink(destination: CourseView()) {
+//                        NewLectureView()
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
+//                    
+//                    NavigationLink(destination: CourseView()) {
+//                        NewLectureView()
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
+//                    
+//                    NavigationLink(destination: CourseView()) {
+//                        NewLectureView()
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
                 }
             }
         }
@@ -39,4 +62,5 @@ struct CommunityFavorites: View {
 
 #Preview {
     CommunityFavorites()
+        .environmentObject(HomeController())
 }

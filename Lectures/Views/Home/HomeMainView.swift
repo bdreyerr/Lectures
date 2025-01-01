@@ -37,6 +37,11 @@ struct HomeMainView: View {
                     Text(Date().formatted(.dateTime.month().day()))
                         .font(.system(size: 14, design: .serif))
                 }
+                // Adding this seems to stop the weird expansion of this section when switching tabs
+                .overlay {
+                    Rectangle()
+                        .stroke(Color.black, lineWidth: 0)
+                }
                 
                 ScrollView(showsIndicators: false) {
                     // Resume Watching
@@ -45,13 +50,6 @@ struct HomeMainView: View {
                         ContinueLearningCourseList()
                             .padding(.top, 5)
                     }
-                    
-                    
-                    // Search Box
-                    // Search any lecture, when you tap on the search bar it kind of expands into it's own view
-                    //                        HomeSearch()
-                    //                            .padding(.top, 20)
-                    //                        .padding(.horizontal, 10)
                     
                     
                     // Category Pills
@@ -67,6 +65,7 @@ struct HomeMainView: View {
                     // Community Favorites
                     // Courses liked a lot by the community
                     CommunityFavorites()
+                        .padding(.top, 10)
                     
                     // Logo
                     

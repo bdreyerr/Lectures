@@ -8,30 +8,53 @@
 import SwiftUI
 
 struct CuratedCourses: View {
-    
+    @EnvironmentObject var homeController: HomeController
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Curated Courses")
-                .font(.system(size: 20, design: .serif))
-                .bold()
+            HStack {
+                Text("Curated Courses")
+                    .font(.system(size: 20, design: .serif))
+                    .bold()
+                
+                Spacer()
+                
+                NavigationLink(destination: CuratedCoursesFullList()) {
+                    Text("View All")
+                        .font(.system(size: 12, design: .serif))
+                        .opacity(0.6)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    NavigationLink(destination: CourseView()) {
-                        FeaturedCourse(image: "mit", courseTitle: "Society of Mind", courseDescriptor: "MIT - Marvin Minsky", length: "1hr 6min", numViews: "2.5M")
+                    ForEach(homeController.communityFavorites, id: \.id) { course in
+                        NavigationLink(destination: CourseView().onAppear {
+                            print("tap registering")
+                            homeController.focusCourse(course: course)
+                        }) {
+                            NewLectureView()
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .buttonStyle(PlainButtonStyle())
                     
-                    NavigationLink(destination: CourseView()) {
-                        FeaturedCourse(image: "mit2", courseTitle: "Computer Science", courseDescriptor: "MIT - Marvin Minsky", length: "1hr 6min", numViews: "2.5M")
-                    }
-                    .buttonStyle(PlainButtonStyle())
                     
-                    NavigationLink(destination: CourseView()) {
-                        FeaturedCourse(image: "stanford", courseTitle: "Sociology I", courseDescriptor: "MIT - Marvin Minsky", length: "1hr 6min", numViews: "2.5M")
-                    }
-                    .buttonStyle(PlainButtonStyle())
+//                    NavigationLink(destination: CourseView()) {
+////                        FeaturedCourse(image: "mit", courseTitle: "Society of Mind", courseDescriptor: "MIT - Marvin Minsky", length: "1hr 6min", numViews: "2.5M")
+//                        NewLectureView()
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
+//                    
+//                    NavigationLink(destination: CourseView()) {
+//                        NewLectureView()
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
+//                    
+//                    NavigationLink(destination: CourseView()) {
+//                        NewLectureView()
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
                 }
             }
         }
@@ -41,4 +64,5 @@ struct CuratedCourses: View {
 
 #Preview {
     CuratedCourses()
+        .environmentObject(HomeController())
 }

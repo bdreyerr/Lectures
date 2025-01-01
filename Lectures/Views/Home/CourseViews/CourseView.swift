@@ -10,170 +10,182 @@ import SwiftUI
 struct CourseView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var homeController: HomeController
+    
+    var previewOverride = false
+    
     @State var isCourseLiked: Bool = false
     var body: some View {
         VStack {
             // Course Cover Image
             ScrollView(showsIndicators: false) {
-                VStack {
-                    HStack {
-                        // course Image
-                        Image("stanford")
-                            .resizable()
-                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                            .frame(width: 40, height: 40)
-                        
-                        // Course title and University
-                        VStack {
-                            Text("The Emotion Machine")
-                                .font(.system(size: 18, design: .serif))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                if let course = homeController.focusedCourse {
+                    
+                    VStack {
+                        HStack {
+                            // course Image
+                            Image("stanford")
+                                .resizable()
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                .frame(width: 40, height: 40)
                             
-                            Text("Stanford University")
+                            // Course title and University
+                            VStack {
+                                Text(course.courseTitle ?? "")
+                                    .font(.system(size: 18, design: .serif))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Text(course.university ?? "")
+                                    .font(.system(size: 12, design: .serif))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            
+                            // Save button
+                            if !isCourseLiked {
+                                Image(systemName: "heart")
+                                    .font(.system(size: 18, design: .serif))
+                                    .onTapGesture {
+                                        self.isCourseLiked.toggle()
+                                    }
+                            } else {
+                                Image(systemName: "heart.fill")
+                                    .font(.system(size: 18, design: .serif))
+                                    .foregroundStyle(Color.red)
+                                    .onTapGesture {
+                                        self.isCourseLiked.toggle()
+                                    }
+                            }
+                        }
+                        
+                        // Course Info
+                        HStack {
+                            Text("\(course.numLecturesInCourse ?? 1) Lectures")
                                 .font(.system(size: 12, design: .serif))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .opacity(0.6)
+                            
+                            Text("\(course.watchTimeInHrs ?? 1)Hr Watch Time")
+                                .font(.system(size: 12, design: .serif))
+                                .opacity(0.6)
+                            
+                            Text("\(course.aggregateViews ?? "0") Views")
+                                .font(.system(size: 12, design: .serif))
+                                .opacity(0.6)
+                            Spacer()
                         }
                         
-                        // Save button
-                        if !isCourseLiked {
-                            Image(systemName: "heart")
-                                .font(.system(size: 18, design: .serif))
-                                .onTapGesture {
-                                    self.isCourseLiked.toggle()
-                                }
-                        } else {
-                            Image(systemName: "heart.fill")
-                                .font(.system(size: 18, design: .serif))
-                                .foregroundStyle(Color.red)
-                                .onTapGesture {
-                                    self.isCourseLiked.toggle()
-                                }
-                        }
-                    }
-                    
-                    // Course Info
-                    HStack {
-                        Text("6 Lectures")
-                            .font(.system(size: 12, design: .serif))
-                            .opacity(0.6)
-                        
-                        Text("9Hr Watch Time")
-                            .font(.system(size: 12, design: .serif))
-                            .opacity(0.6)
-                        
-                        Text("50M Views")
-                            .font(.system(size: 12, design: .serif))
-                            .opacity(0.6)
-                        Spacer()
-                    }
-                    
-                    // Course Categories
-                    HStack {
-                        Text("Neruoscience")
-                            .font(.system(size: 12, design: .serif))
-                            .opacity(0.6)
-                        
-                        Text("Computer Science")
-                            .font(.system(size: 12, design: .serif))
-                            .opacity(0.6)
-                        Spacer()
-                    }
-                    
-                    
-                    // Notes
-                    HStack {
-                        Text("Exam")
-                            .font(.system(size: 14, design: .serif))
-                            .bold()
-                        Image(systemName: "sparkles")
-                            .foregroundStyle(Color.blue)
-                            .font(.system(size: 14, design: .serif))
-                        Spacer()
-                    }
-                    .padding(.top, 2)
-                    
-                    RoundedRectangle(cornerRadius: 20)
-                        .foregroundStyle(Color.clear)
-                        .frame(minWidth: 200)
-                        .frame(height: 30)
-                        .overlay {
+//                        // Course Categories
+                        ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                Image(systemName: "doc.circle")
-                                    .font(.system(size: 18, design: .serif))
-                                    .foregroundStyle(
-                                        LinearGradient(
-                                            colors: [.red, .orange, .yellow, .green, .blue, .purple],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    )
-                                
-                                Text("The Emotion Machine - Course Exam")
-                                    .font(.system(size: 12, design: .serif))
+                                ForEach(course.categories ?? [], id: \.self) { category in
+                                    Text(category)
+                                        .font(.system(size: 12, design: .serif))
+                                        .opacity(0.6)
+                                }
                             }
+                            
+                            Spacer()
                         }
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .strokeBorder(Color.black, lineWidth: 1)
-                        )
-                    
-                    // Notes
-                    HStack {
-                        Text("Exam Answers")
-                            .font(.system(size: 14, design: .serif))
-                            .bold()
-                        Image(systemName: "sparkles")
-                            .foregroundStyle(Color.blue)
-                            .font(.system(size: 14, design: .serif))
-                        Spacer()
-                    }
-                    .padding(.top, 2)
-                    
-                    RoundedRectangle(cornerRadius: 20)
-                        .foregroundStyle(Color.clear)
-                        .frame(minWidth: 200)
-                        .frame(height: 30)
-                        .overlay {
-                            HStack {
-                                Image(systemName: "doc.circle")
-                                    .font(.system(size: 18, design: .serif))
-                                    .foregroundStyle(
-                                        LinearGradient(
-                                            colors: [.red, .orange, .yellow, .green, .blue, .purple],
-                                            startPoint: .top,
-                                            endPoint: .bottom
+                        
+                        
+                        // Notes
+                        HStack {
+                            Text("Exam")
+                                .font(.system(size: 14, design: .serif))
+                                .bold()
+                            Image(systemName: "sparkles")
+                                .foregroundStyle(Color.blue)
+                                .font(.system(size: 14, design: .serif))
+                            Spacer()
+                        }
+                        .padding(.top, 2)
+                        
+                        RoundedRectangle(cornerRadius: 20)
+                            .foregroundStyle(Color.clear)
+                            .frame(minWidth: 200)
+                            .frame(height: 30)
+                            .overlay {
+                                HStack {
+                                    Image(systemName: "doc.circle")
+                                        .font(.system(size: 18, design: .serif))
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: [.red, .orange, .yellow, .green, .blue, .purple],
+                                                startPoint: .top,
+                                                endPoint: .bottom
+                                            )
                                         )
-                                    )
-                                
-                                Text("The Emotion Machine - Course Exam Answer Guide")
-                                    .font(.system(size: 12, design: .serif))
+                                    
+                                    Text("The Emotion Machine - Course Exam")
+                                        .font(.system(size: 12, design: .serif))
+                                }
                             }
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .strokeBorder(Color.black, lineWidth: 1)
+                            )
+                            .disabled(!(course.hasExam ?? false))
+                        
+                        // Notes
+                        HStack {
+                            Text("Exam Answers")
+                                .font(.system(size: 14, design: .serif))
+                                .bold()
+                            Image(systemName: "sparkles")
+                                .foregroundStyle(Color.blue)
+                                .font(.system(size: 14, design: .serif))
+                            Spacer()
                         }
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .strokeBorder(Color.black, lineWidth: 1)
-                        )
-                    
-                    LecturesInCourse()
-                        .padding(.top, 20)
-                        .padding(.bottom, 100)
-                    
-                    Divider()
-                    
-                    
-                    // Related Courses
-                    HStack {
-                        Text("Related to")
-                            .font(.system(size: 14, design: .serif))
-                            .bold()
+                        .padding(.top, 2)
                         
-                        Text("The Emotion Machine")
-                            .font(.system(size: 14, design: .serif))
+                        RoundedRectangle(cornerRadius: 20)
+                            .foregroundStyle(Color.clear)
+                            .frame(minWidth: 200)
+                            .frame(height: 30)
+                            .overlay {
+                                HStack {
+                                    Image(systemName: "doc.circle")
+                                        .font(.system(size: 18, design: .serif))
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: [.red, .orange, .yellow, .green, .blue, .purple],
+                                                startPoint: .top,
+                                                endPoint: .bottom
+                                            )
+                                        )
+                                    
+                                    Text("The Emotion Machine - Course Exam Answer Guide")
+                                        .font(.system(size: 12, design: .serif))
+                                }
+                            }
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .strokeBorder(Color.black, lineWidth: 1)
+                            )
+                            .disabled(!(course.hasExamAnswers ?? false))
                         
-                        Spacer()
+                        LecturesInCourse()
+                            .padding(.top, 20)
+                            .padding(.bottom, 100)
+                        
+                        Divider()
+                        
+                        
+                        // Related Courses
+                        HStack {
+                            Text("Related to")
+                                .font(.system(size: 14, design: .serif))
+                                .bold()
+                            
+                            Text("The Emotion Machine")
+                                .font(.system(size: 14, design: .serif))
+                            
+                            Spacer()
+                        }
                     }
+                    .padding(.horizontal, 20)
+                } else {
+                    Text("We couldn't load this course, please try again later")
                 }
-                .padding(.horizontal, 20)
                 
                 SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "Swaginomics", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
                 
@@ -187,4 +199,5 @@ struct CourseView: View {
 
 #Preview {
     CourseView()
+        .environmentObject(HomeController())
 }

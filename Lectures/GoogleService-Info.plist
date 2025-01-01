@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>751292162667-jb8d4b3m9m41o3elgbn45qdqbn2quit1.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.751292162667-jb8d4b3m9m41o3elgbn45qdqbn2quit1</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAgTHAB6LtHQD7JpE4goE_JzYoe-ZHpQec</string>
+	<key>GCM_SENDER_ID</key>
+	<string>751292162667</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.bendreyer.Lectura</string>
+	<key>PROJECT_ID</key>
+	<string>lectura-6548f</string>
+	<key>STORAGE_BUCKET</key>
+	<string>lectura-6548f.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:751292162667:ios:7f6b1f949f5f186f1c472e</string>
+</dict>
+</plist>

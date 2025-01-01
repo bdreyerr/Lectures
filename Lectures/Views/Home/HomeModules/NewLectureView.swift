@@ -1,18 +1,18 @@
 //
-//  PreviouslyWatchedCourseCard.swift
+//  NewLectureView.swift
 //  Lectures
 //
-//  Created by Ben Dreyer on 12/17/24.
+//  Created by Ben Dreyer on 12/29/24.
 //
 
 import SwiftUI
 
-struct PreviouslyWatchedCourseCard: View {
-    var image: String
-    var duration: Double
+struct NewLectureView: View {
+    var images = ["mit", "stanford", "scu"]
+    
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            Image(image)
+            Image(images.randomElement() ?? "mit")
                 .resizable()
                 .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
                 .aspectRatio(contentMode: .fill)
@@ -37,31 +37,21 @@ struct PreviouslyWatchedCourseCard: View {
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                         
-                        Text("MIT - Marvin Minsky")
+                        Text("MIT · 9 Lectures · 8hrs")
                             .font(.system(size: 14, design: .serif))
                             .foregroundColor(.white.opacity(0.8))
                     }
                     Spacer()
                     
-                    Circle()
-                        .fill(Color.white)
-                        .frame(width: 40, height: 40)
-                        .overlay(
-                            Image(systemName: "play.fill")
-                                .foregroundColor(Color(hue: 0.001, saturation: 0.95, brightness: 0.973))
-                        )
+//                    Circle()
+//                        .fill(Color.white)
+//                        .frame(width: 40, height: 40)
+//                        .overlay(
+//                            Image(systemName: "play.fill")
+//                                .foregroundColor(Color(hue: 0.001, saturation: 0.95, brightness: 0.973))
+//                        )
                 }
                 .padding()
-                
-                // progress bar
-                GeometryReader { geometry in
-                    Rectangle()
-                        .fill(Color.red)
-                        .frame(width: geometry.size.width * duration, height: 3) // 30% progress
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .frame(height: 3)
-                .padding(.horizontal, 11)
             }
             .padding(.bottom, 1)
             
@@ -72,5 +62,5 @@ struct PreviouslyWatchedCourseCard: View {
 }
 
 #Preview {
-    PreviouslyWatchedCourseCard(image: "mit", duration: 0.2)
+    NewLectureView()
 }

@@ -23,16 +23,16 @@ struct ContinueLearningCourseList: View {
 //                        }
 //                    }
                     NavigationLink(destination: LectureView()) {
-                        PreviouslyWatchedCourseCard(image: images[0], duration: Double.random(in: 0.1...0.9))
+                        PreviouslyWatchedLectureCard(image: images[0], duration: Double.random(in: 0.1...0.9))
                     }
                     NavigationLink(destination: LectureView()) {
-                        PreviouslyWatchedCourseCard(image: images[1], duration: Double.random(in: 0.1...0.9))
+                        PreviouslyWatchedLectureCard(image: images[1], duration: Double.random(in: 0.1...0.9))
                     }
                     NavigationLink(destination: LectureView()) {
-                        PreviouslyWatchedCourseCard(image: images[2], duration: Double.random(in: 0.1...0.9))
+                        PreviouslyWatchedLectureCard(image: images[2], duration: Double.random(in: 0.1...0.9))
                     }
                     NavigationLink(destination: LectureView()) {
-                        PreviouslyWatchedCourseCard(image: images[3], duration: Double.random(in: 0.1...0.9))
+                        PreviouslyWatchedLectureCard(image: images[3], duration: Double.random(in: 0.1...0.9))
                     }
                 }
             }
