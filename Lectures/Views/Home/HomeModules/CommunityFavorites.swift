@@ -32,27 +32,13 @@ struct CommunityFavorites: View {
                     
                     ForEach(homeController.communityFavorites, id: \.id) { course in
                         NavigationLink(destination: CourseView()) {
-                            NewLectureView()
+                            CourseCardView(course: course)
                         }
                         .buttonStyle(PlainButtonStyle())
-                        .onTapGesture {
-                            homeController.focusCourse(course: course)
-                        }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            homeController.focusCourse(course)
+                        })
                     }
-//                    NavigationLink(destination: CourseView()) {
-//                        NewLectureView()
-//                    }
-//                    .buttonStyle(PlainButtonStyle())
-//                    
-//                    NavigationLink(destination: CourseView()) {
-//                        NewLectureView()
-//                    }
-//                    .buttonStyle(PlainButtonStyle())
-//                    
-//                    NavigationLink(destination: CourseView()) {
-//                        NewLectureView()
-//                    }
-//                    .buttonStyle(PlainButtonStyle())
                 }
             }
         }

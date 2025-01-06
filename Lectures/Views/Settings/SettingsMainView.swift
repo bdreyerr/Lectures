@@ -17,32 +17,7 @@ struct SettingsMainView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // Today's Prompt and Change Date Button
-                HStack {
-                    if (colorScheme == .light) {
-                        Image("LogoTransparentWhiteBackground")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                    } else if (colorScheme == .dark) {
-                        Image("LogoBlackBackground")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                    }
-                    
-                    Text("|   Lectura")
-                        .font(.system(size: 16, design: .serif))
-                        .bold()
-                    
-                    Spacer()
-                    
-                    Text(Date().formatted(.dateTime.month().day()))
-                        .font(.system(size: 14, design: .serif))
-                }
-                // Adding this seems to stop the weird expansion of this section when switching tabs
-                .overlay {
-                    Rectangle()
-                        .stroke(Color.black, lineWidth: 0)
-                }
+                TopBrandView()
                 
                 ScrollView(showsIndicators: false) {
                     Text("Settings")
@@ -110,6 +85,7 @@ struct SettingsMainView: View {
                         .opacity(0.8)
                 }
             }
+            .navigationBarHidden(true)
             .padding(.horizontal, 20)
         }
     }

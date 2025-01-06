@@ -18,20 +18,20 @@ struct CategoryCourseList: View {
         }
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                NavigationLink(destination: CourseView()) {
-                    NewLectureView()
-                }
-                .buttonStyle(PlainButtonStyle())
-                
-                NavigationLink(destination: CourseView()) {
-                    NewLectureView()
-                }
-                .buttonStyle(PlainButtonStyle())
-                
-                NavigationLink(destination: CourseView()) {
-                    NewLectureView()
-                }
-                .buttonStyle(PlainButtonStyle())
+//                NavigationLink(destination: CourseView()) {
+//                    NewLectureView()
+//                }
+//                .buttonStyle(PlainButtonStyle())
+//                
+//                NavigationLink(destination: CourseView()) {
+//                    NewLectureView()
+//                }
+//                .buttonStyle(PlainButtonStyle())
+//                
+//                NavigationLink(destination: CourseView()) {
+//                    NewLectureView()
+//                }
+//                .buttonStyle(PlainButtonStyle())
             }
         }
         .padding(.bottom, 20)

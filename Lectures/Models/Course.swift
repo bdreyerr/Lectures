@@ -8,14 +8,18 @@
 import FirebaseFirestore
 import Foundation
 
-struct Course : Codable, Identifiable {
+struct Course : Codable, Identifiable, Hashable {
     // Identifiers
     @DocumentID var id: String?
     
+    // Channel Link
+    var channelId: String?
+    
     // Course Metadata
     var courseTitle: String?
+    var courseDescription: String?
     // TODO(): Consider making the university it's own model
-    var university: String?
+//    var university: String?
     var professorName: String?
     var numLecturesInCourse: Int?
     var watchTimeInHrs: Int?
@@ -32,13 +36,14 @@ struct Course : Codable, Identifiable {
     var examAnswersResourceId: String?
     
     // Lectures inside of the course, using their ID
-//    var lectueres: [String]?
+    var lectureIds: [String]?
     
     
     enum CodingKeys: String, CodingKey {
         case id
+        case channelId
         case courseTitle
-        case university
+        case courseDescription
         case professorName
         case numLecturesInCourse
         case watchTimeInHrs
@@ -49,6 +54,6 @@ struct Course : Codable, Identifiable {
         case hasExamAnswers
         case examResourceId
         case examAnswersResourceId
-        // case lectures
+        case lectureIds
     }
 }

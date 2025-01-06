@@ -7,48 +7,145 @@
 
 import Firebase
 import FirebaseFirestore
+import FirebaseStorage
 import Foundation
 
 class HomeController : ObservableObject {
     
-    @Published var focusedCourse: Course?
-    @Published var focusedLecture: Course?
-    
+    @Published var leadingUniversities: [Channel] = []
     @Published var curatedCourses: [Course] = []
     @Published var communityFavorites: [Course] = []
     
+    @Published var focusedCourse: Course?
+    @Published var focusedLecture: Lecture?
+    @Published var focusedChannel: Channel?
+    
+    // CourseId : [Lecture]
+    @Published var lecturesInCourse: [String : [Lecture]] = [:]
+    
+    // CourseId : Course
+    @Published var cachedCourses: [String : Course] = [:]
+    // LectureId : Course
+    @Published var cachedLectures: [String : Lecture] = [:]
+    // ChannelId: Channel
+    @Published var cachedChannels: [String : Channel] = [:]
+    
+    
+    // CourseId : UIImage
+    @Published var courseThumbnails: [String : UIImage] = [:]
+    // LectureId : UIImage
+    @Published var lectureThumbnails: [String : UIImage] = [:]
+    // ChannelId : UIImage
+    @Published var channelThumbnails: [String : UIImage] = [:]
     
     // Firestore
     let db = Firestore.firestore()
+    // Storage
+    let storage = Storage.storage()
     
     
     init() {
-        print("init in home controller")
-        
-        // load the lectures and courses on the homepage
+        // load the preview list for courses on the home page
+        retrieveLeadingUniversities()
+        retrieveCuratedCourses()
         retrieveCommunityFavorites()
     }
     
+    func retrieveCourse(courseId: String){
+        // check the cache
+        if let _ = cachedCourses[courseId] {
+            print("course already cached")
+            return
+        }
+        
+        Task { @MainActor in
+            let docRef = db.collection("courses").document(courseId)
+            
+            do {
+                let course = try await docRef.getDocument(as: Course.self)
+                self.cachedCourses[courseId] = course
+                
+                // don't fetch the thumbnail, we only need to see it if user wants to access a specific course or lecture
+            } catch {
+                print("Error decoding course: \(error)")
+            }
+        }
+    }
+    
+    func retrieveChannel(channelId: String) {
+        // check the cache
+        if let _ = cachedChannels[channelId] {
+            print("channel already cached")
+            return
+        }
+        
+        Task { @MainActor in
+            let docRef = db.collection("channels").document(channelId)
+            
+            do {
+                let channel = try await docRef.getDocument(as: Channel.self)
+                self.cachedChannels[channelId] = channel
+                
+                // don't fetch the thumbnail, we only need to see it if user wants to access a specific course or lecture
+            } catch {
+                print("Error decoding channel: \(error)")
+            }
+        }
+    }
+    
+    func retrieveLeadingUniversities() {
+        // IDs = [MIT, Harvard, Yale, something , oxford?]
+        let channelIds = ["1", "2", "3", "4", "5"]
+        
+        Task { @MainActor in
+            
+            for channelId in channelIds {
+                let docRef = db.collection("channels").document(channelId)
+                
+                do {
+                    let channel = try await docRef.getDocument(as: Channel.self)
+                    // Add the channel to leading university list to be displayed on home page
+                    self.leadingUniversities.append(channel)
+                    
+                    // cache the fetched channel for future lookups
+                    self.cachedChannels[channelId] = channel
+                    
+                    // TODO: add some logic to not duplicate calls
+                    // get the thumbnail for the channels
+                    self.getChannelThumbnail(channelId: channelId)
+                    
+                } catch {
+                    print("Error decoding channel: \(error)")
+                }
+            }
+            
+        }
+    }
     
     func retrieveCuratedCourses() {
         // TODO: make this list curated, not just the top from the db
-        Task {
+        Task { @MainActor in
             do {
                 let querySnapshot = try await db.collection("courses").order(by: "aggregateViews", descending: true).limit(to: 5).getDocuments()
-                DispatchQueue.main.async {
-                    if querySnapshot.isEmpty {
-                        print("no courses returned when looking up community favorites")
-                        return
-                    }
-                    
-                    for document in querySnapshot.documents {
-                        if let course = try? document.data(as: Course.self) {
-                            DispatchQueue.main.async {
-                                self.curatedCourses.append(course)
-                                
-                                print("adding a course to the array")
-                            }
-                        }
+                
+                if querySnapshot.isEmpty {
+                    print("no courses returned when looking up community favorites")
+                    return
+                }
+                
+                for document in querySnapshot.documents {
+                    if let course = try? document.data(as: Course.self) {
+                        self.curatedCourses.append(course)
+                        
+                        // add the course to the cache
+                        self.cachedCourses[course.id!] = course
+                        
+                        // TODO: add some logic to avoid making duplicate calls
+                        // fetch the courses thumbnail
+                        self.getCourseThumbnail(courseId: course.id!)
+                        
+                        // fetch the channel
+                        self.retrieveChannel(channelId: course.channelId!)
                     }
                 }
             } catch let error {
@@ -61,26 +158,28 @@ class HomeController : ObservableObject {
         // get the courses with the most likes from the courses column in Firebase
         self.communityFavorites = []
         
-        
-        // cache
-        
-        Task {
+        Task { @MainActor in
             do {
                 let querySnapshot = try await db.collection("courses").order(by: "numLikesInApp", descending: true).limit(to: 5).getDocuments()
-                DispatchQueue.main.async {
-                    if querySnapshot.isEmpty {
-                        print("no courses returned when looking up community favorites")
-                        return
-                    }
-                    
-                    for document in querySnapshot.documents {
-                        if let course = try? document.data(as: Course.self) {
-                            DispatchQueue.main.async {
-                                self.communityFavorites.append(course)
-                                
-                                print("adding a course to the array")
-                            }
-                        }
+                
+                if querySnapshot.isEmpty {
+                    print("no courses returned when looking up community favorites")
+                    return
+                }
+                
+                for document in querySnapshot.documents {
+                    if let course = try? document.data(as: Course.self) {
+                        
+                        self.communityFavorites.append(course)
+                        
+                        // add the course to the cache
+                        self.cachedCourses[course.id!] = course
+                        
+                        // fetch the courses thumbnail
+                        self.getCourseThumbnail(courseId: course.id!)
+                        
+                        // fetch the channel
+                        self.retrieveChannel(channelId: course.channelId!)
                     }
                 }
             } catch let error {
@@ -89,8 +188,157 @@ class HomeController : ObservableObject {
         }
     }
     
-    func focusCourse(course: Course) {
+    func retrieveLecturesInCourse(courseId: String, lectureIds: [String]) {
+        var lectures: [Lecture] = []
+        
+        
+        Task { @MainActor in
+            // reset the var
+            self.lecturesInCourse[courseId] = []
+            
+            
+            for lectureId in lectureIds {
+                // check the cache before making a DB call
+                if let lecture = cachedLectures[lectureId] {
+                    lectures.append(lecture)
+                    print("lecture already cached")
+                    continue
+                }
+                
+                // otherwise look it up in DB
+                
+                let docRef = db.collection("lectures").document(lectureId)
+                
+                do {
+                    let lecture = try await docRef.getDocument(as: Lecture.self)
+                    lectures.append(lecture)
+                    
+                    // add the newly fetched lecture to the cache
+                    self.cachedLectures[lectureId] = lecture
+                    
+                    // fetch the lecture thumbnail from storage
+                    self.getLectureThumnbnail(lectureId: lectureId)
+                    
+                    // fetch the channel
+                    self.retrieveChannel(channelId: lecture.channelId!)
+                } catch {
+                    print("Error decoding lecture: \(error)")
+                }
+            }
+            
+            self.lecturesInCourse[courseId] = lectures
+        }
+    }
+    
+    func focusChannel(_ channel: Channel) {
+        self.focusedChannel = nil
+        self.focusedChannel = channel
+        
+        // get channel thumbnail
+        self.getChannelThumbnail(channelId: channel.id!)
+        
+        // When we're focusing the channel, we know we want to look at the list of that channel's courses
+        // we have a list of each courseId under this channel, we should retrieve each one and cache them if they are not already cached
+        
+        for courseId in channel.courseIds! {
+            self.retrieveCourse(courseId: courseId)
+        }
+    }
+    
+    func focusCourse(_ course: Course) {
         self.focusedCourse = nil
         self.focusedCourse = course
+        
+        // TODO: add some logic to avoid duplicate calls to storage
+        // When a course gets focused we want to make sure the channel's thumbnail is loaded and ready to display on Courseview
+        self.getChannelThumbnail(channelId: course.channelId!)
+    }
+    
+    func focusLecture(_ lecture: Lecture) {
+        print("lecture is being focused")
+        self.focusedLecture = nil
+        self.focusedLecture = lecture
+        
+        // When a lecture gets focused we want to make sure the channel's thumbnail is loaded and ready to display on LectureView
+        self.getChannelThumbnail(channelId: lecture.channelId!)
+    }
+    
+    func getCourseThumbnail(courseId: String) {
+        // check cache
+        if let _ = self.courseThumbnails[courseId] {
+            print("course thumbnail already cached")
+        }
+        
+        // Fetch image from firestore
+        Task {
+            // Fetch the prompts image from storage
+            let imageRef = self.storage.reference().child("courses/" + courseId + ".jpeg")
+                        
+            // download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+            imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
+                if let error = error {
+                    print("error downloading image from storage: ", error.localizedDescription)
+                    // There was an issue with the image or the image doesn't exist, either way set both prompt and promptImage back to nil
+                    return
+                } else {
+                    // Data for image is returned
+                    let image = UIImage(data: data!)
+                    // Add image to cache
+                    self.courseThumbnails[courseId] = image
+                }
+            }
+        }
+    }
+    
+    func getLectureThumnbnail(lectureId: String) {
+        // check cache
+        if let _ = self.lectureThumbnails[lectureId] {
+            print("lecture thumbnail already cached")
+        }
+        
+        Task {
+            // Fetch the prompts image from storage
+            let imageRef = self.storage.reference().child("lectures/" + lectureId + ".jpeg")
+                        
+            // download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+            imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
+                if let error = error {
+                    print("error downloading image from storage: ", error.localizedDescription)
+                    // There was an issue with the image or the image doesn't exist, either way set both prompt and promptImage back to nil
+                    return
+                } else {
+                    // Data for image is returned
+                    let image = UIImage(data: data!)
+                    // Add image to cache
+                    self.lectureThumbnails[lectureId] = image
+                }
+            }
+        }
+    }
+    
+    func getChannelThumbnail(channelId: String) {
+        // check cache
+        if let _ = self.channelThumbnails[channelId] {
+            print("channel thumbnail already cached")
+        }
+        
+        Task {
+            // Fetch the prompts image from storage
+            let imageRef = self.storage.reference().child("channels/" + channelId + ".jpeg")
+                        
+            // download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+            imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
+                if let error = error {
+                    print("error downloading image from storage: ", error.localizedDescription)
+                    // There was an issue with the image or the image doesn't exist, either way set both prompt and promptImage back to nil
+                    return
+                } else {
+                    // Data for image is returned
+                    let image = UIImage(data: data!)
+                    // Add image to cache
+                    self.channelThumbnails[channelId] = image
+                }
+            }
+        }
     }
 }

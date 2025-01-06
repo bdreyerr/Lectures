@@ -11,33 +11,39 @@ struct CourseView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @EnvironmentObject var homeController: HomeController
+    @EnvironmentObject var examController: ExamController
+    @EnvironmentObject var examAnswerController: ExamAnswerController
     
-    var previewOverride = false
-    
+
     @State var isCourseLiked: Bool = false
+    @State private var isChannelFollowed = false
+    
     var body: some View {
-        VStack {
-            // Course Cover Image
-            ScrollView(showsIndicators: false) {
-                if let course = homeController.focusedCourse {
+        if let course = homeController.focusedCourse {
+            VStack {
+                // Course Cover Image?
+                ScrollView(showsIndicators: false) {
                     
                     VStack {
                         HStack {
-                            // course Image
-                            Image("stanford")
-                                .resizable()
-                                .clipShape(RoundedRectangle(cornerRadius: 15))
-                                .frame(width: 40, height: 40)
-                            
                             // Course title and University
                             VStack {
                                 Text(course.courseTitle ?? "")
                                     .font(.system(size: 18, design: .serif))
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                Text(course.university ?? "")
-                                    .font(.system(size: 12, design: .serif))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                // nav link to channel view
+//                                NavigationLink(destination: ChannelView()) {
+//                                    
+//                                }
+//                                .simultaneousGesture(TapGesture().onEnded {
+//                                    // focus a channel
+//                                    if let channel = homeController.cachedChannels[course.channelId!] {
+//                                        homeController.focusChannel(channel)
+//                                    }
+//                                })
+//                                .buttonStyle(PlainButtonStyle())
                             }
                             
                             // Save button
@@ -73,7 +79,7 @@ struct CourseView: View {
                             Spacer()
                         }
                         
-//                        // Course Categories
+                        // Course Categories
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
                                 ForEach(course.categories ?? [], id: \.self) { category in
@@ -86,8 +92,86 @@ struct CourseView: View {
                             Spacer()
                         }
                         
+                        // Channel Info
+                        HStack {
+                            // channel image - nav link to channel view
+                            NavigationLink(destination: ChannelView()) {
+                                if let channelImage = homeController.channelThumbnails[course.channelId!] {
+                                    Image(uiImage: channelImage)
+                                        .resizable()
+                                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                                        .frame(width: 40, height: 40)
+                                } else {
+                                    Image("stanford")
+                                        .resizable()
+                                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                                        .frame(width: 40, height: 40)
+                                }
+                                
+                                if let channel = homeController.cachedChannels[course.channelId!] {
+                                    VStack {
+                                        Text(channel.title!)
+                                            .font(.system(size: 14, design: .serif))
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        
+                                        HStack {
+                                            Text("\(channel.numCourses!) Courses")
+                                                .font(.system(size: 12, design: .serif))
+                                                .opacity(0.6)
+                                            
+                                            Text("\(channel.numLectures!) Lectures")
+                                                .font(.system(size: 12, design: .serif))
+                                                .opacity(0.6)
+                                            
+                                            Spacer()
+                                        }
+                                    }
+                                }
+                            }
+                            .simultaneousGesture(TapGesture().onEnded {
+                                // focus a channel
+                                // try to get the channel using course.channelId
+                                if let channel = homeController.cachedChannels[course.channelId!] {
+                                    homeController.focusChannel(channel)
+                                }
+                            })
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            // Channel Follow Button
+                            // follow button
+                            Button(action: {
+                                withAnimation(.spring()) {
+                                    isChannelFollowed.toggle()
+                                }
+                            }) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: isChannelFollowed ? "heart.fill" : "heart")
+                                        .font(.system(size: 14))
+                                    
+                                    Text(isChannelFollowed ? "Following" : "Follow")
+                                        .font(.system(size: 14, weight: .semibold))
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .foregroundColor(isChannelFollowed ? .white : .primary)
+                                .background(
+                                    Capsule()
+                                        .fill(isChannelFollowed ? Color.red : Color.clear)
+                                        .overlay(
+                                            Capsule()
+                                                .strokeBorder(isChannelFollowed ? Color.red : Color.gray, lineWidth: 1)
+                                        )
+                                )
+                            }
+                        }
                         
-                        // Notes
+                        // Course Description
+                        ExpandableText(text: course.courseDescription!, maxLength: 150)
+                            .padding(.top, 1)
+                        
+                        
+                        // Exam
+                        
                         HStack {
                             Text("Exam")
                                 .font(.system(size: 14, design: .serif))
@@ -99,33 +183,18 @@ struct CourseView: View {
                         }
                         .padding(.top, 2)
                         
-                        RoundedRectangle(cornerRadius: 20)
-                            .foregroundStyle(Color.clear)
-                            .frame(minWidth: 200)
-                            .frame(height: 30)
-                            .overlay {
-                                HStack {
-                                    Image(systemName: "doc.circle")
-                                        .font(.system(size: 18, design: .serif))
-                                        .foregroundStyle(
-                                            LinearGradient(
-                                                colors: [.red, .orange, .yellow, .green, .blue, .purple],
-                                                startPoint: .top,
-                                                endPoint: .bottom
-                                            )
-                                        )
-                                    
-                                    Text("The Emotion Machine - Course Exam")
-                                        .font(.system(size: 12, design: .serif))
-                                }
-                            }
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .strokeBorder(Color.black, lineWidth: 1)
-                            )
-                            .disabled(!(course.hasExam ?? false))
                         
-                        // Notes
+                        if let examId = course.examResourceId {
+                            if let exam = examController.cachedExams[examId] {
+                                ResourceChip(resource: exam)
+                            }
+                        }
+                        
+                        // todo put a loading thing here or something to indicate there's no resource on this
+                        
+                        
+                        
+                        // Exam Answers
                         HStack {
                             Text("Exam Answers")
                                 .font(.system(size: 14, design: .serif))
@@ -137,33 +206,15 @@ struct CourseView: View {
                         }
                         .padding(.top, 2)
                         
-                        RoundedRectangle(cornerRadius: 20)
-                            .foregroundStyle(Color.clear)
-                            .frame(minWidth: 200)
-                            .frame(height: 30)
-                            .overlay {
-                                HStack {
-                                    Image(systemName: "doc.circle")
-                                        .font(.system(size: 18, design: .serif))
-                                        .foregroundStyle(
-                                            LinearGradient(
-                                                colors: [.red, .orange, .yellow, .green, .blue, .purple],
-                                                startPoint: .top,
-                                                endPoint: .bottom
-                                            )
-                                        )
-                                    
-                                    Text("The Emotion Machine - Course Exam Answer Guide")
-                                        .font(.system(size: 12, design: .serif))
-                                }
+                        if let examAnswerId = course.examAnswersResourceId {
+                            if let examAnswer = examAnswerController.cachedExamAnswers[examAnswerId] {
+                                ResourceChip(resource: examAnswer)
                             }
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .strokeBorder(Color.black, lineWidth: 1)
-                            )
-                            .disabled(!(course.hasExamAnswers ?? false))
+                        }
                         
-                        LecturesInCourse()
+                        // todo put a loading thing here or something to indicate there's no resource on this
+                        
+                        LecturesInCourse(course: course)
                             .padding(.top, 20)
                             .padding(.bottom, 100)
                         
@@ -183,21 +234,51 @@ struct CourseView: View {
                         }
                     }
                     .padding(.horizontal, 20)
+                    
+                    NavigationLink(destination: CourseView()){
+                        SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "Swaginomics", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        // make a course up
+                        let course = Course(id: "1", channelId: "1", courseTitle: "the title is here", courseDescription: "description is here", professorName: "Jimmy", numLecturesInCourse: 2, watchTimeInHrs: 5, categories: [], examResourceId:"1", examAnswersResourceId: "1")
+                        homeController.focusCourse(course)
+                    })
+                    
+//                    SearchedCourse(coverImage: "stanford", universityImage: "mit", courseName: "How to pull", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+//                    
+//                    SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "Another One For Ya", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+                }
+            }
+            .onAppear {
+                // get resource info
+                
+                // get the exam
+                if let examId = course.examResourceId {
+                    examController.retrieveExam(examId: examId)
                 } else {
-                    Text("We couldn't load this course, please try again later")
+                    print("course didn't have an exam Id")
                 }
                 
-                SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "Swaginomics", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+                // get the exam answers
+                if let examAnswerId = course.examAnswersResourceId {
+                    examAnswerController.retrieveExamAnswer(examAnswerId: examAnswerId)
+                } else {
+                    print("course didn't have an exam Id")
+                }
                 
-                SearchedCourse(coverImage: "stanford", universityImage: "mit", courseName: "How to pull", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
-                
-                SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "Another One For Ya", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+                // get the lectures in this course
+                if let lectureIds = course.lectureIds {
+                    homeController.retrieveLecturesInCourse(courseId: course.id!, lectureIds: lectureIds)
+                }
             }
         }
     }
+    
 }
 
 #Preview {
     CourseView()
         .environmentObject(HomeController())
+        .environmentObject(ExamController())
+        .environmentObject(ExamAnswerController())
 }

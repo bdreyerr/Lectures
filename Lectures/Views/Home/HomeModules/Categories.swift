@@ -12,9 +12,6 @@ struct Categories: View {
         
         var body: some View {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Categories")
-                    .font(.system(size: 20, design: .serif))
-                    .bold()
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {

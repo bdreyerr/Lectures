@@ -43,30 +43,8 @@ struct SearchMainView: View {
     var body: some View {
         ZStack {
             VStack {
-                // Today's Prompt and Change Date Button
-                HStack {
-                    if (colorScheme == .light) {
-                        Image("LogoTransparentWhiteBackground")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                    } else if (colorScheme == .dark) {
-                        Image("LogoBlackBackground")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                    }
-                    
-                    Text("|   Lectura")
-                        .font(.system(size: 16, design: .serif))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .bold()
-                    
-                    
-                    Text(Date().formatted(.dateTime.month().day()))
-                        .font(.system(size: 14, design: .serif))
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-                .padding(.top, 1)
-                .padding(.horizontal, 20)
+                TopBrandView()
+                    .padding(.horizontal, 20)
                 
                 
                 ScrollView() {
@@ -111,6 +89,7 @@ struct SearchMainView: View {
                 }
                 .scrollDismissesKeyboard(.interactively)
             }
+            .navigationBarHidden(true)
             
         }
     }

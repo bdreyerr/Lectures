@@ -16,6 +16,13 @@ struct ContentView: View {
     @StateObject var userController = UserController()
     @StateObject var homeController = HomeController()
     
+    // Resource Controllers
+    @StateObject var examController = ExamController()
+    @StateObject var examAnswerController = ExamAnswerController()
+    @StateObject var notesController = NotesController()
+    @StateObject var homeworkController = HomeworkController()
+    @StateObject var homeworkAnswersController = HomeworkAnswersController()
+    
     var body: some View {
         ZStack {
             if hasUserSeenPaywall {
@@ -42,6 +49,12 @@ struct ContentView: View {
         .environmentObject(authController)
         .environmentObject(userController)
         .environmentObject(homeController)
+        .environmentObject(examController)
+        .environmentObject(examAnswerController)
+        .environmentObject(notesController)
+        .environmentObject(homeworkController)
+        .environmentObject(homeworkAnswersController)
+        
     }
 }
 
@@ -50,4 +63,9 @@ struct ContentView: View {
         .environmentObject(AuthController())
         .environmentObject(UserController())
         .environmentObject(HomeController())
+        .environmentObject(ExamController())
+        .environmentObject(ExamAnswerController())
+        .environmentObject(NotesController())
+        .environmentObject(HomeworkController())
+        .environmentObject(HomeworkAnswersController())
 }

@@ -49,29 +49,29 @@ struct Paywall: View {
                     // free
                     MembershipOption(
                         titleText: "Free",
-                        attributes: ["ads", "$0.99 per resource"],
+                        attributes: ["free access to all courses", "ads", "unlimited resources", "no personalized learning"],
                         optionIndex: 0,
-                        selectedOption: $authController.selectedMembershipType
-                    )
-                    .padding(.horizontal, 5)
-                    
-                    // plus
-                    MembershipOption(
-                        titleText: "Plus $4.99/mo",
-                        attributes: ["no ads", "100 resources / mo"],
-                        optionIndex: 1,
                         selectedOption: $authController.selectedMembershipType
                     )
                     .padding(.horizontal, 5)
                     
                     // pro
                     MembershipOption(
-                        titleText: "Pro $7.99/mo",
-                        attributes: ["no ads", "Unlimited Resources"],
-                        optionIndex: 2,
+                        titleText: "Plus $6.99/mo",
+                        attributes: ["free access to all courses", "no ads", "unlimited resources", "course history", "course planner"],
+                        optionIndex: 1,
                         selectedOption: $authController.selectedMembershipType
                     )
                     .padding(.horizontal, 5)
+                    
+                    // pro
+//                    MembershipOption(
+//                        titleText: "Pro $7.99/mo",
+//                        attributes: ["no ads", "Unlimited Resources"],
+//                        optionIndex: 2,
+//                        selectedOption: $authController.selectedMembershipType
+//                    )
+//                    .padding(.horizontal, 5)
                 }
                 
                 Text("Resource = notes, homeworks, practice exams & answers")
