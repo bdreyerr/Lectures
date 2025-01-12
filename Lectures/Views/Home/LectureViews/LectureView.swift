@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import YouTubePlayerKit
 
 struct LectureView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -15,6 +16,8 @@ struct LectureView: View {
     @EnvironmentObject var homeworkController: HomeworkController
     @EnvironmentObject var homeworkAnswersController: HomeworkAnswersController
     
+    // Youtube player
+    @EnvironmentObject var youTubePlayerController: YouTubePlayerController
 
     @State var duration: Double = 0.6
     
@@ -28,63 +31,79 @@ struct LectureView: View {
     var body: some View {
         if let lecture = homeController.focusedLecture {
             VStack {
-                // Playback view (starts paused)
+                // YouTubePlayer (starts video on page load)
                 ZStack(alignment: .bottomLeading) {
                     
-                    if let image = homeController.lectureThumbnails[lecture.id!] {
-                        Image(uiImage: image)
-                            .resizable()
-                            .border(Color.green)
-                            .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
-                            .aspectRatio(contentMode: .fit)
+                    // make sure the youtube url is attatched to this lecture
+                    if let _ = lecture.youtubeVideoUrl {
+                        YouTubePlayerView(youTubePlayerController.player) { state in
+                            // Overlay ViewBuilder closure to place an overlay View
+                            // for the current `YouTubePlayer.State`
+                            switch state {
+                            case .idle:
+//                                ProgressView()
+                                SkeletonLoader(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
+                            case .ready:
+                                EmptyView()
+                            case .error(let error):
+                                Text(verbatim: "YouTube player couldn't be loaded: \(error)")
+                            }
+                        }
+                        .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
                     } else {
-                        Image("google_logo")
-                            .resizable()
-                            .border(Color.green)
-                            .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
-                            .aspectRatio(contentMode: .fit)
+                        SkeletonLoader(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
                     }
+                    
+//                    if let image = homeController.lectureThumbnails[lecture.id!] {
+//                        Image(uiImage: image)
+//                            .resizable()
+//                            .border(Color.green)
+//                            .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
+//                            .aspectRatio(contentMode: .fit)
+//                    } else {
+//                        SkeletonLoader(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
+//                    }
                     
                     // Add semi-transparent gradient overlay
-                    LinearGradient(
-                        gradient: Gradient(colors: [.clear, .black.opacity(0.85)]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
+//                    LinearGradient(
+//                        gradient: Gradient(colors: [.clear, .black.opacity(0.85)]),
+//                        startPoint: .top,
+//                        endPoint: .bottom
+//                    )
+//                    .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
                     
                     
-                    HStack {
-                        Spacer()
-                        
-                        Circle()
-                            .fill(Color.white)
-                            .frame(width: 40, height: 40)
-                            .overlay(
-                                Image(systemName: "play.fill")
-                                    .foregroundColor(Color(hue: 0.001, saturation: 0.95, brightness: 0.973))
-                            )
-                            .padding()
-                    }
-                    
-                    // progress bar
-                    GeometryReader { geometry in
-                        Rectangle()
-                            .fill(Color.red)
-                            .frame(width: geometry.size.width * duration, height: 3) // 30% progress
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .frame(height: 3)
-                    .padding(.horizontal, 0)
+//                    HStack {
+//                        Spacer()
+//                        
+//                        Circle()
+//                            .fill(Color.white)
+//                            .frame(width: 40, height: 40)
+//                            .overlay(
+//                                Image(systemName: "play.fill")
+//                                    .foregroundColor(Color(hue: 0.001, saturation: 0.95, brightness: 0.973))
+//                            )
+//                            .padding()
+//                    }
+//                    
+//                    // progress bar
+//                    GeometryReader { geometry in
+//                        Rectangle()
+//                            .fill(Color.red)
+//                            .frame(width: geometry.size.width * duration, height: 3) // 30% progress
+//                            .frame(maxWidth: .infinity, alignment: .leading)
+//                    }
+//                    .frame(height: 3)
+//                    .padding(.horizontal, 0)
                 }
                 .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
                 .shadow(radius: 2.5)
-                .border(Color.black)
+//                .border(Color.black)
+                
+                
                 Spacer()
                 
                 // Course Indicator & Lecture Picker
-                
-                
                 ScrollView() {
                     VStack(alignment: .leading) {
                         HStack {
@@ -130,10 +149,17 @@ struct LectureView: View {
                             // Profile Picture
                             // channel image - nav link to channel view
                             NavigationLink(destination: ChannelView()) {
-                                Image("stanford")
-                                    .resizable()
-                                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                                    .frame(width: 40, height: 40)
+                                if let channelImage = homeController.channelThumbnails[lecture.channelId!] {
+                                    Image(uiImage: channelImage)
+                                        .resizable()
+//                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .frame(width: 40, height: 40)
+                                } else {
+                                    Image("stanford")
+                                        .resizable()
+//                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .frame(width: 40, height: 40)
+                                }
                             }
                             .simultaneousGesture(TapGesture().onEnded {
                                 // focus a channel
@@ -174,6 +200,7 @@ struct LectureView: View {
                                 }
                             }
                         }
+                        .cornerRadius(5)
                         
                         
                         // Lecture Description
@@ -194,6 +221,11 @@ struct LectureView: View {
                         if let noteId = lecture.notesResourceId {
                             if let note = notesController.cachedNotes[noteId] {
                                 ResourceChip(resource: note)
+                            } else {
+                                HStack {
+                                    SkeletonLoader(width: 300, height: 40)
+                                    Spacer()
+                                }
                             }
                         }
                         
@@ -213,6 +245,11 @@ struct LectureView: View {
                         if let homeworkId = lecture.homeworkResourceId {
                             if let homework = homeworkController.cachedHomeworks[homeworkId] {
                                 ResourceChip(resource: homework)
+                            } else {
+                                HStack {
+                                    SkeletonLoader(width: 300, height: 40)
+                                    Spacer()
+                                }
                             }
                         }
                         
@@ -231,6 +268,11 @@ struct LectureView: View {
                         if let homeworkAnswerId = lecture.homeworkAnswersResourceId {
                             if let homeworkAnswer = homeworkAnswersController.cachedHomeworkAnswers[homeworkAnswerId] {
                                 ResourceChip(resource: homeworkAnswer)
+                            } else {
+                                HStack {
+                                    SkeletonLoader(width: 300, height: 40)
+                                    Spacer()
+                                }
                             }
                         }
                         
@@ -265,6 +307,8 @@ struct LectureView: View {
                 }
             }
             .onAppear {
+                
+                
                 // get the resource info
                 
                 if let lecture = homeController.focusedLecture {
@@ -291,9 +335,6 @@ struct LectureView: View {
                 } else {
                     print("lecture not focused yet")
                 }
-                
-                
-                
             }
         } else {
             Text("We couldn't load that lecture.")
@@ -304,4 +345,5 @@ struct LectureView: View {
 #Preview {
     LectureView()
         .environmentObject(NotesController())
+        .environmentObject(YouTubePlayerController())
 }

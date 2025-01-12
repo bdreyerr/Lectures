@@ -23,11 +23,7 @@ struct CourseCardView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             } else {
                 // default image when not loaded
-                Image("google_logo")
-                    .resizable()
-                    .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
-                    .aspectRatio(contentMode: .fill)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
             }
             
             // Add semi-transparent gradient overlay

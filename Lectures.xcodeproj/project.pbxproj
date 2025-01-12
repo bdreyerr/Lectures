@@ -13,6 +13,10 @@
 		1A0EC3EB2D2522F20098AD26 /* SignOutButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC3EA2D2522F20098AD26 /* SignOutButton.swift */; };
 		1A0EC3ED2D2523340098AD26 /* DeleteAccountButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC3EC2D2523340098AD26 /* DeleteAccountButton.swift */; };
 		1A0EC3EF2D25CF9E0098AD26 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC3EE2D25CF9E0098AD26 /* UserController.swift */; };
+		1A21B9822D30745400A492D0 /* YouTubePlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1A21B9812D30745400A492D0 /* YouTubePlayerKit */; };
+		1A21B9842D30746C00A492D0 /* YouTubePlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A21B9832D30746C00A492D0 /* YouTubePlayerController.swift */; };
+		1A21B9862D30E95D00A492D0 /* NewHomeMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A21B9852D30E95D00A492D0 /* NewHomeMainView.swift */; };
+		1A21B9882D30ED1A00A492D0 /* Collections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A21B9872D30ED1A00A492D0 /* Collections.swift */; };
 		1A5685622D29FB4D00CD3427 /* ExpandableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5685612D29FB4D00CD3427 /* ExpandableText.swift */; };
 		1A5685642D29FE5A00CD3427 /* NotesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5685632D29FE5A00CD3427 /* NotesController.swift */; };
 		1A5685662D2A048B00CD3427 /* HomeworkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5685652D2A048B00CD3427 /* HomeworkController.swift */; };
@@ -24,13 +28,18 @@
 		1A56857B2D2B48CE00CD3427 /* CoursesByChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A56857A2D2B48CE00CD3427 /* CoursesByChannel.swift */; };
 		1A56857D2D2B4F5E00CD3427 /* CourseByChannelModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A56857C2D2B4F5E00CD3427 /* CourseByChannelModule.swift */; };
 		1A56857F2D2B82C600CD3427 /* LeadingUniversities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A56857E2D2B82C600CD3427 /* LeadingUniversities.swift */; };
+		1A5685842D2B96E800CD3427 /* ResourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5685832D2B96E800CD3427 /* ResourceView.swift */; };
+		1A5685862D2B971100CD3427 /* PDFViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5685852D2B971100CD3427 /* PDFViewer.swift */; };
+		1A5685882D2B989700CD3427 /* test-pdf-doc.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 1A5685872D2B989700CD3427 /* test-pdf-doc.pdf */; };
+		1A56858A2D2E3CAC00CD3427 /* RelatedCourse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5685892D2E3CAC00CD3427 /* RelatedCourse.swift */; };
+		1A56858D2D2E4AE800CD3427 /* SkeletonLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A56858C2D2E4AE800CD3427 /* SkeletonLoader.swift */; };
+		1A56858F2D2E4B3000CD3427 /* LoaderPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A56858E2D2E4B3000CD3427 /* LoaderPreview.swift */; };
 		1A577AC52D25D61700BE27BF /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A577AC42D25D61700BE27BF /* Course.swift */; };
 		1A577AC72D25D96D00BE27BF /* Lecture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A577AC62D25D96D00BE27BF /* Lecture.swift */; };
 		1A577AC92D25DABE00BE27BF /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A577AC82D25DABE00BE27BF /* HomeController.swift */; };
 		1A577ADE2D28848000BE27BF /* ExamController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A577ADD2D28848000BE27BF /* ExamController.swift */; };
 		1A577AE02D28873100BE27BF /* ResourceChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A577ADF2D28873100BE27BF /* ResourceChip.swift */; };
 		1A577AE22D288A9B00BE27BF /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A577AE12D288A9B00BE27BF /* Resource.swift */; };
-		1A577AE52D288BF900BE27BF /* ResourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A577AE42D288BF900BE27BF /* ResourceView.swift */; };
 		1A577AE72D288EC400BE27BF /* ExamAnswerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A577AE62D288EC400BE27BF /* ExamAnswerController.swift */; };
 		1A577AE92D28A14300BE27BF /* LectureInCourseModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A577AE82D28A14300BE27BF /* LectureInCourseModule.swift */; };
 		1A6495C82D24949100EA16D2 /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6495C72D24949000EA16D2 /* AuthController.swift */; };
@@ -60,6 +69,9 @@
 		1A7E9AB62D23CE4300CBEF99 /* Paywall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9AB52D23CE4300CBEF99 /* Paywall.swift */; };
 		1A7E9AB92D24921000CBEF99 /* SignInWithApple.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9AB82D24921000CBEF99 /* SignInWithApple.swift */; };
 		1A7E9ABB2D24923600CBEF99 /* SignInWithGoogle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9ABA2D24923500CBEF99 /* SignInWithGoogle.swift */; };
+		1A88CF7B2D2F214500A9CE55 /* HomeLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88CF7A2D2F214500A9CE55 /* HomeLoadingView.swift */; };
+		1A88CF812D306C8B00A9CE55 /* PlayCourseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88CF802D306C8B00A9CE55 /* PlayCourseButton.swift */; };
+		1A88CF842D30719F00A9CE55 /* YoutubePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88CF832D30719F00A9CE55 /* YoutubePlayer.swift */; };
 		1AA40D782D0FE56700BB311F /* LecturesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA40D772D0FE56700BB311F /* LecturesApp.swift */; };
 		1AA40D7A2D0FE56700BB311F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA40D792D0FE56700BB311F /* ContentView.swift */; };
 		1AA40D7C2D0FE56A00BB311F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AA40D7B2D0FE56A00BB311F /* Assets.xcassets */; };
@@ -85,6 +97,9 @@
 		1A0EC3EA2D2522F20098AD26 /* SignOutButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutButton.swift; sourceTree = "<group>"; };
 		1A0EC3EC2D2523340098AD26 /* DeleteAccountButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountButton.swift; sourceTree = "<group>"; };
 		1A0EC3EE2D25CF9E0098AD26 /* UserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserController.swift; sourceTree = "<group>"; };
+		1A21B9832D30746C00A492D0 /* YouTubePlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubePlayerController.swift; sourceTree = "<group>"; };
+		1A21B9852D30E95D00A492D0 /* NewHomeMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHomeMainView.swift; sourceTree = "<group>"; };
+		1A21B9872D30ED1A00A492D0 /* Collections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collections.swift; sourceTree = "<group>"; };
 		1A5685612D29FB4D00CD3427 /* ExpandableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableText.swift; sourceTree = "<group>"; };
 		1A5685632D29FE5A00CD3427 /* NotesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesController.swift; sourceTree = "<group>"; };
 		1A5685652D2A048B00CD3427 /* HomeworkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeworkController.swift; sourceTree = "<group>"; };
@@ -96,13 +111,18 @@
 		1A56857A2D2B48CE00CD3427 /* CoursesByChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesByChannel.swift; sourceTree = "<group>"; };
 		1A56857C2D2B4F5E00CD3427 /* CourseByChannelModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseByChannelModule.swift; sourceTree = "<group>"; };
 		1A56857E2D2B82C600CD3427 /* LeadingUniversities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadingUniversities.swift; sourceTree = "<group>"; };
+		1A5685832D2B96E800CD3427 /* ResourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceView.swift; sourceTree = "<group>"; };
+		1A5685852D2B971100CD3427 /* PDFViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewer.swift; sourceTree = "<group>"; };
+		1A5685872D2B989700CD3427 /* test-pdf-doc.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "test-pdf-doc.pdf"; sourceTree = "<group>"; };
+		1A5685892D2E3CAC00CD3427 /* RelatedCourse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedCourse.swift; sourceTree = "<group>"; };
+		1A56858C2D2E4AE800CD3427 /* SkeletonLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonLoader.swift; sourceTree = "<group>"; };
+		1A56858E2D2E4B3000CD3427 /* LoaderPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaderPreview.swift; sourceTree = "<group>"; };
 		1A577AC42D25D61700BE27BF /* Course.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
 		1A577AC62D25D96D00BE27BF /* Lecture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lecture.swift; sourceTree = "<group>"; };
 		1A577AC82D25DABE00BE27BF /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		1A577ADD2D28848000BE27BF /* ExamController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExamController.swift; sourceTree = "<group>"; };
 		1A577ADF2D28873100BE27BF /* ResourceChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceChip.swift; sourceTree = "<group>"; };
 		1A577AE12D288A9B00BE27BF /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
-		1A577AE42D288BF900BE27BF /* ResourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceView.swift; sourceTree = "<group>"; };
 		1A577AE62D288EC400BE27BF /* ExamAnswerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExamAnswerController.swift; sourceTree = "<group>"; };
 		1A577AE82D28A14300BE27BF /* LectureInCourseModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LectureInCourseModule.swift; sourceTree = "<group>"; };
 		1A6495C72D24949000EA16D2 /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
@@ -126,6 +146,9 @@
 		1A7E9AB52D23CE4300CBEF99 /* Paywall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paywall.swift; sourceTree = "<group>"; };
 		1A7E9AB82D24921000CBEF99 /* SignInWithApple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithApple.swift; sourceTree = "<group>"; };
 		1A7E9ABA2D24923500CBEF99 /* SignInWithGoogle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithGoogle.swift; sourceTree = "<group>"; };
+		1A88CF7A2D2F214500A9CE55 /* HomeLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLoadingView.swift; sourceTree = "<group>"; };
+		1A88CF802D306C8B00A9CE55 /* PlayCourseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayCourseButton.swift; sourceTree = "<group>"; };
+		1A88CF832D30719F00A9CE55 /* YoutubePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YoutubePlayer.swift; sourceTree = "<group>"; };
 		1AA40D742D0FE56700BB311F /* Lectures.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lectures.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA40D772D0FE56700BB311F /* LecturesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LecturesApp.swift; sourceTree = "<group>"; };
 		1AA40D792D0FE56700BB311F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -150,6 +173,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A21B9822D30745400A492D0 /* YouTubePlayerKit in Frameworks */,
 				1A6495CB2D2495ED00EA16D2 /* GoogleSignIn in Frameworks */,
 				1A7E9AA72D2244B400CBEF99 /* FirebaseAuth in Frameworks */,
 				1A7E9AA92D2244B400CBEF99 /* FirebaseFirestore in Frameworks */,
@@ -190,6 +214,25 @@
 			path = ChannelViews;
 			sourceTree = "<group>";
 		};
+		1A5685822D2B96D700CD3427 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				1A5685832D2B96E800CD3427 /* ResourceView.swift */,
+				1A5685852D2B971100CD3427 /* PDFViewer.swift */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		1A56858B2D2E4AD700CD3427 /* LoadingViews */ = {
+			isa = PBXGroup;
+			children = (
+				1A56858C2D2E4AE800CD3427 /* SkeletonLoader.swift */,
+				1A56858E2D2E4B3000CD3427 /* LoaderPreview.swift */,
+				1A88CF7A2D2F214500A9CE55 /* HomeLoadingView.swift */,
+			);
+			path = LoadingViews;
+			sourceTree = "<group>";
+		};
 		1A577ADC2D28846E00BE27BF /* ResourceControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -200,14 +243,6 @@
 				1A5685672D2A04BE00CD3427 /* HomeworkAnswersController.swift */,
 			);
 			path = ResourceControllers;
-			sourceTree = "<group>";
-		};
-		1A577AE32D288BED00BE27BF /* ResourceViews */ = {
-			isa = PBXGroup;
-			children = (
-				1A577AE42D288BF900BE27BF /* ResourceView.swift */,
-			);
-			path = ResourceViews;
 			sourceTree = "<group>";
 		};
 		1A7E9A762D149DEE00CBEF99 /* CourseViews */ = {
@@ -251,6 +286,8 @@
 				1A7E9A872D20964700CBEF99 /* LecturesInCourse.swift */,
 				1A577AE82D28A14300BE27BF /* LectureInCourseModule.swift */,
 				1A7E9A892D21DC1300CBEF99 /* CourseCardView.swift */,
+				1A5685892D2E3CAC00CD3427 /* RelatedCourse.swift */,
+				1A88CF802D306C8B00A9CE55 /* PlayCourseButton.swift */,
 			);
 			path = CourseModules;
 			sourceTree = "<group>";
@@ -294,6 +331,21 @@
 			path = OnboardingModules;
 			sourceTree = "<group>";
 		};
+		1A88CF792D2F1D6600A9CE55 /* LoadControllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = LoadControllers;
+			sourceTree = "<group>";
+		};
+		1A88CF822D30719400A9CE55 /* YoutubePlayer */ = {
+			isa = PBXGroup;
+			children = (
+				1A88CF832D30719F00A9CE55 /* YoutubePlayer.swift */,
+			);
+			path = YoutubePlayer;
+			sourceTree = "<group>";
+		};
 		1AA40D6B2D0FE56700BB311F = {
 			isa = PBXGroup;
 			children = (
@@ -313,6 +365,7 @@
 		1AA40D762D0FE56700BB311F /* Lectures */ = {
 			isa = PBXGroup;
 			children = (
+				1A5685872D2B989700CD3427 /* test-pdf-doc.pdf */,
 				1A0EC3E12D24A7840098AD26 /* Info.plist */,
 				1AA40D882D0FE8B400BB311F /* Controllers */,
 				1AA40D872D0FE8AE00BB311F /* Models */,
@@ -339,6 +392,8 @@
 		1AA40D862D0FE8A800BB311F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1A56858B2D2E4AD700CD3427 /* LoadingViews */,
+				1A5685822D2B96D700CD3427 /* Resource */,
 				1A7E9AAE2D2375C100CBEF99 /* Onboarding */,
 				1A7E9A942D21ED7D00CBEF99 /* Settings */,
 				1AA40DA42D137D2B00BB311F /* Search */,
@@ -365,12 +420,14 @@
 		1AA40D882D0FE8B400BB311F /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				1A88CF792D2F1D6600A9CE55 /* LoadControllers */,
 				1A577ADC2D28846E00BE27BF /* ResourceControllers */,
 				1AA40DAC2D137D5400BB311F /* TabBarController.swift */,
 				1A6495C72D24949000EA16D2 /* AuthController.swift */,
 				1A0EC3E42D251D250098AD26 /* MyCoursesController.swift */,
 				1A0EC3EE2D25CF9E0098AD26 /* UserController.swift */,
 				1A577AC82D25DABE00BE27BF /* HomeController.swift */,
+				1A21B9832D30746C00A492D0 /* YouTubePlayerController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -378,13 +435,14 @@
 		1AA40D8B2D121C5A00BB311F /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				1A88CF822D30719400A9CE55 /* YoutubePlayer */,
 				1A5685712D2A51B300CD3427 /* ChannelViews */,
-				1A577AE32D288BED00BE27BF /* ResourceViews */,
 				1A7E9A772D149DF400CBEF99 /* LectureViews */,
 				1A7E9A762D149DEE00CBEF99 /* CourseViews */,
 				1AA40D8E2D121E4D00BB311F /* HomeModules */,
 				1AA40D8C2D121C8000BB311F /* HomeMainView.swift */,
 				1A577ADF2D28873100BE27BF /* ResourceChip.swift */,
+				1A21B9852D30E95D00A492D0 /* NewHomeMainView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -403,6 +461,7 @@
 				1A7E9A8F2D21E68B00CBEF99 /* CategoryCourseList.swift */,
 				1A5685612D29FB4D00CD3427 /* ExpandableText.swift */,
 				1A56857E2D2B82C600CD3427 /* LeadingUniversities.swift */,
+				1A21B9872D30ED1A00A492D0 /* Collections.swift */,
 			);
 			path = HomeModules;
 			sourceTree = "<group>";
@@ -448,6 +507,7 @@
 				1A7E9AAC2D22451400CBEF99 /* FirebaseCore */,
 				1A6495CA2D2495ED00EA16D2 /* GoogleSignIn */,
 				1A6495CC2D2495ED00EA16D2 /* GoogleSignInSwift */,
+				1A21B9812D30745400A492D0 /* YouTubePlayerKit */,
 			);
 			productName = Lectures;
 			productReference = 1AA40D742D0FE56700BB311F /* Lectures.app */;
@@ -480,6 +540,7 @@
 			packageReferences = (
 				1A7E9AA52D2244B400CBEF99 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				1A6495C92D2495ED00EA16D2 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				1A21B9802D30745400A492D0 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
 			);
 			productRefGroup = 1AA40D752D0FE56700BB311F /* Products */;
 			projectDirPath = "";
@@ -497,6 +558,7 @@
 			files = (
 				1AA40D802D0FE56A00BB311F /* Preview Assets.xcassets in Resources */,
 				1AA40D7C2D0FE56A00BB311F /* Assets.xcassets in Resources */,
+				1A5685882D2B989700CD3427 /* test-pdf-doc.pdf in Resources */,
 				1A0EC3E02D24A42C0098AD26 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -514,6 +576,7 @@
 				1A5685662D2A048B00CD3427 /* HomeworkController.swift in Sources */,
 				1A0EC3E52D251D250098AD26 /* MyCoursesController.swift in Sources */,
 				1A7E9A8C2D21DDF300CBEF99 /* CuratedCoursesFullList.swift in Sources */,
+				1A21B9882D30ED1A00A492D0 /* Collections.swift in Sources */,
 				1A7E9A982D21F69100CBEF99 /* WatchedCourses.swift in Sources */,
 				1A5685622D29FB4D00CD3427 /* ExpandableText.swift in Sources */,
 				1A56857B2D2B48CE00CD3427 /* CoursesByChannel.swift in Sources */,
@@ -523,8 +586,12 @@
 				1A7E9AB92D24921000CBEF99 /* SignInWithApple.swift in Sources */,
 				1A0EC3EB2D2522F20098AD26 /* SignOutButton.swift in Sources */,
 				1A5685682D2A04BE00CD3427 /* HomeworkAnswersController.swift in Sources */,
+				1A56858F2D2E4B3000CD3427 /* LoaderPreview.swift in Sources */,
+				1A56858D2D2E4AE800CD3427 /* SkeletonLoader.swift in Sources */,
 				1A577AE92D28A14300BE27BF /* LectureInCourseModule.swift in Sources */,
+				1A88CF7B2D2F214500A9CE55 /* HomeLoadingView.swift in Sources */,
 				1A7E9AB02D2376BF00CBEF99 /* SignUpOrInOutsideOfPaywall.swift in Sources */,
+				1A56858A2D2E3CAC00CD3427 /* RelatedCourse.swift in Sources */,
 				1A56857D2D2B4F5E00CD3427 /* CourseByChannelModule.swift in Sources */,
 				1A577AE22D288A9B00BE27BF /* Resource.swift in Sources */,
 				1A7E9A802D1901EA00CBEF99 /* MoreLecturesInSameCourseModule.swift in Sources */,
@@ -545,11 +612,12 @@
 				1A7E9AB62D23CE4300CBEF99 /* Paywall.swift in Sources */,
 				1A0EC3ED2D2523340098AD26 /* DeleteAccountButton.swift in Sources */,
 				1A7E9A902D21E68B00CBEF99 /* CategoryCourseList.swift in Sources */,
+				1A88CF812D306C8B00A9CE55 /* PlayCourseButton.swift in Sources */,
 				1A577AC52D25D61700BE27BF /* Course.swift in Sources */,
 				1A7E9A792D149E4C00CBEF99 /* CourseView.swift in Sources */,
+				1A88CF842D30719F00A9CE55 /* YoutubePlayer.swift in Sources */,
 				1AA40D9E2D13711400BB311F /* CommunityFavorites.swift in Sources */,
 				1A5685642D29FE5A00CD3427 /* NotesController.swift in Sources */,
-				1A577AE52D288BF900BE27BF /* ResourceView.swift in Sources */,
 				1A5685792D2B395800CD3427 /* ChannelView.swift in Sources */,
 				1A577ADE2D28848000BE27BF /* ExamController.swift in Sources */,
 				1AA40DA92D137D4400BB311F /* SearchMainView.swift in Sources */,
@@ -558,12 +626,16 @@
 				1AA40D782D0FE56700BB311F /* LecturesApp.swift in Sources */,
 				1A7E9A7B2D14A7AD00CBEF99 /* LectureView.swift in Sources */,
 				1A56856E2D2A4BCE00CD3427 /* ChannelCard.swift in Sources */,
+				1A5685862D2B971100CD3427 /* PDFViewer.swift in Sources */,
 				1A7E9A882D20964700CBEF99 /* LecturesInCourse.swift in Sources */,
+				1A21B9842D30746C00A492D0 /* YouTubePlayerController.swift in Sources */,
 				1A7E9A8E2D21E66800CBEF99 /* CommunityFavoritesFullList.swift in Sources */,
+				1A21B9862D30E95D00A492D0 /* NewHomeMainView.swift in Sources */,
 				1AA40D8D2D121C8000BB311F /* HomeMainView.swift in Sources */,
 				1AA40D942D1225D600BB311F /* ContinueLearningCourseList.swift in Sources */,
 				1A7E9A9A2D21F69E00CBEF99 /* LikedCourses.swift in Sources */,
 				1A577AE72D288EC400BE27BF /* ExamAnswerController.swift in Sources */,
+				1A5685842D2B96E800CD3427 /* ResourceView.swift in Sources */,
 				1A577AC92D25DABE00BE27BF /* HomeController.swift in Sources */,
 				1A56856A2D2A1FBB00CD3427 /* Channel.swift in Sources */,
 				1AA40D922D12258A00BB311F /* PreviouslyWatchedLectureCard.swift in Sources */,
@@ -711,8 +783,8 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -752,8 +824,8 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -793,6 +865,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1A21B9802D30745400A492D0 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SvenTiigi/YouTubePlayerKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.9.0;
+			};
+		};
 		1A6495C92D2495ED00EA16D2 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -812,6 +892,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1A21B9812D30745400A492D0 /* YouTubePlayerKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A21B9802D30745400A492D0 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */;
+			productName = YouTubePlayerKit;
+		};
 		1A6495CA2D2495ED00EA16D2 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1A6495C92D2495ED00EA16D2 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;

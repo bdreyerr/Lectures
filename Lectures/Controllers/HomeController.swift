@@ -12,9 +12,20 @@ import Foundation
 
 class HomeController : ObservableObject {
     
+    // Content for the home page
     @Published var leadingUniversities: [Channel] = []
     @Published var curatedCourses: [Course] = []
     @Published var communityFavorites: [Course] = []
+    // loading vars for the home page content
+    @Published var isUniversityLoading: Bool = true
+    @Published var isCuratedCoursesLoading: Bool = true
+    @Published var isCommunityFavoritesLoading: Bool = true
+    
+//    // Sorted versions of homepage content
+//    @Published var leadingUniversitiesFiltered : [String : [Channel]]
+    
+    @Published var isCourseLoading: Bool = false
+    @Published var isLectureLoading: Bool = false
     
     @Published var focusedCourse: Course?
     @Published var focusedLecture: Lecture?
@@ -46,12 +57,15 @@ class HomeController : ObservableObject {
     
     init() {
         // load the preview list for courses on the home page
+        self.isCommunityFavoritesLoading = true
+        self.isCuratedCoursesLoading = true
+        self.isUniversityLoading = true
         retrieveLeadingUniversities()
         retrieveCuratedCourses()
         retrieveCommunityFavorites()
     }
     
-    func retrieveCourse(courseId: String){
+    func retrieveCourse(courseId: String) {
         // check the cache
         if let _ = cachedCourses[courseId] {
             print("course already cached")
@@ -119,6 +133,7 @@ class HomeController : ObservableObject {
                 }
             }
             
+            self.isUniversityLoading = false
         }
     }
     
@@ -148,6 +163,8 @@ class HomeController : ObservableObject {
                         self.retrieveChannel(channelId: course.channelId!)
                     }
                 }
+                
+                self.isCuratedCoursesLoading = false
             } catch let error {
                 print("error getting community favorites from firestore: ", error)
             }
@@ -155,6 +172,7 @@ class HomeController : ObservableObject {
     }
     
     func retrieveCommunityFavorites() {
+        
         // get the courses with the most likes from the courses column in Firebase
         self.communityFavorites = []
         
@@ -182,6 +200,8 @@ class HomeController : ObservableObject {
                         self.retrieveChannel(channelId: course.channelId!)
                     }
                 }
+                
+                self.isCommunityFavoritesLoading = false
             } catch let error {
                 print("error getting community favorites from firestore: ", error)
             }
@@ -190,7 +210,6 @@ class HomeController : ObservableObject {
     
     func retrieveLecturesInCourse(courseId: String, lectureIds: [String]) {
         var lectures: [Lecture] = []
-        
         
         Task { @MainActor in
             // reset the var
@@ -246,6 +265,8 @@ class HomeController : ObservableObject {
     }
     
     func focusCourse(_ course: Course) {
+        
+        // Code to run after 1 second
         self.focusedCourse = nil
         self.focusedCourse = course
         
@@ -340,5 +361,9 @@ class HomeController : ObservableObject {
                 }
             }
         }
+    }
+    
+    func filterHomePage(selectedCategory: String) {
+        
     }
 }

@@ -14,7 +14,7 @@ struct LeadingUniversities: View {
         VStack(alignment: .leading) {
             HStack {
                 Text("Leading Universities")
-                    .font(.system(size: 20, design: .serif))
+                    .font(.system(size: 14, design: .serif))
                     .bold()
                 
                 Spacer()
@@ -30,13 +30,17 @@ struct LeadingUniversities: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(homeController.leadingUniversities, id: \.id) { channel in
-                        NavigationLink(destination: ChannelView()) {
-                            ChannelCard(channel: channel)
+                        if homeController.isUniversityLoading {
+                            SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                        } else {
+                            NavigationLink(destination: ChannelView()) {
+                                ChannelCard(channel: channel)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .simultaneousGesture(TapGesture().onEnded {
+                                homeController.focusChannel(channel)
+                            })
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .simultaneousGesture(TapGesture().onEnded {
-                            homeController.focusChannel(channel)
-                        })
                     }
                 }
             }

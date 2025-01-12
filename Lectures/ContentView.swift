@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    // Tab Bar
+    @StateObject var tabbarController = TabBarController()
     @State private var selectedTab: CustomTabBar.TabItemKind = .home
     
     @AppStorage("hasUserSeenPaywall") private var hasUserSeenPaywall = false
@@ -30,7 +33,8 @@ struct ContentView: View {
                 case .home:
                     HomeMainView()
                 case .trends:
-                    MyCoursesMainView()
+                    YoutubePlayer()
+//                    MyCoursesMainView()
 //                    Paywall()
                 case .search:
                     SearchMainView()
@@ -40,12 +44,15 @@ struct ContentView: View {
                 
                 VStack {
                     Spacer()
-                    CustomTabBar(selectedTab: $selectedTab)
+                    if tabbarController.isTabbarShowing {
+                        CustomTabBar(selectedTab: $selectedTab)
+                    } 
+                    
                 }
             } else {
                 Paywall()
             }
-        }
+        }.environmentObject(tabbarController)
         .environmentObject(authController)
         .environmentObject(userController)
         .environmentObject(homeController)
@@ -60,6 +67,7 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(TabBarController())
         .environmentObject(AuthController())
         .environmentObject(UserController())
         .environmentObject(HomeController())

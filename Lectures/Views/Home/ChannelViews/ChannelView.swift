@@ -22,12 +22,10 @@ struct ChannelView: View {
                             if let channelImage = homeController.channelThumbnails[channel.id!] {
                                 Image(uiImage: channelImage)
                                     .resizable()
-                                    .clipShape(RoundedRectangle(cornerRadius: 15))
                                     .frame(width: 40, height: 40)
                             } else {
                                 Image("stanford")
                                     .resizable()
-                                    .clipShape(RoundedRectangle(cornerRadius: 15))
                                     .frame(width: 40, height: 40)
                             }
                             
@@ -77,6 +75,7 @@ struct ChannelView: View {
                                 )
                             }
                         }
+                        .cornerRadius(5)
                         
                         
                         

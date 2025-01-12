@@ -10,8 +10,10 @@ import SwiftUI
 struct LecturesInCourse: View {
     @EnvironmentObject var homeController: HomeController
     
-    var course: Course
+    // Youtube player
+    @EnvironmentObject var youTubePlayerController: YouTubePlayerController
     
+    var course: Course
     var body: some View {
         VStack {
             HStack {
@@ -28,7 +30,6 @@ struct LecturesInCourse: View {
             }
             
             Group {
-                
                 if let lectures = homeController.lecturesInCourse[course.id!] {
                     ForEach(lectures, id: \.id) { lecture in
                         NavigationLink(destination: LectureView()) {
@@ -36,10 +37,16 @@ struct LecturesInCourse: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         .simultaneousGesture(TapGesture().onEnded {
-                            // make a course up
-                            print("clicked on a lecture in course view")
+                            // focus the lecture
                             homeController.focusLecture(lecture)
+                            // change the YT player source url
+                            youTubePlayerController.changeSource(url: lecture.youtubeVideoUrl ?? "")
                         })
+                    }
+                } else {
+                    HStack {
+                        SkeletonLoader(width: 300, height: 40)
+                        Spacer()
                     }
                 }
             }
@@ -52,4 +59,5 @@ struct LecturesInCourse: View {
 #Preview {
     LecturesInCourse(course: Course())
         .environmentObject(HomeController())
+        .environmentObject(YouTubePlayerController())
 }

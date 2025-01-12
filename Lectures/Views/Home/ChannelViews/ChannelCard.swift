@@ -17,23 +17,19 @@ struct ChannelCard: View {
             if let image = homeController.channelThumbnails[channel.id!] {
                 Image(uiImage: image)
                     .resizable()
-                    .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                    .frame(width: 200, height: 200)
                     .aspectRatio(contentMode: .fill)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             } else {
                 // default image when not loaded
-                Image("google_logo")
-                    .resizable()
-                    .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
-                    .aspectRatio(contentMode: .fill)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                SkeletonLoader(width: 200, height: 200)
             }
             
             // Add semi-transparent gradient overlay
             LinearGradient(
                 gradient: Gradient(colors: [.clear, .black.opacity(0.85)]),
-                startPoint: .top,
-                endPoint: .bottom
+                startPoint: .bottom,
+                endPoint: .top
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
             .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -47,23 +43,24 @@ struct ChannelCard: View {
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                         
-                        HStack {
-                            Text("\(channel.numCourses!) Courses")
-                                .font(.system(size: 14, design: .serif))
-                                .foregroundColor(.white.opacity(0.8))
-                            Text("\(channel.numLectures!) Lectures")
-                                .font(.system(size: 14, design: .serif))
-                                .foregroundColor(.white.opacity(0.8))
-                        }
+                        Spacer()
+                        
+//                        HStack {
+//                            Text("\(channel.numCourses!) Courses")
+//                                .font(.system(size: 14, design: .serif))
+//                                .foregroundColor(.white.opacity(0.8))
+//                            Text("\(channel.numLectures!) Lectures")
+//                                .font(.system(size: 14, design: .serif))
+//                                .foregroundColor(.white.opacity(0.8))
+//                        }
                     }
                     Spacer()
                 }
                 .padding()
             }
             .padding(.bottom, 1)
-            
         }
-        .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
+        .frame(width: 200, height: 200)
         .shadow(radius: 2.5)
     }
 }

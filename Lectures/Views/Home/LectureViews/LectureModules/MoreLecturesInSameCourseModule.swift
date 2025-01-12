@@ -32,6 +32,11 @@ struct MoreLecturesInSameCourseModule: View {
                         LectureInSameCourseModule(lecture: lecture)
                     }
                 }
+            } else {
+                HStack {
+                    SkeletonLoader(width: 300, height: 40)
+                    Spacer()
+                }
             }
         }
     }
@@ -42,6 +47,8 @@ struct LectureInSameCourseModule: View {
     @EnvironmentObject var notesController: NotesController
     @EnvironmentObject var homeworkController: HomeworkController
     @EnvironmentObject var homeworkAnswersController: HomeworkAnswersController
+    
+    @EnvironmentObject var youTubePlayerController: YouTubePlayerController
     
     var lecture: Lecture
     
@@ -54,36 +61,41 @@ struct LectureInSameCourseModule: View {
                     .resizable()
                     .frame(width: 40, height: 40)
                     .aspectRatio(contentMode: .fill)
+                
+                // Lecture Name
+                Rectangle()
+                    .foregroundColor(Color.clear)
+                    .frame(height: 40)
+                    .overlay {
+                        HStack {
+                            Text(lecture.lectureTitle!)
+                                .font(.system(size: 14, design: .serif))
+                            
+                            Spacer()
+                            
+                            // Lecture Number
+                            Text("\(toRoman(lecture.lectureNumberInCourse!))")
+                                .font(.system(size: 14, design: .serif))
+                                .padding(.trailing, 20)
+                        }
+                    }
             } else {
-                Image("google_logo")
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .aspectRatio(contentMode: .fill)
+                HStack {
+                    SkeletonLoader(width: 300, height: 40)
+                    Spacer()
+                }
             }
             
-            // Lecture Name
-            Rectangle()
-                .foregroundColor(Color.clear)
-                .frame(height: 40)
-                .overlay {
-                    HStack {
-                        Text(lecture.lectureTitle!)
-                            .font(.system(size: 14, design: .serif))
-                        
-                        Spacer()
-                        
-                        // Lecture Number
-                        Text("\(toRoman(lecture.lectureNumberInCourse!))")
-                            .font(.system(size: 14, design: .serif))
-                            .padding(.trailing, 20)
-                    }
-                }
+            
         }
         .background((homeController.focusedLecture?.id! == lecture.id) ? Color.gray.opacity(0.2) : Color.clear)
         .cornerRadius(5)
         .onTapGesture {
             if homeController.focusedLecture?.id! != lecture.id {
                 homeController.focusLecture(lecture)
+                
+                // change source url on youtube player
+                youTubePlayerController.changeSource(url: lecture.youtubeVideoUrl ?? "")
                 
                 // we also gotta get the new lectures resources
                 if let lecture = homeController.focusedLecture {

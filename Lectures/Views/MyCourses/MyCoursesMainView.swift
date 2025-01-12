@@ -34,19 +34,21 @@ struct MyCoursesMainView: View {
                     TopBrandView()
                     
                     ScrollView(showsIndicators: false) {
-                        // watched courses
-                        WatchedCourses()
-                            .padding(.top, 10)
+//                        // watched courses
+//                        WatchedCourses()
+//                            .padding(.top, 10)
+//                        
+//                        
+//                        // liked courses
+//                        LikedCourses()
+//                            .padding(.top, 10)
+//                        
+//                        
+//                        // recommended for you
+//                        RecommendedCourses()
+//                            .padding(.top)
                         
-                        
-                        // liked courses
-                        LikedCourses()
-                            .padding(.top, 10)
-                        
-                        
-                        // recommended for you
-                        RecommendedCourses()
-                            .padding(.top)
+                        LoaderPreview()
                         
                         Spacer()
                         

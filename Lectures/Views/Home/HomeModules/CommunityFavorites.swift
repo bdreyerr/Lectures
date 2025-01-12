@@ -14,7 +14,7 @@ struct CommunityFavorites: View {
         VStack(alignment: .leading) {
             HStack {
                 Text("Community Favorites")
-                    .font(.system(size: 20, design: .serif))
+                    .font(.system(size: 14, design: .serif))
                     .bold()
                 
                 Spacer()
@@ -31,13 +31,17 @@ struct CommunityFavorites: View {
                 HStack {
                     
                     ForEach(homeController.communityFavorites, id: \.id) { course in
-                        NavigationLink(destination: CourseView()) {
-                            CourseCardView(course: course)
+                        if homeController.isCommunityFavoritesLoading {
+                            SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                        } else {
+                            NavigationLink(destination: CourseView()) {
+                                CourseCardView(course: course)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .simultaneousGesture(TapGesture().onEnded {
+                                homeController.focusCourse(course)
+                            })
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .simultaneousGesture(TapGesture().onEnded {
-                            homeController.focusCourse(course)
-                        })
                     }
                 }
             }

@@ -9,5 +9,5 @@ import Foundation
 
 class TabBarController : ObservableObject {
     
-    
+    @Published var isTabbarShowing: Bool = true
 }
