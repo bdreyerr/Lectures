@@ -21,7 +21,7 @@ class AuthController : UIViewController, ObservableObject {
     // Whether or not the user still sess the paywall screen after app first start
     @AppStorage("hasUserSeenPaywall") private var hasUserSeenPaywall = false
     
-    @Published var selectedMembershipType: Int = 0
+//    @Published var selectedMembershipType: Int = 0
     
     @Published var email = ""
     @Published var firstName = ""
@@ -40,7 +40,7 @@ class AuthController : UIViewController, ObservableObject {
     
     @available(iOS 13, *)
     // The function called in the onComplete closure of the SignInWithAppleButton in the RegisterView
-    func appleSignInButtonOnCompletion(result: Result<ASAuthorization, Error>) {
+    func appleSignInButtonOnCompletion(result: Result<ASAuthorization, Error>, displaySignInSheet: Binding<Bool>) {
         switch result {
         case .success(let authResults):
             print("GETTING RESULT IN ON SIGN IN BUTTON COMPLETEION")
@@ -127,7 +127,7 @@ class AuthController : UIViewController, ObservableObject {
                                 // User doesn't exist in the database yet, create a new user object
                                 
                                 // The only field not populated is profilePicture. User needs to add that themselves.
-                                let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, isAdmin: false)
+                                let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, isAdmin: false)
                                 
                                 // Add the user to firestore user collection
                                 let collectionRef = self.db.collection("users")
@@ -138,13 +138,12 @@ class AuthController : UIViewController, ObservableObject {
                                     
                                     self.isFinishedSigningIn = true
                                     
-                                    
-                                    // only close paywall, if the user is selecting the free plan, otherwise, the user still needs to purchase their membership
-                                    if self.selectedMembershipType == 0 {
-                                        self.hasUserSeenPaywall = true
-                                    }
-                                    
                                     print("a new user signed in")
+                                    
+                                    // close the sign in sheet when sign in finishes, if a
+                                    if displaySignInSheet.wrappedValue {
+                                        displaySignInSheet.wrappedValue = false
+                                    }
                                 } catch {
                                     print("Error saving the new user to firestore")
                                 }
@@ -158,12 +157,11 @@ class AuthController : UIViewController, ObservableObject {
                                 //                                UserDefaults.standard.set(self.isSignedIn, forKey: loginStatusKey)
                                 self.isFinishedSigningIn = true
                                 
-                                // only close paywall, if the user is selecting the free plan, otherwise, the user still needs to purchase their membership
-                                if self.selectedMembershipType == 0 {
-                                    self.hasUserSeenPaywall = true
-                                }
-                                
                                 print("an existing user signed in")
+                                
+                                
+                                // make it so the paywall goes away -
+                                self.hasUserSeenPaywall = true
                             }
                         }
                     }
@@ -176,7 +174,7 @@ class AuthController : UIViewController, ObservableObject {
         }
     }
     
-    func signInWithGoogle() {
+    func signInWithGoogle(displaySignInSheet: Binding<Bool>) {
         // get app client id
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         
@@ -243,7 +241,7 @@ class AuthController : UIViewController, ObservableObject {
                         if querySnapshot!.documents.isEmpty {
                             // User doesn't exist in the database yet, create a new user object
                             
-                            let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, isAdmin: false)
+                            let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, isAdmin: false)
                             
                             // Add the user to firestore user collection
                             let collectionRef = self.db.collection("users")
@@ -253,9 +251,9 @@ class AuthController : UIViewController, ObservableObject {
                                 
                                 self.isFinishedSigningIn = true
                                 
-                                // only close paywall, if the user is selecting the free plan, otherwise, the user still needs to purchase their membership
-                                if self.selectedMembershipType == 0 {
-                                    self.hasUserSeenPaywall = true
+                                // close the sign in sheet when sign in finishes, if a
+                                if displaySignInSheet.wrappedValue {
+                                    displaySignInSheet.wrappedValue = false
                                 }
                                 
                             } catch {
@@ -270,10 +268,8 @@ class AuthController : UIViewController, ObservableObject {
                             
                             self.isFinishedSigningIn = true
                             
-                            // only close paywall, if the user is selecting the free plan, otherwise, the user still needs to purchase their membership
-                            if self.selectedMembershipType == 0 {
-                                self.hasUserSeenPaywall = true
-                            }
+                            // make it so the paywall goes away -
+                            self.hasUserSeenPaywall = true
                         }
                     }
                 }

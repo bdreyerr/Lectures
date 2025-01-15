@@ -30,6 +30,12 @@ class HomeController : ObservableObject {
     @Published var focusedCourse: Course?
     @Published var focusedLecture: Lecture?
     @Published var focusedChannel: Channel?
+    @Published var focusedCollection: Collection?
+    
+    // stack of lectures and courses for naviagtion. These are needed because when navigating backwards we lost track of which course / lecture was focused at that point
+    // Focused lecture Stack
+    @Published var focusedLectureStack: [Lecture] = []
+    @Published var focusedCourseStack: [Course] = []
     
     // CourseId : [Lecture]
     @Published var lecturesInCourse: [String : [Lecture]] = [:]
@@ -284,6 +290,12 @@ class HomeController : ObservableObject {
         self.getChannelThumbnail(channelId: lecture.channelId!)
     }
     
+    func focusCollection(_ collection: Collection) {
+        print("collection getting focused")
+        self.focusedCollection = nil
+        self.focusedCollection = collection
+    }
+    
     func getCourseThumbnail(courseId: String) {
         // check cache
         if let _ = self.courseThumbnails[courseId] {
@@ -361,9 +373,5 @@ class HomeController : ObservableObject {
                 }
             }
         }
-    }
-    
-    func filterHomePage(selectedCategory: String) {
-        
     }
 }

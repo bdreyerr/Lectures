@@ -1,0 +1,107 @@
+//
+//  CourseInCollection.swift
+//  Lectures
+//
+//  Created by Ben Dreyer on 1/12/25.
+//
+
+import SwiftUI
+
+struct CourseInCollection: View {
+    @EnvironmentObject var homeController: HomeController
+    
+    @EnvironmentObject var examController: ExamController
+    @EnvironmentObject var examAnswerController: ExamAnswerController
+    
+    var course: Course
+    var body: some View {
+        NavigationLink(destination: CourseView()) {
+            HStack {
+                // Image
+                if let image = homeController.courseThumbnails[course.id!] {
+                    Image(uiImage: image)
+                        .resizable()
+                        .frame(width: 60, height: 60)
+                        .aspectRatio(contentMode: .fill)
+                } else {
+                    Image("google_logo")
+                        .resizable()
+                        .frame(width: 60, height: 60)
+                        .aspectRatio(contentMode: .fill)
+                }
+                
+                VStack {
+                    // course name
+                    HStack {
+                        Text(course.courseTitle ?? "")
+                            .font(.system(size: 16, design: .serif))
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                        Spacer()
+                    }
+                    .padding(.bottom, 2)
+                    
+                    
+                    
+                    // channel image
+                    HStack {
+                        // channel name
+                        if let channel = homeController.cachedChannels[course.channelId!] {
+                            Text(channel.title ?? "")
+                                .font(.system(size: 12, design: .serif))
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                        }
+                        
+                        Text("\(course.numLecturesInCourse ?? 0) Lectures")
+                            .font(.system(size: 12, design: .serif))
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                        
+                        Text("\(course.watchTimeInHrs ?? 0)r Watch Time")
+                            .font(.system(size: 12, design: .serif))
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                        
+                        Text("\(course.aggregateViews ?? "0") Views")
+                            .font(.system(size: 12, design: .serif))
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                        
+                        Spacer()
+                    }
+                }
+            }
+            .cornerRadius(5)
+        }
+        .simultaneousGesture(TapGesture().onEnded { _ in
+            homeController.focusCourse(course)
+            
+            // fetch exam, exam answers and lectures in course - this is normally in the on appear of CourseView, but when hitting a related course the courseview doesn't dissapear and reappear
+            
+            // get the exam
+            if let examId = course.examResourceId {
+                examController.retrieveExam(examId: examId)
+            } else {
+                print("course didn't have an exam Id")
+            }
+            
+            // get the exam answers
+            if let examAnswerId = course.examAnswersResourceId {
+                examAnswerController.retrieveExamAnswer(examAnswerId: examAnswerId)
+            } else {
+                print("course didn't have an exam Id")
+            }
+            
+            // get the lectures in this course
+            if let lectureIds = course.lectureIds {
+                homeController.retrieveLecturesInCourse(courseId: course.id!, lectureIds: lectureIds)
+            }
+        })
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+#Preview {
+    CourseInCollection(course: Course())
+}

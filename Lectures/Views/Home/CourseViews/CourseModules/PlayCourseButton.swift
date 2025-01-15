@@ -13,6 +13,8 @@ struct PlayCourseButton: View {
     // Youtube player
     @EnvironmentObject var youTubePlayerController: YouTubePlayerController
     
+    @Binding var shouldPopCourseFromStack: Bool
+    
     var lecture: Lecture
     var body: some View {
         
@@ -45,12 +47,15 @@ struct PlayCourseButton: View {
             
             // change the YT player source url
             youTubePlayerController.changeSource(url: lecture.youtubeVideoUrl ?? "")
+            
+            // don't pop the course from the stack
+            shouldPopCourseFromStack = false
         })
     }
 }
 
 #Preview {
-    PlayCourseButton(lecture: Lecture())
+    PlayCourseButton(shouldPopCourseFromStack: .constant(false), lecture: Lecture())
         .environmentObject(HomeController())
         .environmentObject(YouTubePlayerController())
 }

@@ -10,6 +10,7 @@ import SwiftUI
 struct ResourceChip: View {
     var resource: Resource
     
+    @Binding var shouldPopFromStack: Bool
     var body: some View {
         
         NavigationLink(destination: ResourceView(resource: resource)) {
@@ -39,9 +40,12 @@ struct ResourceChip: View {
                 )
         }
         .buttonStyle(PlainButtonStyle())
+        .simultaneousGesture(TapGesture().onEnded { _ in
+            shouldPopFromStack = false
+        })
     }
 }
 
-#Preview {
-    ResourceChip(resource: Resource(title: "Exam - 1. Introduction to 'The Society of Mind'"))
-}
+//#Preview {
+//    ResourceChip(resource: Resource(title: "Exam - 1. Introduction to 'The Society of Mind'"), shouldPopFromStack: $false)
+//}

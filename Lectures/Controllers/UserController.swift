@@ -65,4 +65,22 @@ class UserController : ObservableObject {
         }
     }
     
+    func changeMebershipType(userId: String, freeToPro: Bool) {
+        // if freetoPro is true, change membership type from 0 to 1, else from 1 to 0
+        
+        Task { @MainActor in
+            let userRef = db.collection("users").document(userId)
+
+            // Set the "capital" field of the city 'DC'
+            do {
+              try await userRef.updateData([
+                "accountType": freeToPro ? 1 : 0
+              ])
+              print("Document successfully updated")
+            } catch {
+              print("Error updating document: \(error)")
+            }
+        }
+    }
+    
 }

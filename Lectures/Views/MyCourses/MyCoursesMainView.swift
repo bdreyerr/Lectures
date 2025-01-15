@@ -5,6 +5,7 @@
 //  Created by Ben Dreyer on 12/18/24.
 //
 
+import FirebaseAuth
 import SwiftUI
 
 struct MyCoursesMainView: View {
@@ -12,21 +13,27 @@ struct MyCoursesMainView: View {
     
     @AppStorage("isSignedIn") private var isSignedIn = false
     
-    @EnvironmentObject var authController: AuthController
+    //    @EnvironmentObject var authController: AuthController
+    @EnvironmentObject var userController: UserController
     
-    
+    @State var upgradeAccountSheetShowing: Bool = false
     
     var body: some View {
-        
         if !isSignedIn {
             VStack {
-                Text("Please create an account or sign in to view your course history")
+                TopBrandView()
+                    .padding(.horizontal, 20)
+                
+                Spacer()
+                
+                Text("Sign in to see course history")
                     .font(.system(size: 13, design: .serif))
                     .padding(.bottom, 5)
                 
-                SignInWithApple()
+                SignInWithApple(displaySignInSheet: .constant(false))
                 
-                SignInWithGoogle()
+                SignInWithGoogle(displaySignInSheet: .constant(false))
+                    .padding(.bottom, 500)
             }
         } else {
             NavigationView {
@@ -34,21 +41,35 @@ struct MyCoursesMainView: View {
                     TopBrandView()
                     
                     ScrollView(showsIndicators: false) {
-//                        // watched courses
-//                        WatchedCourses()
-//                            .padding(.top, 10)
-//                        
-//                        
-//                        // liked courses
-//                        LikedCourses()
-//                            .padding(.top, 10)
-//                        
-//                        
-//                        // recommended for you
-//                        RecommendedCourses()
-//                            .padding(.top)
                         
-                        LoaderPreview()
+                        if let user = userController.user {
+                            if user.accountType! == 0 {
+                                // Free user, show the paywall and tell them they can't access this feature
+                                Text("Upgrade your account to access watch history and personalized learning features")
+                                    .font(.system(size: 14, design: .serif))
+                                    .padding(.top, 40)
+                                    .multilineTextAlignment(.center) 
+                                
+                                Button(action: {
+                                    upgradeAccountSheetShowing = true
+                                }) {
+                                    Text("Upgrade to PRO")
+                                        .font(.system(size: 16, design: .serif))
+                                        .bold()
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.green.opacity(0.8))
+                                        .cornerRadius(10)
+                                }
+                                .padding(.horizontal, 30)
+                                .sheet(isPresented: $upgradeAccountSheetShowing) {
+                                    UpgradeAccountPaywallWithoutFreeTrial()
+                                }
+                            } else {
+                                LoaderPreview()
+                            }
+                        }
                         
                         Spacer()
                         
@@ -75,11 +96,17 @@ struct MyCoursesMainView: View {
                 .navigationBarHidden(true)
                 .padding(.horizontal, 20)
             }
+            .onAppear {
+                // if the user just signed in on this view, we need to retrieve the user in user controller
+                if let user = Auth.auth().currentUser {
+                    userController.retrieveUserFromFirestore(userId: user.uid)
+                }
+            }
         }
     }
 }
 
 #Preview {
     MyCoursesMainView()
-        .environmentObject(AuthController())
+        .environmentObject(UserController())
 }

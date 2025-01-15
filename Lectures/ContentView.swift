@@ -33,9 +33,7 @@ struct ContentView: View {
                 case .home:
                     HomeMainView()
                 case .trends:
-                    YoutubePlayer()
-//                    MyCoursesMainView()
-//                    Paywall()
+                    MyCoursesMainView()
                 case .search:
                     SearchMainView()
                 case .settings:
@@ -50,7 +48,7 @@ struct ContentView: View {
                     
                 }
             } else {
-                Paywall()
+                OnboardingPaywallWithFreeTrial()
             }
         }.environmentObject(tabbarController)
         .environmentObject(authController)

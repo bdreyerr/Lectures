@@ -11,11 +11,12 @@ struct SignInWithGoogle: View {
     @EnvironmentObject var authController: AuthController
     
     var disablePadding: Bool?
+    @Binding var displaySignInSheet: Bool
     var body: some View {
         // Sign in with Google Button
         Button(action: {
             // sign in with google
-            authController.signInWithGoogle()
+            authController.signInWithGoogle(displaySignInSheet: $displaySignInSheet)
         }) {
             HStack {
                 Image("google_logo")
@@ -38,6 +39,6 @@ struct SignInWithGoogle: View {
 }
 
 #Preview {
-    SignInWithGoogle()
+    SignInWithGoogle(displaySignInSheet: .constant(false))
         .environmentObject(AuthController())
 }

@@ -16,7 +16,7 @@ struct SignInWithApple: View {
     @EnvironmentObject var authController: AuthController
     
     var disablePadding: Bool?
-    
+    @Binding var displaySignInSheet: Bool
     var body: some View {
         SignInWithAppleButton(
             onRequest: { request in
@@ -28,7 +28,7 @@ struct SignInWithApple: View {
             onCompletion: { result in
                 
                 Task {
-                    authController.appleSignInButtonOnCompletion(result: result)
+                    authController.appleSignInButtonOnCompletion(result: result, displaySignInSheet: $displaySignInSheet)
                 }
             }
         )
@@ -40,6 +40,6 @@ struct SignInWithApple: View {
 }
 
 #Preview {
-    SignInWithApple()
+    SignInWithApple(displaySignInSheet: .constant(false))
         .environmentObject(AuthController())
 }

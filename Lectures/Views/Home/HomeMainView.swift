@@ -19,8 +19,8 @@ struct HomeMainView: View {
     @State var userHasPreviouslyWatchedLectures: Bool = true
     
     @State private var selectedTab = 0
-        
-    let tabs = ["Trending", "Computer Science", "Mathmatics", "Humanities", "Psychology"]
+    
+    let tabs = ["Trending", "Computer Science", "Business", "Science", "Humanities", "Engineering", "Healthcare"]
     
     var body: some View {
         NavigationView {
@@ -40,16 +40,16 @@ struct HomeMainView: View {
                                         .lineLimit(1)                    // Ensure single line
                                         .truncationMode(.tail)           // Add ellipsis if text is too long
                                         .frame(maxWidth: .infinity, alignment: .leading)
+                                        .animation(.easeInOut(duration: 0.4), value: selectedTab) // Animate text color
                                     
                                     // Blue line indicator for selected tab
                                     Rectangle()
                                         .fill(selectedTab == index ? Color.orange : Color.clear)
                                         .frame(height: 2)
+                                        .animation(.spring(response: 0.5, dampingFraction: 0.7), value: selectedTab) // Animate underline
                                 }
                                 .onTapGesture {
-                                    withAnimation {
-                                        selectedTab = index
-                                    }
+                                    selectedTab = index
                                 }
                                 .padding(.trailing, 2)
                             }
@@ -57,33 +57,23 @@ struct HomeMainView: View {
                     }
                     .padding(.top, 10)
                     
-                    
-                    // Resume Watching
-                    // If the user has previously watched some lectures, show what they've watched, limit to 5, and add a View All button.
-//                    if (self.userHasPreviouslyWatchedLectures) {
-//                        ContinueLearningCourseList()
-//                            .padding(.top, 5)
-//                    }
-                    
-                    // the loading view
-                    if homeController.isUniversityLoading || homeController.isCuratedCoursesLoading || homeController.isCommunityFavoritesLoading {
-                        HomeLoadingView()
-                    } else {
-//                        Categories()
-//                            .padding(.top, 10)
-                        Collections()
-                            .padding(.top, 5)
-                        
-                        
-                        CuratedCourses()
-                            .padding(.top, 10)
-                        
-                        // Otherwise the content is all loaded and ready to go
-                        LeadingUniversities()
-                            .padding(.top, 10)
-                        
-                        CommunityFavorites()
-                            .padding(.top, 10)
+                    switch selectedTab {
+                    case 0:
+                        Trending()
+                    case 1:
+                        ComputerScience()
+                    case 2:
+                        Trending()
+                    case 3:
+                        ComputerScience()
+                    case 4:
+                        Trending()
+                    case 5:
+                        ComputerScience()
+                    case 6:
+                        Trending()
+                    default:
+                        Text("Couldn't load tab")
                     }
                     
                     Spacer()
@@ -111,6 +101,10 @@ struct HomeMainView: View {
             }
             .navigationBarHidden(true)
             .padding(.horizontal, 20)
+            .onAppear {
+                homeController.focusedLectureStack = []
+                homeController.focusedCourseStack = []
+            }
         }
         .environmentObject(youTubePlayerController)
     }

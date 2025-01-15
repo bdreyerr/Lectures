@@ -59,10 +59,10 @@ struct SettingsMainView: View {
                         
                         DeleteAccountButton()
                     } else {
-                        SignInWithApple(disablePadding: true)
+                        SignInWithApple(disablePadding: true, displaySignInSheet: .constant(false))
                             .padding(.top, 20)
                         
-                        SignInWithGoogle(disablePadding: true)
+                        SignInWithGoogle(disablePadding: true, displaySignInSheet: .constant(false))
                     }
                     
                     // Logo
