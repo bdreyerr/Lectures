@@ -15,6 +15,7 @@ struct MyCoursesMainView: View {
     
     //    @EnvironmentObject var authController: AuthController
     @EnvironmentObject var userController: UserController
+    @EnvironmentObject var watchHistoryController: WatchHistoryController
     
     @State var upgradeAccountSheetShowing: Bool = false
     
@@ -67,7 +68,7 @@ struct MyCoursesMainView: View {
                                     UpgradeAccountPaywallWithoutFreeTrial()
                                 }
                             } else {
-                                LoaderPreview()
+                                MyCoursesProUserView()
                             }
                         }
                         
@@ -95,12 +96,6 @@ struct MyCoursesMainView: View {
                 }
                 .navigationBarHidden(true)
                 .padding(.horizontal, 20)
-            }
-            .onAppear {
-                // if the user just signed in on this view, we need to retrieve the user in user controller
-                if let user = Auth.auth().currentUser {
-                    userController.retrieveUserFromFirestore(userId: user.uid)
-                }
             }
         }
     }

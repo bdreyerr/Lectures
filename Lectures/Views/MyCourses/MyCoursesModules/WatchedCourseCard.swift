@@ -1,20 +1,31 @@
 //
-//  NewLectureView.swift
+//  WatchedCourseCard.swift
 //  Lectures
 //
-//  Created by Ben Dreyer on 12/29/24.
+//  Created by Ben Dreyer on 1/15/25.
 //
 
 import SwiftUI
 
-struct CourseCardView: View {
-    @EnvironmentObject var homeController: HomeController
-    
+struct WatchedCourseCard: View {
+    @EnvironmentObject var courseController: CourseController
+    @EnvironmentObject var watchHistoryController: WatchHistoryController
     
     var course: Course
+    var watchHistory: WatchHistory
+    
+    private var watchProgress: CGFloat {
+        let progress = CGFloat(watchHistory.lectureNumberInCourse!) / CGFloat(course.numLecturesInCourse!)
+        return min(max(progress, 0), 1) // Ensure progress is between 0 and 1
+    }
+    
+    private var progressColor: Color {
+        watchProgress >= 1.0 ? .green : .red
+    }
+    
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            if let image = homeController.courseThumbnails[course.id!] {
+            if let image = courseController.courseThumbnails[course.id!] {
                 Image(uiImage: image)
                     .resizable()
                     .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
@@ -38,14 +49,20 @@ struct CourseCardView: View {
             VStack(spacing: 0) {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(course.courseTitle!)
-                            .font(.system(size: 18, design: .serif))
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                        HStack {
+                            Text(course.courseTitle!)
+                                .font(.system(size: 18, design: .serif))
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.leading) // Ensure text aligns to the left
+                                .lineLimit(2) // Limit to two lines if necessary
+                                .truncationMode(.tail)
+                            Spacer()
+                        }
                         
                         HStack {
                             // TODO: Add back university name
-                            if let channel = homeController.cachedChannels[course.channelId!] {
+                            if let channel = courseController.cachedChannels[course.channelId!] {
                                 Text(channel.title!)
                                     .lineLimit(1) // Limit to a single line
                                     .truncationMode(.tail) // Use ellipsis for truncation
@@ -67,13 +84,21 @@ struct CourseCardView: View {
             }
             .padding(.bottom, 1)
             
+            // Add progress bar at the bottom
+            GeometryReader { geometry in
+                Rectangle()
+                    .fill(progressColor)
+                    .frame(width: geometry.size.width * watchProgress, height: 3)
+                    .position(x: (geometry.size.width * watchProgress) / 2, y: geometry.size.height - 1.5)
+            }
+            .cornerRadius(10)
+            
         }
         .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
         .shadow(radius: 2.5)
     }
 }
 
-#Preview {
-    CourseCardView(course: Course())
-        .environmentObject(HomeController())
-}
+//#Preview {
+//    WatchedCourseCard(course: Course(), watchHistory: WatchHistory())
+//}

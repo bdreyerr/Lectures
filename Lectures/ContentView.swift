@@ -5,6 +5,7 @@
 //  Created by Ben Dreyer on 12/15/24.
 //
 
+import FirebaseAuth
 import SwiftUI
 
 struct ContentView: View {
@@ -13,11 +14,15 @@ struct ContentView: View {
     @StateObject var tabbarController = TabBarController()
     @State private var selectedTab: CustomTabBar.TabItemKind = .home
     
+    @AppStorage("isSignedIn") private var isSignedIn = false
     @AppStorage("hasUserSeenPaywall") private var hasUserSeenPaywall = false
+    
+    @StateObject var courseController = CourseController()
     
     @StateObject var authController = AuthController()
     @StateObject var userController = UserController()
     @StateObject var homeController = HomeController()
+    @StateObject var watchHistoryController = WatchHistoryController()
     
     // Resource Controllers
     @StateObject var examController = ExamController()
@@ -50,7 +55,8 @@ struct ContentView: View {
             } else {
                 OnboardingPaywallWithFreeTrial()
             }
-        }.environmentObject(tabbarController)
+        }
+        .environmentObject(tabbarController)
         .environmentObject(authController)
         .environmentObject(userController)
         .environmentObject(homeController)
@@ -59,7 +65,17 @@ struct ContentView: View {
         .environmentObject(notesController)
         .environmentObject(homeworkController)
         .environmentObject(homeworkAnswersController)
-        
+        .environmentObject(watchHistoryController)
+        .environmentObject(courseController)
+        .onChange(of: isSignedIn) {
+            if isSignedIn == true {
+                if let user = Auth.auth().currentUser {
+                    userController.retrieveUserFromFirestore(userId: user.uid)
+                } else {
+                    print("no auth user yet lol nice try")
+                }
+            }
+        }
     }
 }
 
@@ -74,4 +90,6 @@ struct ContentView: View {
         .environmentObject(NotesController())
         .environmentObject(HomeworkController())
         .environmentObject(HomeworkAnswersController())
+        .environmentObject(WatchHistoryController())
+        .environmentObject(CourseController())
 }

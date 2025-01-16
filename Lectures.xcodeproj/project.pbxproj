@@ -27,6 +27,7 @@
 		1A4F8DF52D3777CF00F1E854 /* UpgradeAccountPaywallWithoutFreeTrial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4F8DF42D3777CF00F1E854 /* UpgradeAccountPaywallWithoutFreeTrial.swift */; };
 		1A4F8DF72D386DC800F1E854 /* WatchHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4F8DF62D386DC800F1E854 /* WatchHistory.swift */; };
 		1A4F8DF92D386F3D00F1E854 /* WatchHistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4F8DF82D386F3D00F1E854 /* WatchHistoryController.swift */; };
+		1A4F8DFB2D38860200F1E854 /* MyCoursesProUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4F8DFA2D38860200F1E854 /* MyCoursesProUserView.swift */; };
 		1A5685622D29FB4D00CD3427 /* ExpandableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5685612D29FB4D00CD3427 /* ExpandableText.swift */; };
 		1A5685642D29FE5A00CD3427 /* NotesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5685632D29FE5A00CD3427 /* NotesController.swift */; };
 		1A5685662D2A048B00CD3427 /* HomeworkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5685652D2A048B00CD3427 /* HomeworkController.swift */; };
@@ -56,6 +57,8 @@
 		1A6495CB2D2495ED00EA16D2 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 1A6495CA2D2495ED00EA16D2 /* GoogleSignIn */; };
 		1A6495CD2D2495ED00EA16D2 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1A6495CC2D2495ED00EA16D2 /* GoogleSignInSwift */; };
 		1A6495CF2D2496C400EA16D2 /* ApplicationUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6495CE2D2496C400EA16D2 /* ApplicationUtility.swift */; };
+		1A7C33A02D3898D40009647E /* WatchedCourseCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C339F2D3898D40009647E /* WatchedCourseCard.swift */; };
+		1A7C33A22D38C3EA0009647E /* CourseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C33A12D38C3EA0009647E /* CourseController.swift */; };
 		1A7E9A792D149E4C00CBEF99 /* CourseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A782D149E4C00CBEF99 /* CourseView.swift */; };
 		1A7E9A7B2D14A7AD00CBEF99 /* LectureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A7A2D14A7AD00CBEF99 /* LectureView.swift */; };
 		1A7E9A802D1901EA00CBEF99 /* MoreLecturesInSameCourseModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A7F2D1901EA00CBEF99 /* MoreLecturesInSameCourseModule.swift */; };
@@ -67,9 +70,7 @@
 		1A7E9A8E2D21E66800CBEF99 /* CommunityFavoritesFullList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A8D2D21E66800CBEF99 /* CommunityFavoritesFullList.swift */; };
 		1A7E9A902D21E68B00CBEF99 /* CategoryCourseList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A8F2D21E68B00CBEF99 /* CategoryCourseList.swift */; };
 		1A7E9A962D21ED8C00CBEF99 /* SettingsMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A952D21ED8C00CBEF99 /* SettingsMainView.swift */; };
-		1A7E9A982D21F69100CBEF99 /* WatchedCourses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A972D21F69100CBEF99 /* WatchedCourses.swift */; };
 		1A7E9A9A2D21F69E00CBEF99 /* LikedCourses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A992D21F69E00CBEF99 /* LikedCourses.swift */; };
-		1A7E9A9C2D21F6A700CBEF99 /* RecommendedCourses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A9B2D21F6A700CBEF99 /* RecommendedCourses.swift */; };
 		1A7E9AA72D2244B400CBEF99 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1A7E9AA62D2244B400CBEF99 /* FirebaseAuth */; };
 		1A7E9AA92D2244B400CBEF99 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1A7E9AA82D2244B400CBEF99 /* FirebaseFirestore */; };
 		1A7E9AAB2D2244B400CBEF99 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1A7E9AAA2D2244B400CBEF99 /* FirebaseStorage */; };
@@ -120,6 +121,7 @@
 		1A4F8DF42D3777CF00F1E854 /* UpgradeAccountPaywallWithoutFreeTrial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeAccountPaywallWithoutFreeTrial.swift; sourceTree = "<group>"; };
 		1A4F8DF62D386DC800F1E854 /* WatchHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchHistory.swift; sourceTree = "<group>"; };
 		1A4F8DF82D386F3D00F1E854 /* WatchHistoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchHistoryController.swift; sourceTree = "<group>"; };
+		1A4F8DFA2D38860200F1E854 /* MyCoursesProUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCoursesProUserView.swift; sourceTree = "<group>"; };
 		1A5685612D29FB4D00CD3427 /* ExpandableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableText.swift; sourceTree = "<group>"; };
 		1A5685632D29FE5A00CD3427 /* NotesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesController.swift; sourceTree = "<group>"; };
 		1A5685652D2A048B00CD3427 /* HomeworkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeworkController.swift; sourceTree = "<group>"; };
@@ -147,6 +149,8 @@
 		1A577AE82D28A14300BE27BF /* LectureInCourseModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LectureInCourseModule.swift; sourceTree = "<group>"; };
 		1A6495C72D24949000EA16D2 /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
 		1A6495CE2D2496C400EA16D2 /* ApplicationUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationUtility.swift; sourceTree = "<group>"; };
+		1A7C339F2D3898D40009647E /* WatchedCourseCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchedCourseCard.swift; sourceTree = "<group>"; };
+		1A7C33A12D38C3EA0009647E /* CourseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseController.swift; sourceTree = "<group>"; };
 		1A7E9A782D149E4C00CBEF99 /* CourseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseView.swift; sourceTree = "<group>"; };
 		1A7E9A7A2D14A7AD00CBEF99 /* LectureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LectureView.swift; sourceTree = "<group>"; };
 		1A7E9A7F2D1901EA00CBEF99 /* MoreLecturesInSameCourseModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreLecturesInSameCourseModule.swift; sourceTree = "<group>"; };
@@ -158,9 +162,7 @@
 		1A7E9A8D2D21E66800CBEF99 /* CommunityFavoritesFullList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityFavoritesFullList.swift; sourceTree = "<group>"; };
 		1A7E9A8F2D21E68B00CBEF99 /* CategoryCourseList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCourseList.swift; sourceTree = "<group>"; };
 		1A7E9A952D21ED8C00CBEF99 /* SettingsMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMainView.swift; sourceTree = "<group>"; };
-		1A7E9A972D21F69100CBEF99 /* WatchedCourses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchedCourses.swift; sourceTree = "<group>"; };
 		1A7E9A992D21F69E00CBEF99 /* LikedCourses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedCourses.swift; sourceTree = "<group>"; };
-		1A7E9A9B2D21F6A700CBEF99 /* RecommendedCourses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendedCourses.swift; sourceTree = "<group>"; };
 		1A7E9AAF2D2376BF00CBEF99 /* SignUpOrInOutsideOfPaywall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpOrInOutsideOfPaywall.swift; sourceTree = "<group>"; };
 		1A7E9AB32D237A3600CBEF99 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		1A7E9AB52D23CE4300CBEF99 /* Paywall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paywall.swift; sourceTree = "<group>"; };
@@ -344,9 +346,8 @@
 		1A7E9A912D21EBE000CBEF99 /* MyCoursesModules */ = {
 			isa = PBXGroup;
 			children = (
-				1A7E9A972D21F69100CBEF99 /* WatchedCourses.swift */,
 				1A7E9A992D21F69E00CBEF99 /* LikedCourses.swift */,
-				1A7E9A9B2D21F6A700CBEF99 /* RecommendedCourses.swift */,
+				1A7C339F2D3898D40009647E /* WatchedCourseCard.swift */,
 			);
 			path = MyCoursesModules;
 			sourceTree = "<group>";
@@ -482,6 +483,7 @@
 				1A577AC82D25DABE00BE27BF /* HomeController.swift */,
 				1A21B9832D30746C00A492D0 /* YouTubePlayerController.swift */,
 				1A4F8DF82D386F3D00F1E854 /* WatchHistoryController.swift */,
+				1A7C33A12D38C3EA0009647E /* CourseController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -525,6 +527,7 @@
 			children = (
 				1A7E9A912D21EBE000CBEF99 /* MyCoursesModules */,
 				1AA40DA62D137D3D00BB311F /* MyCoursesMainView.swift */,
+				1A4F8DFA2D38860200F1E854 /* MyCoursesProUserView.swift */,
 			);
 			path = MyCourses;
 			sourceTree = "<group>";
@@ -632,8 +635,8 @@
 				1A4F8DF32D37486300F1E854 /* FirstOpenSignUpSheet.swift in Sources */,
 				1A7E9A8C2D21DDF300CBEF99 /* CuratedCoursesFullList.swift in Sources */,
 				1A21B9882D30ED1A00A492D0 /* CollectionsTrending.swift in Sources */,
-				1A7E9A982D21F69100CBEF99 /* WatchedCourses.swift in Sources */,
 				1A5685622D29FB4D00CD3427 /* ExpandableText.swift in Sources */,
+				1A4F8DFB2D38860200F1E854 /* MyCoursesProUserView.swift in Sources */,
 				1A56857B2D2B48CE00CD3427 /* CoursesByChannel.swift in Sources */,
 				1A21B9912D34592B00A492D0 /* CourseInCollection.swift in Sources */,
 				1A0EC3E82D251FE00098AD26 /* AccountInformation.swift in Sources */,
@@ -646,6 +649,7 @@
 				1A56858D2D2E4AE800CD3427 /* SkeletonLoader.swift in Sources */,
 				1A577AE92D28A14300BE27BF /* LectureInCourseModule.swift in Sources */,
 				1A88CF7B2D2F214500A9CE55 /* HomeLoadingView.swift in Sources */,
+				1A7C33A22D38C3EA0009647E /* CourseController.swift in Sources */,
 				1A7E9AB02D2376BF00CBEF99 /* SignUpOrInOutsideOfPaywall.swift in Sources */,
 				1A56858A2D2E3CAC00CD3427 /* RelatedCourse.swift in Sources */,
 				1A56857D2D2B4F5E00CD3427 /* CourseByChannelModule.swift in Sources */,
@@ -662,7 +666,6 @@
 				1A6495C82D24949100EA16D2 /* AuthController.swift in Sources */,
 				1A577AC72D25D96D00BE27BF /* Lecture.swift in Sources */,
 				1A7E9A962D21ED8C00CBEF99 /* SettingsMainView.swift in Sources */,
-				1A7E9A9C2D21F6A700CBEF99 /* RecommendedCourses.swift in Sources */,
 				1AA40DAD2D137D5400BB311F /* TabBarController.swift in Sources */,
 				1A6495CF2D2496C400EA16D2 /* ApplicationUtility.swift in Sources */,
 				1AA40D7A2D0FE56700BB311F /* ContentView.swift in Sources */,
@@ -692,6 +695,7 @@
 				1A5685862D2B971100CD3427 /* PDFViewer.swift in Sources */,
 				1A7E9A882D20964700CBEF99 /* LecturesInCourse.swift in Sources */,
 				1A21B9842D30746C00A492D0 /* YouTubePlayerController.swift in Sources */,
+				1A7C33A02D3898D40009647E /* WatchedCourseCard.swift in Sources */,
 				1A7E9A8E2D21E66800CBEF99 /* CommunityFavoritesFullList.swift in Sources */,
 				1A21B98F2D34534C00A492D0 /* Collection.swift in Sources */,
 				1AA40D8D2D121C8000BB311F /* HomeMainView.swift in Sources */,

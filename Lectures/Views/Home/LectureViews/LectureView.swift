@@ -13,6 +13,9 @@ struct LectureView: View {
     
     @EnvironmentObject var userController: UserController
     @EnvironmentObject var homeController: HomeController
+    @EnvironmentObject var watchHistoryController: WatchHistoryController
+    
+    // resource controllers
     @EnvironmentObject var notesController: NotesController
     @EnvironmentObject var homeworkController: HomeworkController
     @EnvironmentObject var homeworkAnswersController: HomeworkAnswersController
@@ -289,10 +292,6 @@ struct LectureView: View {
                     UpgradeAccountPaywallWithoutFreeTrial()
                 }
                 .onAppear {
-                    
-                    print("we're on the on Appear on a lecture view, TEST")
-                    
-                    
                     // get the resource info
                     if let lecture = homeController.focusedLecture {
                         // notes
@@ -318,6 +317,18 @@ struct LectureView: View {
                         
                         // add the newly focused lecture to the stack
                         homeController.focusedLectureStack.append(lecture)
+                        
+                        // save a new watch history state
+                        if let user = userController.user {
+                            // only if the user is PRO member
+                            if user.accountType == 1 {
+                                // we should make sure we have the course somewhere, if we don't have the course what do we do?? Theres a case where lecture view can appear without first focusing a course
+                                if let course = homeController.cachedCourses[lecture.courseId!] {
+                                    // TODO: add a rate limit
+                                    watchHistoryController.updateWatchHistory(userId: user.id!, course: course, lecture: lecture)
+                                }
+                            }
+                        }
                     }
                 }
                 .onDisappear {
@@ -361,4 +372,5 @@ struct LectureView: View {
     LectureView()
         .environmentObject(NotesController())
         .environmentObject(YouTubePlayerController())
+        .environmentObject(WatchHistoryController())
 }
