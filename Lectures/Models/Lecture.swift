@@ -8,7 +8,7 @@
 import FirebaseFirestore
 import Foundation
 
-struct Lecture : Codable, Identifiable {
+struct Lecture : Codable, Identifiable, Hashable {
     // identifier
     @DocumentID var id: String?
     

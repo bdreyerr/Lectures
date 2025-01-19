@@ -39,6 +39,14 @@ class CourseController : ObservableObject {
     // ChannelId : UIImage
     @Published var channelThumbnails: [String : UIImage] = [:]
     
+    // Thumbnail Request Queue
+    // CourseId : IsRequestProcessingOrFinished
+    @Published var courseThumbnailRequestQueue: [String : Bool] = [:]
+    // LectureId : IsRequestProcessingOrFinished
+    @Published var lectureThumbnailRequestQueue: [String : Bool] = [:]
+    // ChannelId : IsRequestProcessingOrFinished
+    @Published var channelThumbnailRequestQueue: [String : Bool] = [:]
+    
     // Firestore
     let db = Firestore.firestore()
     // Storage
@@ -54,7 +62,7 @@ class CourseController : ObservableObject {
         
         // check the cache
         if let _ = cachedCourses[courseId] {
-            print("course already cached")
+            //            print("course already cached")
             return
         }
         
@@ -75,7 +83,7 @@ class CourseController : ObservableObject {
     func retrieveChannel(channelId: String) {
         // check the cache
         if let _ = cachedChannels[channelId] {
-            print("channel already cached")
+            //            print("channel already cached")
             return
         }
         
@@ -85,6 +93,27 @@ class CourseController : ObservableObject {
             do {
                 let channel = try await docRef.getDocument(as: Channel.self)
                 self.cachedChannels[channelId] = channel
+                
+                // don't fetch the thumbnail, we only need to see it if user wants to access a specific course or lecture
+            } catch {
+                print("Error decoding channel: \(error)")
+            }
+        }
+    }
+    
+    func retrieveLecture(lectureId: String) {
+        // check the cache
+        if let _ = cachedLectures[lectureId] {
+            //            print("channel already cached")
+            return
+        }
+        
+        Task { @MainActor in
+            let docRef = db.collection("lectures").document(lectureId)
+            
+            do {
+                let lecture = try await docRef.getDocument(as: Lecture.self)
+                self.cachedLectures[lectureId] = lecture
                 
                 // don't fetch the thumbnail, we only need to see it if user wants to access a specific course or lecture
             } catch {
@@ -170,21 +199,43 @@ class CourseController : ObservableObject {
     
     // ---------- Fetch Thumbnail (Storage) ----------
     func getCourseThumbnail(courseId: String) {
-        // check cache
-        if let _ = self.courseThumbnails[courseId] {
-            print("course thumbnail already cached")
+        // check if request was already made for this course
+        if let request = self.courseThumbnailRequestQueue[courseId] {
+            // make sure it's set to true, if we failed to retrieve thumbnail, we'll set the bool val back to false
+            if request {
+                print("we already requested this course thumbnail")
+                return
+            }
         }
         
-        // Fetch image from firestore
-        Task {
+        // first time requesting this thumbnail, process the request
+        self.courseThumbnailRequestQueue[courseId] = true
+        
+        Task { @MainActor in
+            
+            // check cache
+            if let _ = self.courseThumbnails[courseId] {
+                //            print("course thumbnail already cached")
+                return
+            }
+            
+            // Fetch image from firestore
+            
+            let storage = Storage.storage()
+
+            // Create a storage reference from our storage service
+            let storageRef = storage.reference()
+            
             // Fetch the prompts image from storage
-            let imageRef = self.storage.reference().child("courses/" + courseId + ".jpeg")
-                        
+            let imageRef = storageRef.child("courses/" + courseId + ".jpeg")
+            
             // download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
             imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
                 if let error = error {
                     print("error downloading image from storage: ", error.localizedDescription)
                     // There was an issue with the image or the image doesn't exist, either way set both prompt and promptImage back to nil
+                    
+                    self.courseThumbnailRequestQueue[courseId] = false
                     return
                 } else {
                     // Data for image is returned
@@ -197,15 +248,34 @@ class CourseController : ObservableObject {
     }
     
     func getLectureThumnbnail(lectureId: String) {
+        
+        // check if request was already made for this course
+        if let request = self.lectureThumbnailRequestQueue[lectureId] {
+            // make sure it's set to true, if we failed to retrieve thumbnail, we'll set the bool val back to false
+            if request {
+                print("we already requested this lecture thumbnail")
+                return
+            }
+        }
+        
+        // first time requesting this thumbnail, process the request
+        self.lectureThumbnailRequestQueue[lectureId] = true
+        
         // check cache
         if let _ = self.lectureThumbnails[lectureId] {
-            print("lecture thumbnail already cached")
+            //            print("lecture thumbnail already cached")
+            return
         }
         
         Task {
+            let storage = Storage.storage()
+
+            // Create a storage reference from our storage service
+            let storageRef = storage.reference()
+            
             // Fetch the prompts image from storage
-            let imageRef = self.storage.reference().child("lectures/" + lectureId + ".jpeg")
-                        
+            let imageRef = storageRef.child("lectures/" + lectureId + ".jpeg")
+            
             // download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
             imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
                 if let error = error {
@@ -223,20 +293,39 @@ class CourseController : ObservableObject {
     }
     
     func getChannelThumbnail(channelId: String) {
-        // check cache
-        if let _ = self.channelThumbnails[channelId] {
-            print("channel thumbnail already cached")
+        // check if request was already made for this course
+        if let request = self.channelThumbnailRequestQueue[channelId] {
+            // make sure it's set to true, if we failed to retrieve thumbnail, we'll set the bool val back to false
+            if request {
+                print("we already requested this channel thumbnail")
+                return
+            }
+        } else {
+            // first time requesting this thumbnail, process the request
+            self.channelThumbnailRequestQueue[channelId] = true
         }
         
-        Task {
+        // check cache
+        if let _ = self.channelThumbnails[channelId] {
+            //            print("channel thumbnail already cached")
+            return
+        }
+        
+        Task { @MainActor in
+            // Get a reference to the storage service using the default Firebase App
+            let storage = Storage.storage()
+
+            // Create a storage reference from our storage service
+            let storageRef = storage.reference()
             // Fetch the prompts image from storage
-            let imageRef = self.storage.reference().child("channels/" + channelId + ".jpeg")
-                        
+            let imageRef = storageRef.child("channels/" + channelId + ".jpeg")
+            
             // download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
             imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
                 if let error = error {
                     print("error downloading image from storage: ", error.localizedDescription)
                     // There was an issue with the image or the image doesn't exist, either way set both prompt and promptImage back to nil
+                    self.channelThumbnailRequestQueue[channelId] = false
                     return
                 } else {
                     // Data for image is returned

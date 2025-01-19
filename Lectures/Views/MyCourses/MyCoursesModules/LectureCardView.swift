@@ -1,31 +1,19 @@
 //
-//  WatchedCourseCard.swift
+//  LectureCardView.swift
 //  Lectures
 //
-//  Created by Ben Dreyer on 1/15/25.
+//  Created by Ben Dreyer on 1/18/25.
 //
 
 import SwiftUI
 
-struct WatchedCourseCard: View {
+struct LectureCardView: View {
     @EnvironmentObject var courseController: CourseController
-    @EnvironmentObject var myCourseController: MyCourseController
     
-    var course: Course
-    var watchHistory: WatchHistory
-    
-    private var watchProgress: CGFloat {
-        let progress = CGFloat(watchHistory.lectureNumberInCourse!) / CGFloat(course.numLecturesInCourse!)
-        return min(max(progress, 0), 1) // Ensure progress is between 0 and 1
-    }
-    
-    private var progressColor: Color {
-        watchProgress >= 1.0 ? .green : .red
-    }
-    
+    var lecture: Lecture
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            if let image = courseController.courseThumbnails[course.id!] {
+            if let image = courseController.lectureThumbnails[lecture.id!] {
                 Image(uiImage: image)
                     .resizable()
                     .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
@@ -45,12 +33,22 @@ struct WatchedCourseCard: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
             .clipShape(RoundedRectangle(cornerRadius: 10))
             
+            // Play button overlay in center
+            Circle()
+                .fill(.black.opacity(0.6))
+                .frame(width: 50, height: 50)
+                .overlay(
+                    Image(systemName: "play.fill")
+                        .foregroundColor(.red)
+                        .font(.system(size: 20))
+                )
+                .position(x: UIScreen.main.bounds.width * 0.3, y: 75) // Center of the card
             
             VStack(spacing: 0) {
                 HStack {
                     VStack(alignment: .leading) {
                         HStack {
-                            Text(course.courseTitle!)
+                            Text(lecture.lectureTitle!)
                                 .font(.system(size: 18, design: .serif))
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
@@ -62,7 +60,7 @@ struct WatchedCourseCard: View {
                         
                         HStack {
                             // TODO: Add back university name
-                            if let channel = courseController.cachedChannels[course.channelId!] {
+                            if let channel = courseController.cachedChannels[lecture.channelId!] {
                                 Text(channel.title!)
                                     .lineLimit(1) // Limit to a single line
                                     .truncationMode(.tail) // Use ellipsis for truncation
@@ -70,12 +68,12 @@ struct WatchedCourseCard: View {
                                     .foregroundColor(.white.opacity(0.8))
                             }
                             
-                            Text("\(course.numLecturesInCourse!) Lectures")
-                                .font(.system(size: 14, design: .serif))
-                                .foregroundColor(.white.opacity(0.8))
-                            Text("\(course.watchTimeInHrs!)hrs")
-                                .font(.system(size: 14, design: .serif))
-                                .foregroundColor(.white.opacity(0.8))
+//                            Text("\(course.numLecturesInCourse!) Lectures")
+//                                .font(.system(size: 14, design: .serif))
+//                                .foregroundColor(.white.opacity(0.8))
+//                            Text("\(course.watchTimeInHrs!)hrs")
+//                                .font(.system(size: 14, design: .serif))
+//                                .foregroundColor(.white.opacity(0.8))
                         }
                     }
                     Spacer()
@@ -84,15 +82,6 @@ struct WatchedCourseCard: View {
             }
             .padding(.bottom, 1)
             
-            // Add progress bar at the bottom
-            GeometryReader { geometry in
-                Rectangle()
-                    .fill(progressColor)
-                    .frame(width: geometry.size.width * watchProgress, height: 3)
-                    .position(x: (geometry.size.width * watchProgress) / 2, y: geometry.size.height - 1.5)
-            }
-            .cornerRadius(10)
-            
         }
         .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
         .shadow(radius: 2.5)
@@ -100,5 +89,5 @@ struct WatchedCourseCard: View {
 }
 
 //#Preview {
-//    WatchedCourseCard(course: Course(), watchHistory: WatchHistory())
+//    LectureCardView()
 //}

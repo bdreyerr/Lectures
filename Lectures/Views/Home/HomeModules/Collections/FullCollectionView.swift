@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FullCollectionView: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
     var collection: Collection
@@ -52,7 +53,7 @@ struct FullCollectionView: View {
                 
                 // Course list for the collection
                 ForEach(collection.courseIdList!, id: \.self) { courseId in
-                    if let course = homeController.cachedCourses[courseId] {
+                    if let course = courseController.cachedCourses[courseId] {
                         CourseInCollection(course: course)
                     }
                 }

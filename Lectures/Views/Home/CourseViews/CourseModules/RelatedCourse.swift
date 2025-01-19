@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RelatedCourse: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
     @EnvironmentObject var examController: ExamController
@@ -17,11 +18,11 @@ struct RelatedCourse: View {
     var body: some View {
         Button(action: {
             // if this course is the same as the focused course already do nothing
-            if let focusedCourse = homeController.focusedCourse, focusedCourse.id == course.id {
+            if let focusedCourse = courseController.focusedCourse, focusedCourse.id == course.id {
                 return
             }
             
-            homeController.focusCourse(course)
+            courseController.focusCourse(course)
             
             // fetch exam, exam answers and lectures in course - this is normally in the on appear of CourseView, but when hitting a related course the courseview doesn't dissapear and reappear
             
@@ -41,12 +42,12 @@ struct RelatedCourse: View {
             
             // get the lectures in this course
             if let lectureIds = course.lectureIds {
-                homeController.retrieveLecturesInCourse(courseId: course.id!, lectureIds: lectureIds)
+                courseController.retrieveLecturesInCourse(courseId: course.id!, lectureIds: lectureIds)
             }
         }) {
             HStack {
                 // Image
-                if let image = homeController.courseThumbnails[course.id!] {
+                if let image = courseController.courseThumbnails[course.id!] {
                     Image(uiImage: image)
                         .resizable()
                         .frame(width: 60, height: 60)
@@ -67,14 +68,13 @@ struct RelatedCourse: View {
                             .truncationMode(.tail)
                         Spacer()
                     }
-                    .padding(.bottom, 2)
                     
                     
                     
                     // channel image
                     HStack {
                         // channel name
-                        if let channel = homeController.cachedChannels[course.channelId!] {
+                        if let channel = courseController.cachedChannels[course.channelId!] {
                             Text(channel.title ?? "")
                                 .font(.system(size: 12, design: .serif))
                                 .lineLimit(1)
@@ -82,17 +82,20 @@ struct RelatedCourse: View {
                         }
                         
                         Text("\(course.numLecturesInCourse ?? 0) Lectures")
-                            .font(.system(size: 12, design: .serif))
+                            .font(.system(size: 12))
+//                            .font(.system(size: 12, design: .serif))
                             .lineLimit(1)
                             .truncationMode(.tail)
                         
                         Text("\(course.watchTimeInHrs ?? 0)r Watch Time")
-                            .font(.system(size: 12, design: .serif))
+                            .font(.system(size: 12))
+//                            .font(.system(size: 12, design: .serif))
                             .lineLimit(1)
                             .truncationMode(.tail)
                         
                         Text("\(course.aggregateViews ?? "0") Views")
-                            .font(.system(size: 12, design: .serif))
+                            .font(.system(size: 12))
+//                            .font(.system(size: 12, design: .serif))
                             .lineLimit(1)
                             .truncationMode(.tail)
                         

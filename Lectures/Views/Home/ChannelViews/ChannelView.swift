@@ -8,18 +8,22 @@
 import SwiftUI
 
 struct ChannelView: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
+    @EnvironmentObject var userController: UserController
+    @EnvironmentObject var myCourseController: MyCourseController
     
     @State private var isChannelFollowed = false
+    @State private var isUpgradeAccountSheetShowing: Bool = false
     var body: some View {
-        if let channel = homeController.focusedChannel {
+        if let channel = courseController.focusedChannel {
             VStack {
                 // Course Cover Image?
                 ScrollView(showsIndicators: false) {
                     VStack {
                         HStack {
                             // channel image not a nav link
-                            if let channelImage = homeController.channelThumbnails[channel.id!] {
+                            if let channelImage = courseController.channelThumbnails[channel.id!] {
                                 Image(uiImage: channelImage)
                                     .resizable()
                                     .frame(width: 40, height: 40)
@@ -38,11 +42,11 @@ struct ChannelView: View {
                                 // channel stats
                                 HStack {
                                     Text("\(channel.numCourses!) Courses")
-                                        .font(.system(size: 12, design: .serif))
+                                        .font(.system(size: 12))
                                         .opacity(0.6)
                                     
                                     Text("\(channel.numLectures!) Lectures")
-                                        .font(.system(size: 12, design: .serif))
+                                        .font(.system(size: 12))
                                         .opacity(0.6)
                                     
                                     Spacer()
@@ -51,8 +55,17 @@ struct ChannelView: View {
                             
                             // follow button
                             Button(action: {
-                                withAnimation(.spring()) {
-                                    isChannelFollowed.toggle()
+                                // if the user isn't a PRO member, they can't follow accounts
+                                if let user = userController.user {
+                                    if user.accountType == 1 {
+                                        userController.followChannel(userId: user.id!, channelId: channel.id!)
+                                        withAnimation(.spring()) {
+                                            isChannelFollowed.toggle()
+                                        }
+                                    } else {
+                                        // show the upgrade account sheet
+                                        self.isUpgradeAccountSheetShowing = true
+                                    }
                                 }
                             }) {
                                 HStack(spacing: 8) {
@@ -88,6 +101,17 @@ struct ChannelView: View {
                             .padding(.top, 5)
                     }
                     .padding(.horizontal, 20)
+                }
+            }
+            .sheet(isPresented: $isUpgradeAccountSheetShowing) {
+                UpgradeAccountPaywallWithoutFreeTrial()
+            }
+            .onAppear {
+                // check if the user follows the course's channel and set the button accordingly
+                if let user = userController.user {
+                    if user.followedChannelIds!.contains(channel.id!) {
+                        self.isChannelFollowed = true
+                    }
                 }
             }
         } else {

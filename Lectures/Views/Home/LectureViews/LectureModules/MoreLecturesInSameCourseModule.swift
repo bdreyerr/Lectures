@@ -6,21 +6,27 @@
 //
 
 import SwiftUI
+import YouTubePlayerKit
 
 struct MoreLecturesInSameCourseModule: View {
     
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
+//    @Binding var playerSource: YouTubePlayer.Source?
+    @ObservedObject var player: YouTubePlayer
+    
     var body: some View {
-        if let lecture = homeController.focusedLecture {
-            if let lectures = homeController.lecturesInCourse[lecture.courseId!] {
+        if let lecture = courseController.focusedLecture {
+            if let lectures = courseController.lecturesInCourse[lecture.courseId!] {
                 VStack {
                     HStack {
                         Text("More in")
-                            .font(.system(size: 14, design: .serif))
+                            .font(.system(size: 14))
+//                            .font(.system(size: 14, design: .serif))
                             .bold()
                         
-                        Text(homeController.cachedCourses[lecture.courseId!]!.courseTitle!)
+                        Text(courseController.cachedCourses[lecture.courseId!]!.courseTitle!)
                             .font(.system(size: 14, design: .serif))
                             .lineLimit(1)
                             .truncationMode(.tail)
@@ -29,7 +35,7 @@ struct MoreLecturesInSameCourseModule: View {
                     }
                     
                     ForEach(lectures, id: \.id) { lecture in
-                        LectureInSameCourseModule(lecture: lecture)
+                        LectureInSameCourseModule(lecture: lecture, player: player)
                     }
                 }
             } else {
@@ -43,20 +49,21 @@ struct MoreLecturesInSameCourseModule: View {
 }
 
 struct LectureInSameCourseModule: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     @EnvironmentObject var notesController: NotesController
     @EnvironmentObject var homeworkController: HomeworkController
     @EnvironmentObject var homeworkAnswersController: HomeworkAnswersController
     
-    @EnvironmentObject var youTubePlayerController: YouTubePlayerController
-    
     var lecture: Lecture
+    
+    @ObservedObject var player: YouTubePlayer
     
     var body: some View {
         // Other Lectures in the course
         HStack {
             // Image
-            if let image = homeController.lectureThumbnails[lecture.id!] {
+            if let image = courseController.lectureThumbnails[lecture.id!] {
                 Image(uiImage: image)
                     .resizable()
                     .frame(width: 40, height: 40)
@@ -88,17 +95,17 @@ struct LectureInSameCourseModule: View {
             
             
         }
-        .background((homeController.focusedLecture?.id! == lecture.id) ? Color.gray.opacity(0.2) : Color.clear)
+        .background((courseController.focusedLecture?.id! == lecture.id) ? Color.gray.opacity(0.2) : Color.clear)
         .cornerRadius(5)
         .onTapGesture {
-            if homeController.focusedLecture?.id! != lecture.id {
-                homeController.focusLecture(lecture)
+            if courseController.focusedLecture?.id! != lecture.id {
+                courseController.focusLecture(lecture)
                 
                 // change source url on youtube player
-                youTubePlayerController.changeSource(url: lecture.youtubeVideoUrl ?? "")
+                player.source = .url(lecture.youtubeVideoUrl ?? "")
                 
                 // we also gotta get the new lectures resources
-                if let lecture = homeController.focusedLecture {
+                if let lecture = courseController.focusedLecture {
                     // notes
                     if let noteId = lecture.notesResourceId {
                         notesController.retrieveNote(noteId: noteId)
@@ -146,7 +153,7 @@ struct LectureInSameCourseModule: View {
     }
 }
 
-#Preview {
-    MoreLecturesInSameCourseModule()
-        .environmentObject(HomeController())
-}
+//#Preview {
+//    MoreLecturesInSameCourseModule()
+//        .environmentObject(HomeController())
+//}

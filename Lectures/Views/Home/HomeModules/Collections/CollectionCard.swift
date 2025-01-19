@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CollectionCard : View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     var collection: Collection
     
@@ -59,7 +60,7 @@ struct CollectionCard : View {
         .simultaneousGesture(TapGesture().onEnded { _ in
             // retrieve the courses in this collection
             for courseId in collection.courseIdList! {
-                homeController.retrieveCourse(courseId: courseId)
+                courseController.retrieveCourse(courseId: courseId)
             }
         })
         .buttonStyle(PlainButtonStyle())

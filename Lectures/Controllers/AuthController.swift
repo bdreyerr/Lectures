@@ -127,7 +127,7 @@ class AuthController : UIViewController, ObservableObject {
                                 // User doesn't exist in the database yet, create a new user object
                                 
                                 // The only field not populated is profilePicture. User needs to add that themselves.
-                                let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, isAdmin: false)
+                                let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, likedCourseIds: [], likedLectureIds: [], followedChannelIds: [], isAdmin: false)
                                 
                                 // Add the user to firestore user collection
                                 let collectionRef = self.db.collection("users")
@@ -241,7 +241,7 @@ class AuthController : UIViewController, ObservableObject {
                         if querySnapshot!.documents.isEmpty {
                             // User doesn't exist in the database yet, create a new user object
                             
-                            let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, isAdmin: false)
+                            let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, likedCourseIds: [], likedLectureIds: [], followedChannelIds: [], isAdmin: false)
                             
                             // Add the user to firestore user collection
                             let collectionRef = self.db.collection("users")

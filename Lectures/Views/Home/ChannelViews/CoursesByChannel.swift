@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct CoursesByChannel: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
     var body: some View {
-        if let channel = homeController.focusedChannel {
+        if let channel = courseController.focusedChannel {
             VStack {
                 HStack {
                     Text("Courses by")
@@ -35,8 +36,8 @@ struct CoursesByChannel: View {
                         }
                         .simultaneousGesture(TapGesture().onEnded { _ in
                             // get the course from the cache based on courseId
-                            if let course = homeController.cachedCourses[courseId] {
-                                homeController.focusCourse(course)
+                            if let course = courseController.cachedCourses[courseId] {
+                                courseController.focusCourse(course)
                             }
                         })
                         .buttonStyle(PlainButtonStyle())

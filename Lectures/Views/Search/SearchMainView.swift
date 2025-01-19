@@ -10,35 +10,8 @@ import SwiftUI
 struct SearchMainView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @State private var currentSubject = "cognitive science"
-    @State private var displayedText = ""
-    @State private var subjects = [
-        "cognitive science",
-        "differential equations",
-        "linear algebra",
-        "computer science",
-        "organic chemistry"
-    ]
-    @State private var currentIndex = 0
-    @State private var isAnimating = false
-    
-    // Increased timer interval to allow for typing animation
-    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
-    
-    func typeWriter() {
-        let typeInterval = 0.05 // Adjust speed of typing
-        isAnimating = true
-        displayedText = ""
-        
-        for (index, character) in currentSubject.enumerated() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + typeInterval * Double(index)) {
-                displayedText += String(character)
-                if index == currentSubject.count - 1 {
-                    isAnimating = false
-                }
-            }
-        }
-    }
+    @State private var searchText: String = ""
+    @State private var areFiltersShowing: Bool = false
     
     var body: some View {
         ZStack {
@@ -49,49 +22,171 @@ struct SearchMainView: View {
                 
                 ScrollView() {
                     
-                    HStack {
-                        Text("Find a course -")
-                            .font(.system(size: 20, design: .serif))
-                            .bold()
-                            .padding(.bottom, 2)
-                        
-                        Spacer()
-                        
-                        // Replace previous Text with this version
-                        Text(displayedText)
-                            .font(.system(size: 18, design: .serif))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(.black.opacity(0.9))
-                            .animation(.easeInOut(duration: 0.1), value: displayedText)
-                            .onReceive(timer) { _ in
-                                if !isAnimating {
-                                    currentIndex = (currentIndex + 1) % subjects.count
-                                    currentSubject = subjects[currentIndex]
-                                    typeWriter()
+                    VStack {
+                        HStack {
+                            // Search Icon
+                            Image(systemName: "magnifyingglass")
+                            
+                            // Search TextField
+                            TextField("Search", text: $searchText)
+                                .font(.system(size: 16))
+                                .textFieldStyle(PlainTextFieldStyle())
+                            
+                            
+                            // Clear Button (X Icon)
+                            if !searchText.isEmpty {
+                                Button(action: {
+                                    searchText = "" // Clear the text
+                                }) {
+                                    Image(systemName: "xmark")
                                 }
                             }
-                            .onAppear {
-                                typeWriter() // Initial animation
+                            
+                            // filters
+                            Button(action: {
+                                withAnimation(.spring()) {
+                                    areFiltersShowing.toggle()
+                                }
+                            }) {
+                                Image(systemName: "text.alignright")
                             }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        
+                        if areFiltersShowing {
+                            // Result Type
+                            // Categories
+                            Group {
+                                HStack {
+                                    Text("Result Type")
+                                        .font(.system(size: 12))
+                                    Spacer()
+                                }
+                                .padding(.top, 10)
+                                
+                                HStack {
+                                    SearchResultTypePill(iconName: "newspaper.fill", text: "Lectures")
+                                    
+                                    SearchResultTypePill(iconName: "mail.stack.fill", text: "Courses")
+                                    
+                                    SearchResultTypePill(iconName: "graduationcap", text: "Channels")
+                                    
+                                    Spacer()
+                                }
+                            }
+                            
+                            // Categories
+                            Group {
+                                HStack {
+                                    Text("Categories")
+                                        .font(.system(size: 12))
+                                    Spacer()
+                                }
+                                .padding(.top, 10)
+                                
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack {
+                                        PlainSearchFilterPill(text: "Computer Science")
+                                        
+                                        PlainSearchFilterPill(text: "Business")
+                                        
+                                        PlainSearchFilterPill(text: "Health")
+                                        
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            
+                            
+                            // Course Size (selecting any of these removes lectures from search results)
+                            Group {
+                                HStack {
+                                    Text("Course Size")
+                                        .font(.system(size: 12))
+                                    Spacer()
+                                }
+                                .padding(.top, 10)
+                                
+                                HStack {
+                                    PlainSearchFilterPill(text: "<5 lecture")
+                                    PlainSearchFilterPill(text: ">5 lecture")
+                                    PlainSearchFilterPill(text: ">105 lecture")
+                                    
+                                    Spacer()
+                                }
+                            }
+                            
+                            
+                            // Sory By
+                            Group {
+                                HStack {
+                                    Text("Sory By")
+                                        .font(.system(size: 12))
+                                    Spacer()
+                                }
+                                .padding(.top, 10)
+                                
+                                HStack {
+                                    PlainSearchFilterPill(text: "Most Watched")
+                                    PlainSearchFilterPill(text: "Most Liked")
+                                    
+                                    Spacer()
+                                }
+                            }
+                            
+                            
+                        }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(10)
+                    .background(Color.black.opacity(0.05)) // Dark background
+                    .cornerRadius(20) // Rounded corners
+                    .padding(.horizontal)
+                    .padding(.top, 10)
                     
-                    SearchBarWithFilters()
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 10)
                     
-                    SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "The Emotion Machine", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+                    //                    HStack {
+                    //                        Text("Find a course -")
+                    //                            .font(.system(size: 20, design: .serif))
+                    //                            .bold()
+                    //                            .padding(.bottom, 2)
+                    //
+                    //                        Spacer()
+                    //
+                    //                        // Replace previous Text with this version
+                    //                        Text(displayedText)
+                    //                            .font(.system(size: 18, design: .serif))
+                    //                            .frame(maxWidth: .infinity, alignment: .leading)
+                    //                            .foregroundColor(.black.opacity(0.9))
+                    //                            .animation(.easeInOut(duration: 0.1), value: displayedText)
+                    //                            .onReceive(timer) { _ in
+                    //                                if !isAnimating {
+                    //                                    currentIndex = (currentIndex + 1) % subjects.count
+                    //                                    currentSubject = subjects[currentIndex]
+                    //                                    typeWriter()
+                    //                                }
+                    //                            }
+                    //                            .onAppear {
+                    //                                typeWriter() // Initial animation
+                    //                            }
+                    //                    }
+                    //                    .padding(.horizontal, 20)
                     
-                    SearchedCourse(coverImage: "stanford", universityImage: "mit", courseName: "The Emotion Machine", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+                    //                    SearchBarWithFilters()
+                    //                        .padding(.horizontal, 20)
+                    //                        .padding(.bottom, 10)
                     
-                    SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "Another One For Ya", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+                    //                    SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "The Emotion Machine", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+                    //
+                    //                    SearchedCourse(coverImage: "stanford", universityImage: "mit", courseName: "The Emotion Machine", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
+                    //
+                    //                    SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "Another One For Ya", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
                     
                 }
-                .scrollDismissesKeyboard(.interactively)
+                
             }
-            .navigationBarHidden(true)
-            
+            .scrollDismissesKeyboard(.interactively)
         }
+        .navigationBarHidden(true)
     }
 }
 

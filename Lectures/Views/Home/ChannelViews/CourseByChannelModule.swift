@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct CourseByChannelModule: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
     var courseId: String
     var body: some View {
-        if let course = homeController.cachedCourses[courseId] {
-            
+        if let course = courseController.cachedCourses[courseId] {
             // Other Lectures in the course
             HStack {
                 // Image
                 
-                if let image = homeController.courseThumbnails[courseId] {
+                if let image = courseController.courseThumbnails[courseId] {
                     Image(uiImage: image)
                         .resizable()
                         .frame(width: 40, height: 40)
@@ -48,18 +48,18 @@ struct CourseByChannelModule: View {
                             HStack {
                                 // num Lectures
                                 Text("\(course.numLecturesInCourse!) Lectures")
-                                    .font(.system(size: 12, design: .serif))
+                                    .font(.system(size: 12))
                                     .opacity(0.8)
                                 
                                 
                                 // Watch time
                                 Text("\(course.watchTimeInHrs!)Hrs")
-                                    .font(.system(size: 12, design: .serif))
+                                    .font(.system(size: 12))
                                     .opacity(0.8)
                                 
                                 // Views
                                 Text("\(course.aggregateViews!) Views")
-                                    .font(.system(size: 12, design: .serif))
+                                    .font(.system(size: 12))
                                     .opacity(0.8)
                                 
                                 Spacer()

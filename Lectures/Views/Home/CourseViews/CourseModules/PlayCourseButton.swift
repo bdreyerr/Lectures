@@ -8,10 +8,8 @@
 import SwiftUI
 
 struct PlayCourseButton: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
-    
-    // Youtube player
-    @EnvironmentObject var youTubePlayerController: YouTubePlayerController
     
     @Binding var shouldPopCourseFromStack: Bool
     
@@ -43,10 +41,7 @@ struct PlayCourseButton: View {
         .simultaneousGesture(TapGesture().onEnded {
             // make a course up
             print("clicked on a lecture in course view")
-            homeController.focusLecture(lecture)
-            
-            // change the YT player source url
-            youTubePlayerController.changeSource(url: lecture.youtubeVideoUrl ?? "")
+            courseController.focusLecture(lecture)
             
             // don't pop the course from the stack
             shouldPopCourseFromStack = false
@@ -57,5 +52,4 @@ struct PlayCourseButton: View {
 #Preview {
     PlayCourseButton(shouldPopCourseFromStack: .constant(false), lecture: Lecture())
         .environmentObject(HomeController())
-        .environmentObject(YouTubePlayerController())
 }

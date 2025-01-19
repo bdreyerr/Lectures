@@ -15,7 +15,7 @@ struct MyCoursesMainView: View {
     
     //    @EnvironmentObject var authController: AuthController
     @EnvironmentObject var userController: UserController
-    @EnvironmentObject var watchHistoryController: WatchHistoryController
+    @EnvironmentObject var myCourseController: MyCourseController
     
     @State var upgradeAccountSheetShowing: Bool = false
     

@@ -15,7 +15,6 @@ struct OnboardingPaywallWithFreeTrial: View {
     @State private var showSignUpSheet: Bool = false
     @State private var showSignInSheet: Bool = false
     
-    
     var body: some View {
         ZStack {
             LatticeBackground()
@@ -324,7 +323,7 @@ struct ProFeaturesSheet: View {
                 VStack(alignment: .leading, spacing: 10) {
                     FeatureRow(icon: "checkmark.circle.fill", text: "Free access to all courses and lectures")
                     FeatureRow(icon: "checkmark.circle.fill", text: "Ad-free experience.")
-                    FeatureRow(icon: "checkmark.circle.fill", text: "Unlock personalized learning features (course planner, recommendations)")
+                    FeatureRow(icon: "checkmark.circle.fill", text: "Personalized Learning (Course Progress, Saved Lectures, Follow Universities)")
                     FeatureRow(icon: "checkmark.circle.fill", text: "Free access to all course and lecture resources (notes, homework, exams)")
                     FeatureRow(icon: "checkmark.circle.fill", text: "Customize app appearance")
                 }

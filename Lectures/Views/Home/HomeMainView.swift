@@ -9,12 +9,8 @@ import SwiftUI
 
 struct HomeMainView: View {
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
-    
-    // YouTube Player Controller
-    // we initalize it here because we want to change source url when we foucs a new lecture, which happens in this view sometimes. sometimes also happens in lecture view, but this is a parent of lecture view
-    // Youtube player
-    @StateObject var youTubePlayerController = YouTubePlayerController()
     
     @State var userHasPreviouslyWatchedLectures: Bool = true
     
@@ -102,11 +98,22 @@ struct HomeMainView: View {
             .navigationBarHidden(true)
             .padding(.horizontal, 20)
             .onAppear {
-                homeController.focusedLectureStack = []
-                homeController.focusedCourseStack = []
+                // for first time loading this view, fetch the content
+                if homeController.curatedCourses.isEmpty {
+                    homeController.isCommunityFavoritesLoading = true
+                    homeController.isCuratedCoursesLoading = true
+                    homeController.isUniversityLoading = true
+                    homeController.retrieveLeadingUniversities(courseController: courseController)
+                    homeController.retrieveCuratedCourses(courseController: courseController)
+                    homeController.retrieveCommunityFavorites(courseController: courseController)
+                }
+                
+                
+                
+                courseController.focusedLectureStack = []
+                courseController.focusedCourseStack = []
             }
         }
-        .environmentObject(youTubePlayerController)
     }
 }
 

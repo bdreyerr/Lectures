@@ -21,7 +21,7 @@ class ExamAnswerController : ObservableObject {
     func retrieveExamAnswer(examAnswerId: String) {
         // if it's already cached don't do another lookup
         if let _ = cachedExamAnswers[examAnswerId] {
-            print("examAnswer already cached")
+//            print("examAnswer already cached")
             return
         }
         

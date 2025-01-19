@@ -8,16 +8,17 @@
 import SwiftUI
 
 struct ChannelCard: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
     var channel: Channel
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            if let image = homeController.channelThumbnails[channel.id!] {
+            if let image = courseController.channelThumbnails[channel.id!] {
                 Image(uiImage: image)
                     .resizable()
-                    .frame(width: 200, height: 200)
+                    .frame(width: 180, height: 180)
                     .aspectRatio(contentMode: .fill)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             } else {
@@ -44,15 +45,6 @@ struct ChannelCard: View {
                             .foregroundColor(.white)
                         
                         Spacer()
-                        
-//                        HStack {
-//                            Text("\(channel.numCourses!) Courses")
-//                                .font(.system(size: 14, design: .serif))
-//                                .foregroundColor(.white.opacity(0.8))
-//                            Text("\(channel.numLectures!) Lectures")
-//                                .font(.system(size: 14, design: .serif))
-//                                .foregroundColor(.white.opacity(0.8))
-//                        }
                     }
                     Spacer()
                 }
@@ -60,7 +52,7 @@ struct ChannelCard: View {
             }
             .padding(.bottom, 1)
         }
-        .frame(width: 200, height: 200)
+        .frame(width: 180, height: 180)
         .shadow(radius: 2.5)
     }
 }

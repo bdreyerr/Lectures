@@ -10,39 +10,40 @@ import SwiftUI
 
 struct MyCoursesProUserView: View {
     @EnvironmentObject var courseController: CourseController
-    @EnvironmentObject var watchHistoryController: WatchHistoryController
-//    @EnvironmentObject var userController: UserController
+    @EnvironmentObject var myCourseController: MyCourseController
+    @EnvironmentObject var userController: UserController
     
     // wHcontroller - on init get 3 latest WachHistory Objects, and when you get them also retrieve the course using Coursecontroller.Retrieve course which was passed as an argument
     
     var body: some View {
         Group {
-            HStack {
-                Text("Course History")
-                    .font(.system(size: 13, design: .serif))
-                    .bold()
+            if myCourseController.isWatchHistoryLoading {
+                HomeLoadingView()
+            } else {
                 
-                Spacer()
-            }
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(watchHistoryController.recentWatchHistories, id: \.id) { watchHistory in
-                        if let course = courseController.cachedCourses[watchHistory.courseId!] {
-                            NavigationLink(destination: CourseView()) {
-                                WatchedCourseCard(course: course, watchHistory: watchHistory)
-                            }
-                            .simultaneousGesture(TapGesture().onEnded { _ in
-                                
-                            })
-                        }
-                    }
-                }
+                CourseHistory()
+                
+                FollowedChannels()
+                
+                SavedCourses()
+                
+                SavedLectures()
+                
             }
         }
         .onAppear {
+            // clear the focus stack (we're back at the beginning of nav stack)
+            courseController.focusedLectureStack = []
+            courseController.focusedCourseStack = []
+            
             if let user = Auth.auth().currentUser {
-                watchHistoryController.retrieveRecentWatchHistories(userId: user.uid, courseController: courseController)
+                myCourseController.retrieveRecentWatchHistories(userId: user.uid, courseController: courseController)
+                // TODO: we don't need to do this every time
+                if let user = userController.user {
+                    myCourseController.retrieveFollowedChannels(channelIds: user.followedChannelIds!, courseController: courseController)
+                    myCourseController.retrieveLikedCourses(courseIds: user.likedCourseIds!, courseController: courseController)
+                    myCourseController.retrieveLikedLectures(lectureIds: user.likedLectureIds!, courseController: courseController)
+                }
             } else {
                 print("user isn't auth'd yet? idk")
             }

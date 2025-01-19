@@ -12,13 +12,16 @@ import FirebaseStorage
 import Foundation
 
 
-class WatchHistoryController : ObservableObject {
+class MyCourseController : ObservableObject {
     
     @Published var recentWatchHistories : [WatchHistory] = []
     
     // CourseId : WatchHistory
     @Published var cachedWatchHistories : [String : WatchHistory] = [:]
-    // store the course affiliated with a watchHistory object, so they can be displayed and navigated to in view
+    
+    
+    // Loading
+    @Published var isWatchHistoryLoading: Bool = false
     
     // Firestore
     let db = Firestore.firestore()
@@ -61,6 +64,7 @@ class WatchHistoryController : ObservableObject {
                         print("error writing new free watch history to firestore: ", error.localizedDescription)
                     }
                     
+                    self.refreshCourseHistory(userId: userId)
                     return
                 }
                 
@@ -88,6 +92,9 @@ class WatchHistoryController : ObservableObject {
                         print("Error writing watch history to Firestore: \(error)")
                     }
                     
+                    
+                    // refresh the user's watch history (so they dn't have to re-open app to see changes
+                    self.refreshCourseHistory(userId: userId) // might break passing the nil course controller, but we don't need it on a refresh
                     return
                 }
             } catch {
@@ -98,17 +105,17 @@ class WatchHistoryController : ObservableObject {
     
     // get a user's recently watched courses (on app open)
     func retrieveRecentWatchHistories(userId: String, courseController: CourseController) {
-        
         // TODO: find a better way to refresh this? for now if it's already filled we won't check firestore again
         if self.recentWatchHistories.count > 0 {
             print("skipping getting recent watch history again")
             return
         }
         
+        self.isWatchHistoryLoading = true
         Task { @MainActor in
             self.recentWatchHistories = []
             do {
-                let querySnapshot = try await db.collection("watchHistories").whereField("userId", isEqualTo: userId).order(by: "courseLastWatched", descending: true).limit(to: 3).getDocuments()
+                let querySnapshot = try await db.collection("watchHistories").whereField("userId", isEqualTo: userId).order(by: "courseLastWatched", descending: true).limit(to: 10).getDocuments()
                 
                 for document in querySnapshot.documents {
                     // build the watchHistory object and add it
@@ -124,13 +131,68 @@ class WatchHistoryController : ObservableObject {
                         print("couldn't convert the document to a watch history")
                     }
                 }
+                
+                self.isWatchHistoryLoading = false
             } catch {
                 print("Error getting documents: \(error)")
             }
         }
     }
     
-    // get a single course watchHistory
     
-    // get a single lecture WatchHistory
+    func refreshCourseHistory(userId: String) {
+        Task { @MainActor in
+            self.recentWatchHistories = []
+            do {
+                let querySnapshot = try await db.collection("watchHistories").whereField("userId", isEqualTo: userId).order(by: "courseLastWatched", descending: true).limit(to: 10).getDocuments()
+                
+                for document in querySnapshot.documents {
+                    // build the watchHistory object and add it
+                    if let watchHistory = try? document.data(as: WatchHistory.self) {
+                        self.recentWatchHistories.append(watchHistory)
+                        self.cachedWatchHistories[watchHistory.courseId!] = watchHistory
+                        
+                        
+                        // we don't need to get these because we only call refresh when an already loaded course was added to watch history
+//                        courseController.retrieveCourse(courseId: watchHistory.courseId!)
+//                        courseController.retrieveChannel(channelId: watchHistory.channelId!)
+//                        courseController.getCourseThumbnail(courseId: watchHistory.courseId!)
+                    } else {
+                        print("couldn't convert the document to a watch history")
+                    }
+                }
+                
+                self.isWatchHistoryLoading = false
+            } catch {
+                print("Error getting documents: \(error)")
+            }
+        }
+    }
+    
+    func retrieveFollowedChannels(channelIds: [String], courseController: CourseController) {
+        Task { @MainActor in            
+            for channelId in channelIds {
+                courseController.retrieveChannel(channelId: channelId)
+                courseController.getChannelThumbnail(channelId: channelId)
+            }
+        }
+    }
+    
+    func retrieveLikedCourses(courseIds: [String], courseController: CourseController) {
+        Task { @MainActor in
+            for courseId in courseIds {
+                courseController.retrieveCourse(courseId: courseId)
+                courseController.getCourseThumbnail(courseId: courseId)
+            }
+        }
+    }
+    
+    func retrieveLikedLectures(lectureIds: [String], courseController: CourseController) {
+        Task { @MainActor in
+            for lectureId in lectureIds {
+                courseController.retrieveLecture(lectureId: lectureId)
+                courseController.getLectureThumnbnail(lectureId: lectureId)
+            }
+        }
+    }
 }

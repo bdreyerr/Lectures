@@ -17,6 +17,10 @@ struct User : Codable {
     // 0 = Free, 1 = Pro
     var accountType: Int?
     
+    var likedCourseIds: [String]?
+    var likedLectureIds: [String]?
+    var followedChannelIds: [String]?
+    
     var isAdmin: Bool?
     
     enum CodingKeys: String, CodingKey {
@@ -25,6 +29,9 @@ struct User : Codable {
         case lastName
         case email
         case accountType
+        case likedCourseIds
+        case likedLectureIds
+        case followedChannelIds
         case isAdmin
     }
 }

@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct CourseCardView: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
     
     var course: Course
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            if let image = homeController.courseThumbnails[course.id!] {
+            if let image = courseController.courseThumbnails[course.id!] {
                 Image(uiImage: image)
                     .resizable()
                     .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
@@ -45,7 +46,7 @@ struct CourseCardView: View {
                         
                         HStack {
                             // TODO: Add back university name
-                            if let channel = homeController.cachedChannels[course.channelId!] {
+                            if let channel = courseController.cachedChannels[course.channelId!] {
                                 Text(channel.title!)
                                     .lineLimit(1) // Limit to a single line
                                     .truncationMode(.tail) // Use ellipsis for truncation

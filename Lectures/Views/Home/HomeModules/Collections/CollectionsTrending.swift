@@ -10,7 +10,7 @@ import SwiftUI
 struct CollectionsTrending: View {
     
     var collections = [
-        Collection(id: "1", image: "cs3", title: "Introductory Computer Science", subText: "Freshman CS at Top Tech Schools", description: """
+        Collection(id: "1", image: "cs", title: "Introductory Computer Science", subText: "Freshman CS at Top Tech Schools", description: """
     Dive into foundational computer science through curated introductory courses from world-leading institutions. This collection features core CS courses modeled after first-year curricula at universities like Stanford and MIT, providing a comprehensive introduction to computational thinking, programming fundamentals, and computer systems.
     
     Students begin with essential programming concepts, data structures, and algorithms while developing strong problem-solving skills. Through hands-on projects and carefully structured assignments, they'll master fundamental concepts that form the backbone of a computer science education. The curriculum emphasizes both theoretical understanding and practical implementation, preparing students for advanced study in areas like artificial intelligence, systems design, and software engineering.
@@ -25,7 +25,7 @@ struct CollectionsTrending: View {
     
     This collection offers the rigor and depth characteristic of elite technical institutions while remaining accessible to motivated beginners. Whether you're pursuing a career in technology or seeking to understand the foundations of modern computing, these courses provide an excellent starting point for your journey into computer science.
     """, courseIdList: ["1", "2"]),
-        Collection(id: "2", image: "humanities1", title: "Humanities Essentials", subText: "Mind Bending Psychology, Literature and More", description: """
+        Collection(id: "2", image: "humanities", title: "Humanities Essentials", subText: "Mind Bending Psychology, Literature and More", description: """
 Embark on a transformative journey through the fundamental questions and ideas that have shaped human civilization. This collection brings together essential courses in literature, philosophy, history, and the arts, offering a rich exploration of human thought, creativity, and cultural expression across time and cultures.
 
 From ancient philosophical debates to masterpieces of world literature, these courses develop critical thinking, analytical writing, and deep reading skills vital for understanding our shared human experience. Students engage with timeless works that address fundamental questions about knowledge, justice, beauty, and the human condition.

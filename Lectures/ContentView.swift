@@ -22,9 +22,10 @@ struct ContentView: View {
     @StateObject var authController = AuthController()
     @StateObject var userController = UserController()
     @StateObject var homeController = HomeController()
-    @StateObject var watchHistoryController = WatchHistoryController()
+    @StateObject var myCourseController = MyCourseController()
     
     // Resource Controllers
+    @StateObject var resourceController = ResourceController()
     @StateObject var examController = ExamController()
     @StateObject var examAnswerController = ExamAnswerController()
     @StateObject var notesController = NotesController()
@@ -60,12 +61,13 @@ struct ContentView: View {
         .environmentObject(authController)
         .environmentObject(userController)
         .environmentObject(homeController)
+        .environmentObject(resourceController)
         .environmentObject(examController)
         .environmentObject(examAnswerController)
         .environmentObject(notesController)
         .environmentObject(homeworkController)
         .environmentObject(homeworkAnswersController)
-        .environmentObject(watchHistoryController)
+        .environmentObject(myCourseController)
         .environmentObject(courseController)
         .onChange(of: isSignedIn) {
             if isSignedIn == true {
@@ -90,6 +92,7 @@ struct ContentView: View {
         .environmentObject(NotesController())
         .environmentObject(HomeworkController())
         .environmentObject(HomeworkAnswersController())
-        .environmentObject(WatchHistoryController())
+        .environmentObject(MyCourseController())
         .environmentObject(CourseController())
+        .environmentObject(ResourceController())
 }

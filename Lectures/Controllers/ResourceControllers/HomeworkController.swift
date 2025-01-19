@@ -14,7 +14,7 @@ class HomeworkController : ObservableObject {
     func retrieveHomework(homeworkId: String) {
         // if it's already cached don't do another lookup
         if let _ = cachedHomeworks[homeworkId] {
-            print("homework already cached")
+//            print("homework already cached")
             return
         }
         

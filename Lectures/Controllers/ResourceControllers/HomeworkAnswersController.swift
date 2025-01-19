@@ -22,7 +22,7 @@ class HomeworkAnswersController : ObservableObject {
     func retrieveHomeworkAnswer(homeworkAnswerId: String) {
         // if it's already cached don't do another lookup
         if let _ = cachedHomeworkAnswers[homeworkAnswerId] {
-            print("homework already cached")
+//            print("homework already cached")
             return
         }
         

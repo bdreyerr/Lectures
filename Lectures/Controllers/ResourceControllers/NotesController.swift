@@ -6,6 +6,8 @@ class NotesController : ObservableObject {
     // ExamId : Exam
     @Published var cachedNotes: [String : Resource] = [:]
     
+    
+    
     // TODO: Should we also store a map of courseIds : Resource?
     
     // Firestore
@@ -14,7 +16,7 @@ class NotesController : ObservableObject {
     func retrieveNote(noteId: String) {
         // if it's already cached don't do another lookup
         if let _ = cachedNotes[noteId] {
-            print("note already cached")
+//            print("note already cached")
             return
         }
         

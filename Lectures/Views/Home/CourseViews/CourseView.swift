@@ -10,29 +10,29 @@ import SwiftUI
 struct CourseView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var userController: UserController
     @EnvironmentObject var homeController: HomeController
     @EnvironmentObject var examController: ExamController
     @EnvironmentObject var examAnswerController: ExamAnswerController
     // Youtube player
-    @EnvironmentObject var youTubePlayerController: YouTubePlayerController
+//    @EnvironmentObject var youTubePlayerController: YouTubePlayerController
     
     // TODO: move these into user controller rather than local on this view
     @State var isCourseLiked: Bool = false
     @State private var isChannelFollowed = false
     
     @State private var shouldPopCourseFromStackOnDissapear: Bool = true
+    @State private var shouldAddCourseToStack: Bool = true
     
     @State private var isUpgradeAccountSheetShowing: Bool = false
     
     var body: some View {
         Group {
-            if let course = homeController.focusedCourse {
+            if let course = courseController.focusedCourse {
                 VStack {
                     // Course Cover Image?
                     ScrollView(showsIndicators: false) {
-                        
-                        
                         VStack(spacing: 5) {
                             HStack {
                                 // Course title and University
@@ -42,47 +42,46 @@ struct CourseView: View {
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 
-                                // Save button
-                                if !isCourseLiked {
-                                    Image(systemName: "heart")
-                                        .font(.system(size: 18, design: .serif))
-                                        .onTapGesture {
-                                            // if the user isn't a PRO member, they can't like courses
-                                            if let user = userController.user {
-                                                if user.accountType == 1 {
-                                                    withAnimation(.spring()) {
-                                                        self.isCourseLiked.toggle()
-                                                    }
-                                                    // TODO: add logic to like a course
-                                                    return
-                                                }
+
+                                // Like Course Button
+                                Button(action: {
+                                    // if the user isn't a PRO member, they can't like courses
+                                    if let user = userController.user {
+                                        if user.accountType == 1 {
+                                            userController.likeCourse(userId: user.id!, courseId: course.id!)
+                                            withAnimation(.spring()) {
+                                                self.isCourseLiked.toggle()
                                             }
-                                            
-                                            // show the upgrade account sheet
-                                            self.isUpgradeAccountSheetShowing = true
+                                            // TODO: add logic to like a course
+                                            return
                                         }
-                                } else {
-                                    Image(systemName: "heart.fill")
+                                    }
+                                    
+                                    // show the upgrade account sheet
+                                    self.isUpgradeAccountSheetShowing = true
+                                }) {
+                                    Image(systemName: isCourseLiked ? "heart.fill" : "heart")
                                         .font(.system(size: 18, design: .serif))
-                                        .foregroundStyle(Color.red)
-                                        .onTapGesture {
-                                            self.isCourseLiked.toggle()
-                                        }
+                                        .foregroundStyle(isCourseLiked ? Color.red : Color.black)
                                 }
+                                
                             }
                             
                             // Course Info
                             HStack {
                                 Text("\(course.numLecturesInCourse ?? 1) Lectures")
-                                    .font(.system(size: 12, design: .serif))
+                                    .font(.system(size: 12))
+//                                    .font(.system(size: 12, design: .serif))
                                     .opacity(0.6)
                                 
                                 Text("\(course.watchTimeInHrs ?? 1)Hr Watch Time")
-                                    .font(.system(size: 12, design: .serif))
+                                    .font(.system(size: 12))
+//                                    .font(.system(size: 12, design: .serif))
                                     .opacity(0.6)
                                 
                                 Text("\(course.aggregateViews ?? "0") Views")
-                                    .font(.system(size: 12, design: .serif))
+                                    .font(.system(size: 12))
+//                                    .font(.system(size: 12, design: .serif))
                                     .opacity(0.6)
                                 Spacer()
                             }
@@ -92,7 +91,8 @@ struct CourseView: View {
                                 HStack {
                                     ForEach(course.categories ?? [], id: \.self) { category in
                                         Text(category)
-                                            .font(.system(size: 12, design: .serif))
+                                            .font(.system(size: 12))
+//                                            .font(.system(size: 12, design: .serif))
                                             .opacity(0.6)
                                     }
                                 }
@@ -102,7 +102,7 @@ struct CourseView: View {
                             
                             HStack {
                                 // Play Button - links to lecture view and starts video
-                                if let lectures = homeController.lecturesInCourse[course.id!] {
+                                if let lectures = courseController.lecturesInCourse[course.id!] {
                                     if lectures.count > 0 {
                                         PlayCourseButton(shouldPopCourseFromStack: $shouldPopCourseFromStackOnDissapear, lecture: lectures[0])
                                     } else {
@@ -114,7 +114,7 @@ struct CourseView: View {
                                 
                                 Spacer()
                             }
-                            .padding(.bottom, 8)
+                            .padding(.bottom, 10)
                             
                             
                             
@@ -122,13 +122,13 @@ struct CourseView: View {
                             HStack {
                                 // channel image - nav link to channel view
                                 NavigationLink(destination: ChannelView()) {
-                                    if let channelImage = homeController.channelThumbnails[course.channelId!] {
+                                    if let channelImage = courseController.channelThumbnails[course.channelId!] {
                                         Image(uiImage: channelImage)
                                             .resizable()
                                         //                                        .clipShape(RoundedRectangle(cornerRadius: 10))
                                             .frame(width: 40, height: 40)
                                         
-                                        if let channel = homeController.cachedChannels[course.channelId!] {
+                                        if let channel = courseController.cachedChannels[course.channelId!] {
                                             VStack {
                                                 Text(channel.title!)
                                                     .font(.system(size: 14, design: .serif))
@@ -136,52 +136,17 @@ struct CourseView: View {
                                                 
                                                 HStack {
                                                     Text("\(channel.numCourses!) Courses")
-                                                        .font(.system(size: 12, design: .serif))
+                                                        .font(.system(size: 12))
+//                                                        .font(.system(size: 12, design: .serif))
                                                         .opacity(0.6)
                                                     
                                                     Text("\(channel.numLectures!) Lectures")
-                                                        .font(.system(size: 12, design: .serif))
+                                                        .font(.system(size: 12))
+//                                                        .font(.system(size: 12, design: .serif))
                                                         .opacity(0.6)
                                                     
                                                     Spacer()
                                                 }
-                                            }
-                                            
-                                            // Channel Follow Button
-                                            Button(action: {
-                                                // if the user isn't a PRO member, they can't follow accounts
-                                                if let user = userController.user {
-                                                    if user.accountType == 1 {
-                                                        withAnimation(.spring()) {
-                                                            isChannelFollowed.toggle()
-                                                        }
-                                                        // TODO: add logic to follow a channel
-                                                        return
-                                                    }
-                                                }
-                                                
-                                                // show the upgrade account sheet
-                                                self.isUpgradeAccountSheetShowing = true
-                                                
-                                            }) {
-                                                HStack(spacing: 8) {
-                                                    Image(systemName: isChannelFollowed ? "heart.fill" : "heart")
-                                                        .font(.system(size: 14))
-                                                    
-                                                    Text(isChannelFollowed ? "Following" : "Follow")
-                                                        .font(.system(size: 14, weight: .semibold))
-                                                }
-                                                .padding(.horizontal, 16)
-                                                .padding(.vertical, 8)
-                                                .foregroundColor(isChannelFollowed ? .white : .primary)
-                                                .background(
-                                                    Capsule()
-                                                        .fill(isChannelFollowed ? Color.red : Color.clear)
-                                                        .overlay(
-                                                            Capsule()
-                                                                .strokeBorder(isChannelFollowed ? Color.red : Color.gray, lineWidth: 1)
-                                                        )
-                                                )
                                             }
                                         }
                                     } else {
@@ -195,31 +160,69 @@ struct CourseView: View {
                                     self.shouldPopCourseFromStackOnDissapear = false
                                     
                                     // try to get the channel using course.channelId
-                                    if let channel = homeController.cachedChannels[course.channelId!] {
-                                        homeController.focusChannel(channel)
+                                    if let channel = courseController.cachedChannels[course.channelId!] {
+                                        courseController.focusChannel(channel)
                                     }
                                 })
                                 .buttonStyle(PlainButtonStyle())
+                                
+                                // Channel Follow Button
+                                Button(action: {
+                                    // if the user isn't a PRO member, they can't follow accounts
+                                    if let user = userController.user {
+                                        if user.accountType == 1 {
+                                            userController.followChannel(userId: user.id!, channelId: course.channelId!)
+                                            withAnimation(.spring()) {
+                                                isChannelFollowed.toggle()
+                                            }
+                                        } else {
+                                            // show the upgrade account sheet
+                                            self.isUpgradeAccountSheetShowing = true
+                                        }
+                                    }
+                                    
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: isChannelFollowed ? "heart.fill" : "heart")
+                                            .font(.system(size: 14))
+                                        
+                                        Text(isChannelFollowed ? "Following" : "Follow")
+                                            .font(.system(size: 14, weight: .semibold))
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .foregroundColor(isChannelFollowed ? .white : .primary)
+                                    .background(
+                                        Capsule()
+                                            .fill(isChannelFollowed ? Color.red : Color.clear)
+                                            .overlay(
+                                                Capsule()
+                                                    .strokeBorder(isChannelFollowed ? Color.red : Color.gray, lineWidth: 1)
+                                            )
+                                    )
+                                }
+                                
                             }
                             .cornerRadius(5)
                             
                             // Course Description
                             ExpandableText(text: course.courseDescription!, maxLength: 150)
-                                .padding(.top, 1)
+                                .padding(.top, 10)
                             
                             
                             // Exam
                             
                             HStack {
                                 Text("Exam")
-                                    .font(.system(size: 14, design: .serif))
+                                    .font(.system(size: 14))
+//                                    .font(.system(size: 14, design: .serif))
                                     .bold()
                                 Image(systemName: "sparkles")
                                     .foregroundStyle(Color.blue)
                                     .font(.system(size: 14, design: .serif))
                                 Spacer()
                             }
-                            .padding(.top, 2)
+                            .padding(.top, 20)
                             
                             
                             if let examId = course.examResourceId {
@@ -240,7 +243,8 @@ struct CourseView: View {
                             // Exam Answers
                             HStack {
                                 Text("Exam Answers")
-                                    .font(.system(size: 14, design: .serif))
+                                    .font(.system(size: 14))
+//                                    .font(.system(size: 14, design: .serif))
                                     .bold()
                                 Image(systemName: "sparkles")
                                     .foregroundStyle(Color.blue)
@@ -269,7 +273,8 @@ struct CourseView: View {
                             VStack {
                                 HStack {
                                     Text("Lectures In")
-                                        .font(.system(size: 14, design: .serif))
+                                        .font(.system(size: 14))
+//                                        .font(.system(size: 14, design: .serif))
                                         .bold()
                                     
                                     Text(course.courseTitle ?? "Title")
@@ -281,7 +286,7 @@ struct CourseView: View {
                                 }
                                 
                                 Group {
-                                    if let lectures = homeController.lecturesInCourse[course.id!] {
+                                    if let lectures = courseController.lecturesInCourse[course.id!] {
                                         ForEach(lectures, id: \.id) { lecture in
                                             NavigationLink(destination: LectureView()) {
                                                 LectureInCourseModule(lecture: lecture)
@@ -290,9 +295,7 @@ struct CourseView: View {
                                             .simultaneousGesture(TapGesture().onEnded {
                                                 shouldPopCourseFromStackOnDissapear = false
                                                 // focus the lecture
-                                                homeController.focusLecture(lecture)
-                                                // change the YT player source url
-                                                youTubePlayerController.changeSource(url: lecture.youtubeVideoUrl ?? "")
+                                                courseController.focusLecture(lecture)
                                             })
                                         }
                                     } else {
@@ -314,7 +317,8 @@ struct CourseView: View {
                             // Related Courses
                             HStack {
                                 Text("Courses related to")
-                                    .font(.system(size: 14, design: .serif))
+                                    .font(.system(size: 14))
+//                                    .font(.system(size: 14, design: .serif))
                                     .bold()
                                 
                                 
@@ -358,8 +362,22 @@ struct CourseView: View {
                     UpgradeAccountPaywallWithoutFreeTrial()
                 }
                 .onAppear {
-                    // get resource info
+                    // check if the user follows the course's channel and set the button accordingly
+                    if let user = userController.user {
+                        if user.followedChannelIds!.contains(course.channelId!) {
+                            self.isChannelFollowed = true
+                        }
+                    }
                     
+                    // same if the user likes the course
+                    if let user = userController.user {
+                        if user.likedCourseIds!.contains(course.id!) {
+                            self.isCourseLiked = true
+                        }
+                    }
+                    
+                    // get resource info
+            
                     // get the exam
                     if let examId = course.examResourceId {
                         examController.retrieveExam(examId: examId)
@@ -376,25 +394,37 @@ struct CourseView: View {
                     
                     // get the lectures in this course
                     if let lectureIds = course.lectureIds {
-                        homeController.retrieveLecturesInCourse(courseId: course.id!, lectureIds: lectureIds)
+                        print("retrieving lectures in course gang")
+                        courseController.retrieveLecturesInCourse(courseId: course.id!, lectureIds: lectureIds)
                     }
                     
-                    // add the newly focused course to the stack
-                    homeController.focusedCourseStack.append(course)
+                    if self.shouldAddCourseToStack {
+                        // add the newly focused course to the stack
+                        
+                        // MAKE SURE we aren't navigating back and the course was already focused and already in the stack
+                        if courseController.focusedCourseStack.last != course {
+                            print("appending to focus stack")
+                            courseController.focusedCourseStack.append(course)
+                        }
+                    }
                 }
                 .onDisappear {
                     if self.shouldPopCourseFromStackOnDissapear {
                         print("course view is dissapearing, we're going to pop the course stack")
                         
                         // remove the top of the focused lecture stack, for backwards navigation
-                        if let _ = homeController.focusedCourseStack.popLast() {
+                        if let _ = courseController.focusedCourseStack.popLast() {
 //                            print("")
                         }
                         
                         // also set the focused lecture to nil
-                        homeController.focusedCourse = nil
+                        courseController.focusedCourse = nil
                     } else {
                         print("course is dissapearing, but we're not popping it")
+                        
+                        // set the var back to true, it's default state - so if you return via nav stack, the propper behavior occurs
+                        // set the var back to false if returning to the view
+                        self.shouldPopCourseFromStackOnDissapear = true
                     }
                 }
             } else {
@@ -402,16 +432,20 @@ struct CourseView: View {
             }
         }
         .onAppear {
-            print("on appear on the group for course")
-            if homeController.focusedCourse == nil {
+            print("ON APPEAR - num things in the course stack: \(courseController.focusedCourseStack.count)")
+            if courseController.focusedCourse == nil {
                 print("course not focused yet, we'll try to focus the top of the stack")
                 // if there's not a focused lecture, try to focus the top of the stack
                 
-                if let topCourse = homeController.focusedCourseStack.last {
-                    homeController.focusCourse(topCourse)
+                if let topCourse = courseController.focusedCourseStack.last {
+                    courseController.focusCourse(topCourse)
                     // since the lecture was already in the stack, the resources should be cached
+                    self.shouldAddCourseToStack = false
                 }
             }
+        }
+        .onDisappear {
+            print("ON DISAPPEAR - num things in the course stack: \(courseController.focusedCourseStack.count)")
         }
     }
 }
@@ -421,5 +455,4 @@ struct CourseView: View {
         .environmentObject(HomeController())
         .environmentObject(ExamController())
         .environmentObject(ExamAnswerController())
-        .environmentObject(YouTubePlayerController())
 }

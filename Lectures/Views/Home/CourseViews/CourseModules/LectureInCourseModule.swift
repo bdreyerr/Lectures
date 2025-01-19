@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LectureInCourseModule: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
     var lecture: Lecture
@@ -16,7 +17,7 @@ struct LectureInCourseModule: View {
         // Other Lectures in the course
         HStack {
             // Image
-            if let image = homeController.lectureThumbnails[lecture.id!] {
+            if let image = courseController.lectureThumbnails[lecture.id!] {
                 Image(uiImage: image)
                     .resizable()
                     .frame(width: 40, height: 40)

@@ -22,7 +22,8 @@ struct ExpandableText: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(truncatedText)
-                .font(.system(size: 13, design: .serif))
+                .font(.system(size: 13))
+//                .font(.system(size: 13, design: .serif))
                 .opacity(0.8)
                 .frame(maxWidth: .infinity, alignment: .leading)
             

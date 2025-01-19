@@ -30,6 +30,18 @@ struct SearchBarWithFilters: View {
                 .onTapGesture {
                     isFilterShowing.toggle()
                 }
+            
+            // Submit Button
+            Button(action: {
+                // Add your search submit logic here
+                print("Search submitted")
+            }) {
+                Image(systemName: "arrow.right.circle.fill")
+                    .foregroundColor(.orange)
+                    .padding()
+            }
+            .buttonStyle(PlainButtonStyle()) // Avoid default button style
+            
         }
         .padding(10)
         .background(Color.white)

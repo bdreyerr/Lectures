@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CuratedCourses: View {
+    @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
     var body: some View {
@@ -18,13 +19,6 @@ struct CuratedCourses: View {
                     .bold()
                 
                 Spacer()
-                
-                NavigationLink(destination: CuratedCoursesFullList()) {
-                    Text("View All")
-                        .font(.system(size: 12, design: .serif))
-                        .opacity(0.6)
-                }
-                .buttonStyle(PlainButtonStyle())
             }
             
             ScrollView(.horizontal, showsIndicators: false) {
@@ -39,7 +33,7 @@ struct CuratedCourses: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                             .simultaneousGesture(TapGesture().onEnded {
-                                homeController.focusCourse(course)
+                                courseController.focusCourse(course)
                             })
                         }
                     }
