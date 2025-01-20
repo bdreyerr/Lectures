@@ -10,183 +10,156 @@ import SwiftUI
 struct SearchMainView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @State private var searchText: String = ""
-    @State private var areFiltersShowing: Bool = false
+    @EnvironmentObject var courseController: CourseController
+    
+    @StateObject var searchController = SearchController()
     
     var body: some View {
-        ZStack {
-            VStack {
-                TopBrandView()
-                    .padding(.horizontal, 20)
-                
-                
-                ScrollView() {
+        NavigationView {
+            ZStack {
+                VStack {
+                    TopBrandView()
                     
-                    VStack {
-                        HStack {
-                            // Search Icon
-                            Image(systemName: "magnifyingglass")
-                            
-                            // Search TextField
-                            TextField("Search", text: $searchText)
-                                .font(.system(size: 16))
-                                .textFieldStyle(PlainTextFieldStyle())
-                            
-                            
-                            // Clear Button (X Icon)
-                            if !searchText.isEmpty {
-                                Button(action: {
-                                    searchText = "" // Clear the text
-                                }) {
-                                    Image(systemName: "xmark")
-                                }
-                            }
-                            
-                            // filters
-                            Button(action: {
-                                withAnimation(.spring()) {
-                                    areFiltersShowing.toggle()
-                                }
-                            }) {
-                                Image(systemName: "text.alignright")
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
+                    ScrollView(showsIndicators: false) {
+                        SearchBarWithFilters()
                         
-                        if areFiltersShowing {
-                            // Result Type
-                            // Categories
-                            Group {
-                                HStack {
-                                    Text("Result Type")
-                                        .font(.system(size: 12))
-                                    Spacer()
-                                }
-                                .padding(.top, 10)
+                        
+                        // channels
+                        if !searchController.searchResultChannels.isEmpty {
+                            HStack {
+                                Image(systemName: "person")
+                                    .font(.system(size: 10))
+                                    .opacity(0.8)
                                 
-                                HStack {
-                                    SearchResultTypePill(iconName: "newspaper.fill", text: "Lectures")
-                                    
-                                    SearchResultTypePill(iconName: "mail.stack.fill", text: "Courses")
-                                    
-                                    SearchResultTypePill(iconName: "graduationcap", text: "Channels")
-                                    
-                                    Spacer()
-                                }
+                                Text("Channels")
+                                    .font(.system(size: 10))
+                                    .opacity(0.8)
+                                Spacer()
                             }
+                            .padding(.top, 10)
                             
-                            // Categories
-                            Group {
-                                HStack {
-                                    Text("Categories")
-                                        .font(.system(size: 12))
-                                    Spacer()
-                                }
-                                .padding(.top, 10)
-                                
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack {
-                                        PlainSearchFilterPill(text: "Computer Science")
-                                        
-                                        PlainSearchFilterPill(text: "Business")
-                                        
-                                        PlainSearchFilterPill(text: "Health")
-                                        
-                                        Spacer()
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(alignment: .top, spacing: 16) {
+                                    let groupedChannels = stride(from: 0, to: searchController.searchResultChannels.count, by: 2).map { index in
+                                        Array(searchController.searchResultChannels[index..<min(index + 2, searchController.searchResultChannels.count)])
+                                    }
+                                    
+                                    ForEach(groupedChannels.indices, id: \.self) { groupIndex in
+                                        let group = groupedChannels[groupIndex]
+                                        VStack(spacing: 16) {
+                                            ForEach(group, id: \.id) { channel in
+                                                if searchController.isChannelsLoading {
+                                                    SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 40)
+                                                } else {
+                                                    NavigationLink(destination: ChannelView()) {
+                                                        ChannelCard(channel: channel)
+                                                    }
+                                                    .buttonStyle(PlainButtonStyle())
+                                                    .simultaneousGesture(TapGesture().onEnded {
+                                                        courseController.focusChannel(channel)
+                                                    })
+                                                }
+                                            }
+                                        }
+                                        .padding(.trailing, 10)
                                     }
                                 }
                             }
-                            
-                            
-                            // Course Size (selecting any of these removes lectures from search results)
-                            Group {
-                                HStack {
-                                    Text("Course Size")
-                                        .font(.system(size: 12))
-                                    Spacer()
-                                }
-                                .padding(.top, 10)
+                        }
+                        
+                        if !searchController.searchResultCourses.isEmpty {
+                            HStack {
+                                Image(systemName: "mail.stack")
+                                    .font(.system(size: 10))
+                                    .opacity(0.8)
                                 
-                                HStack {
-                                    PlainSearchFilterPill(text: "<5 lecture")
-                                    PlainSearchFilterPill(text: ">5 lecture")
-                                    PlainSearchFilterPill(text: ">105 lecture")
+                                Text("Courses")
+                                    .font(.system(size: 10))
+                                    .opacity(0.8)
+                                Spacer()
+                            }
+                            .padding(.top, 10)
+                            .padding(.bottom, 2)
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(alignment: .top, spacing: 16) {
+                                    let groupedCourses = stride(from: 0, to: searchController.searchResultCourses.count, by: 2).map { index in
+                                        Array(searchController.searchResultCourses[index..<min(index + 2, searchController.searchResultCourses.count)])
+                                    }
                                     
-                                    Spacer()
+                                    ForEach(groupedCourses.indices, id: \.self) { groupIndex in
+                                        let group = groupedCourses[groupIndex]
+                                        VStack(spacing: 16) {
+                                            ForEach(group, id: \.id) { course in
+                                                if searchController.isCoursesLoading {
+                                                    SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                                                } else {
+                                                    CourseSearchResult(course: course)
+                                                }
+                                            }
+                                            Spacer() // if there's only  1 course, push it to the top
+                                        }
+                                        .padding(.trailing, 10)
+                                    }
                                 }
                             }
-                            
-                            
-                            // Sory By
-                            Group {
-                                HStack {
-                                    Text("Sory By")
-                                        .font(.system(size: 12))
-                                    Spacer()
-                                }
-                                .padding(.top, 10)
+                        }
+                        
+                        
+                        if !searchController.searchResultLectures.isEmpty {
+                            HStack {
+                                Image(systemName: "newspaper")
+                                    .font(.system(size: 10))
+                                    .opacity(0.8)
                                 
-                                HStack {
-                                    PlainSearchFilterPill(text: "Most Watched")
-                                    PlainSearchFilterPill(text: "Most Liked")
+                                Text("Lectures")
+                                    .font(.system(size: 10))
+                                    .opacity(0.8)
+                                Spacer()
+                            }
+                            .padding(.top, 10)
+                            .padding(.bottom, 2)
+                            
+                            
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(alignment: .top, spacing: 16) {
+                                    let groupedLectures = stride(from: 0, to: searchController.searchResultLectures.count, by: 2).map { index in
+                                        Array(searchController.searchResultLectures[index..<min(index + 2, searchController.searchResultLectures.count)])
+                                    }
                                     
-                                    Spacer()
+                                    ForEach(groupedLectures.indices, id: \.self) { groupIndex in
+                                        let group = groupedLectures[groupIndex]
+                                        VStack(spacing: 16) {
+                                            ForEach(group, id: \.id) { lecture in
+                                                if searchController.isLecturesLoading {
+                                                    SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 40)
+                                                } else {
+                                                    NavigationLink(destination: LectureView()) {
+                                                        LectureSearchResult(lecture: lecture)
+                                                    }
+                                                    .buttonStyle(PlainButtonStyle())
+                                                    .simultaneousGesture(TapGesture().onEnded {
+                                                        courseController.focusLecture(lecture)
+                                                    })
+                                                }
+                                            }
+                                            Spacer() // if there's only  1 lecture, push it to the top
+                                        }
+                                        .padding(.trailing, 10)
+                                    }
                                 }
                             }
-                            
-                            
                         }
                     }
-                    .padding(10)
-                    .background(Color.black.opacity(0.05)) // Dark background
-                    .cornerRadius(20) // Rounded corners
-                    .padding(.horizontal)
-                    .padding(.top, 10)
-                    
-                    
-                    //                    HStack {
-                    //                        Text("Find a course -")
-                    //                            .font(.system(size: 20, design: .serif))
-                    //                            .bold()
-                    //                            .padding(.bottom, 2)
-                    //
-                    //                        Spacer()
-                    //
-                    //                        // Replace previous Text with this version
-                    //                        Text(displayedText)
-                    //                            .font(.system(size: 18, design: .serif))
-                    //                            .frame(maxWidth: .infinity, alignment: .leading)
-                    //                            .foregroundColor(.black.opacity(0.9))
-                    //                            .animation(.easeInOut(duration: 0.1), value: displayedText)
-                    //                            .onReceive(timer) { _ in
-                    //                                if !isAnimating {
-                    //                                    currentIndex = (currentIndex + 1) % subjects.count
-                    //                                    currentSubject = subjects[currentIndex]
-                    //                                    typeWriter()
-                    //                                }
-                    //                            }
-                    //                            .onAppear {
-                    //                                typeWriter() // Initial animation
-                    //                            }
-                    //                    }
-                    //                    .padding(.horizontal, 20)
-                    
-                    //                    SearchBarWithFilters()
-                    //                        .padding(.horizontal, 20)
-                    //                        .padding(.bottom, 10)
-                    
-                    //                    SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "The Emotion Machine", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
-                    //
-                    //                    SearchedCourse(coverImage: "stanford", universityImage: "mit", courseName: "The Emotion Machine", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
-                    //
-                    //                    SearchedCourse(coverImage: "mit", universityImage: "stanford", courseName: "Another One For Ya", universityName: "MIT", numLectures: 6, watchTimeinHrs: 9, totalViews: "50M")
                     
                 }
-                
+                .padding(.horizontal, 20)
+                .scrollDismissesKeyboard(.interactively)
             }
-            .scrollDismissesKeyboard(.interactively)
+            .navigationBarHidden(true)
+            .environmentObject(searchController)
         }
-        .navigationBarHidden(true)
     }
 }
 

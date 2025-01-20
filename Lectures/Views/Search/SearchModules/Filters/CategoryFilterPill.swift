@@ -1,29 +1,36 @@
 //
-//  SearchResultTypePill.swift
+//  CategoryFilterPill.swift
 //  Lectures
 //
-//  Created by Ben Dreyer on 1/18/25.
+//  Created by Ben Dreyer on 1/19/25.
 //
 
 import SwiftUI
 
-struct SearchResultTypePill: View {
+struct CategoryFilterPill: View {
+    @EnvironmentObject var searchController: SearchController
     
-    var iconName: String
     var text: String
     
-    @State private var isSelected: Bool = true
+    @State private var isSelected: Bool = false
+    
     var body: some View {
         Button(action: {
             // Action for the button
             withAnimation(.spring()) {
+                // either add or remove this category from the list in the controller
+                if isSelected {
+                    // remove
+                    searchController.activeCategories.removeAll { $0 == text }
+                } else {
+                    // add
+                    searchController.activeCategories.append(text)
+                }
+                
                 isSelected.toggle()
             }
         }) {
             HStack {
-                Image(systemName: iconName)
-                    .font(.system(size: 11, weight: .medium))
-                
                 Text(text)
                     .font(.system(size: 11, weight: .medium))
             }
@@ -38,5 +45,5 @@ struct SearchResultTypePill: View {
 }
 
 //#Preview {
-//    SearchResultTypePill()
+//    CategoryFilterPill()
 //}

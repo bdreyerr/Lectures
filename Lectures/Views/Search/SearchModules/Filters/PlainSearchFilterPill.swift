@@ -10,13 +10,14 @@ import SwiftUI
 struct PlainSearchFilterPill: View {
     var text: String
     
-    @State private var isSelected: Bool = false
+    @Binding var isSelected: Bool 
+    var onTap: (Bool) -> Void  // Add this closure property
     
     var body: some View {
         Button(action: {
             // Action for the button
             withAnimation(.spring()) {
-                isSelected.toggle()
+                onTap(isSelected)  // Call the closure with the new state
             }
         }) {
             HStack {

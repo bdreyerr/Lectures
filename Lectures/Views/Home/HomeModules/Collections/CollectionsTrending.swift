@@ -61,20 +61,77 @@ Through challenging problem sets, theoretical explorations, and practical applic
     ]
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
+        
+        VStack(alignment: .leading) {
+            HStack {
+                Text("Trending Collections")
+                    .font(.system(size: 14, design: .serif))
+                    .bold()
                 
-                CollectionCard(collection: collections[0])
-                
-                CollectionCard(collection: collections[1])
-                
-                CollectionCard(collection: collections[2])
-                
+                Spacer()
+            }
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .top, spacing: 16) {
+                    let groupedUniversities = stride(from: 0, to: collections.count, by: 2).map { index in
+                        Array(collections[index..<min(index + 2, collections.count)])
+                    }
+                    
+                    ForEach(groupedUniversities.indices, id: \.self) { groupIndex in
+                        let group = groupedUniversities[groupIndex]
+                        VStack(spacing: 16) {
+                            ForEach(group, id: \.id) { collection in
+                                CollectionCard(collection: collection)
+                            }
+                        }
+                        .padding(.trailing, 10)
+                    }
+                }
             }
         }
+        .frame(maxHeight: 220)
+        
+        
+        
+        
+//        HStack {
+//            Text("Trending Collections")
+//                .font(.system(size: 14, design: .serif))
+//                .bold()
+//            
+//            Spacer()
+//        }
+//        
+//        ScrollView(.horizontal, showsIndicators: false) {
+//            HStack {
+//                let groupedCollections = stride(from: 0, to: collections.count, by: 2).map { index in
+//                    Array(collections[index..<min(index + 2, collections.count)])
+//                }
+//                
+//                ForEach(groupedCollections.indices, id: \.self) { groupIndex in
+//                    let group = groupedCollections[groupIndex]
+//                    VStack {
+//                        ForEach(group, id: \.id) { collection in
+//                            CollectionCard(collection: collection)
+//                        }
+//                        Spacer()
+//                    }
+//                }
+//            }
+//        }
+         
+//        ScrollView(.horizontal, showsIndicators: false) {
+//            HStack(spacing: 10) {
+//                
+//                CollectionCard(collection: collections[0])
+//                
+//                CollectionCard(collection: collections[1])
+//                
+//                CollectionCard(collection: collections[2])
+//                
+//            }
+//        }
     }
-    
-    
 }
 
 #Preview {

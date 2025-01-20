@@ -25,6 +25,8 @@ struct Channel : Codable, Identifiable {
     var numCourses: Int?
     var numLectures: Int?
     
+    var searchTerms: [String]?
+    
     enum CodingKeys: String, CodingKey {
         case id
         case title
@@ -32,6 +34,7 @@ struct Channel : Codable, Identifiable {
         case courseIds
         case numCourses
         case numLectures
+        case searchTerms
     }
     
     // MIT, Stanford, Yale, Harvard, Oxford

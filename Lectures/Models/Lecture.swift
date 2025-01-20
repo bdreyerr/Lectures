@@ -19,6 +19,7 @@ struct Lecture : Codable, Identifiable, Hashable {
     
     // course metadata
     var lectureTitle: String?
+    var courseTitle: String?
     var professorName: String?
     var channelName: String?
     var lectureDescription: String?
@@ -41,11 +42,14 @@ struct Lecture : Codable, Identifiable, Hashable {
     var thumbnailUrl: String?
     var youtubeVideoUrl: String?
     
+    var searchTerms: [String]?
+    
     enum CodingKeys: String, CodingKey {
         case id
         case courseId
         case channelId
         case lectureTitle
+        case courseTitle
         case professorName
         case channelName
         case lectureDescription
@@ -61,5 +65,6 @@ struct Lecture : Codable, Identifiable, Hashable {
         case homeworkAnswersResourceId
         case thumbnailUrl
         case youtubeVideoUrl
+        case searchTerms
     }
 }

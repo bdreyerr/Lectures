@@ -22,19 +22,29 @@ struct LeadingUniversities: View {
             }
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(homeController.leadingUniversities, id: \.id) { channel in
-                        if homeController.isUniversityLoading {
-                            SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
-                        } else {
-                            NavigationLink(destination: ChannelView()) {
-                                ChannelCard(channel: channel)
+                HStack(alignment: .top, spacing: 16) {
+                    let groupedUniversities = stride(from: 0, to: homeController.leadingUniversities.count, by: 2).map { index in
+                        Array(homeController.leadingUniversities[index..<min(index + 2, homeController.leadingUniversities.count)])
+                    }
+                    
+                    ForEach(groupedUniversities.indices, id: \.self) { groupIndex in
+                        let group = groupedUniversities[groupIndex]
+                        VStack(spacing: 16) {
+                            ForEach(group, id: \.id) { channel in
+                                if homeController.isUniversityLoading {
+                                    SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                                } else {
+                                    NavigationLink(destination: ChannelView()) {
+                                        ChannelCard(channel: channel)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .simultaneousGesture(TapGesture().onEnded {
+                                        courseController.focusChannel(channel)
+                                    })
+                                }
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .simultaneousGesture(TapGesture().onEnded {
-                                courseController.focusChannel(channel)
-                            })
                         }
+                        .padding(.trailing, 10)
                     }
                 }
             }

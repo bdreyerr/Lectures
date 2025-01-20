@@ -38,6 +38,9 @@ struct Course : Codable, Identifiable, Hashable {
     // Lectures inside of the course, using their ID
     var lectureIds: [String]?
     
+    // Terms used to search for this course (title, channel, categories, etc..)
+    var searchTerms: [String]?
+    
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -55,5 +58,6 @@ struct Course : Codable, Identifiable, Hashable {
         case examResourceId
         case examAnswersResourceId
         case lectureIds
+        case searchTerms
     }
 }
