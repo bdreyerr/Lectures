@@ -34,15 +34,23 @@ struct LectureCardView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             
             // Play button overlay in center
-            Circle()
-                .fill(.black.opacity(0.6))
+            Image(systemName: "play.circle.fill") // SF Symbol for play button
+                .resizable()
                 .frame(width: 50, height: 50)
-                .overlay(
-                    Image(systemName: "play.fill")
-                        .foregroundColor(.red)
-                        .font(.system(size: 20))
-                )
+                .foregroundColor(.white)
+                .shadow(radius: 5)
                 .position(x: UIScreen.main.bounds.width * 0.3, y: 75) // Center of the card
+            
+            
+//            Circle()
+//                .fill(.black.opacity(0.6))
+//                .frame(width: 50, height: 50)
+//                .overlay(
+//                    Image(systemName: "play.fill")
+//                        .foregroundColor(.red)
+//                        .font(.system(size: 20))
+//                )
+//                .position(x: UIScreen.main.bounds.width * 0.3, y: 75) // Center of the card
             
             VStack(spacing: 0) {
                 HStack {

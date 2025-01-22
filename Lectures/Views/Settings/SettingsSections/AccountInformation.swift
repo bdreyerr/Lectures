@@ -15,42 +15,13 @@ struct AccountInformation: View {
     @EnvironmentObject var userController: UserController
     
     @State private var signInMethod: String?
+    
+    @State private var editNamePopover = false
+    @State private var firstName = ""
+    @State private var lastName = ""
     var body: some View {
         VStack {
-            // Today's Prompt and Change Date Button
-            HStack {
-                if (colorScheme == .light) {
-                    Image("LogoTransparentWhiteBackground")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                } else if (colorScheme == .dark) {
-                    Image("LogoBlackBackground")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                }
-                
-                Text("|   Lectura")
-                    .font(.system(size: 16, design: .serif))
-                    .bold()
-                
-                Spacer()
-                
-                Text(Date().formatted(.dateTime.month().day()))
-                    .font(.system(size: 14, design: .serif))
-            }
-            // Adding this seems to stop the weird expansion of this section when switching tabs
-            .overlay {
-                Rectangle()
-                    .stroke(Color.black, lineWidth: 0)
-            }
-            
             ScrollView(showsIndicators: false) {
-                Text("Settings")
-                    .font(.system(size: 24, design: .serif))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .bold()
-                    .padding(.bottom, 40)
-                
                 Text("Account Information")
                     .font(.system(size: 15, design: .serif))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,6 +41,40 @@ struct AccountInformation: View {
                                 .font(.system(size: 14, design: .serif))
                         }
                         
+                        // edit button
+                        Button(action: {
+                            editNamePopover = true
+                        }) {
+                            Image(systemName: "square.and.pencil")
+                                .imageScale(.medium)
+                                .padding(.leading, 4)  // Add some space before the button
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .alert("Edit Name", isPresented: $editNamePopover) {
+                            
+                            if colorScheme == .light {
+                                TextField("First Name", text: $firstName)
+                                    .foregroundStyle(Color.black)
+                                TextField("Last Name", text: $lastName)
+                                    .foregroundStyle(Color.black)
+                            } else if colorScheme == .dark {
+                                TextField("First Name", text: $firstName)
+                                    .foregroundStyle(Color.white)
+                                TextField("Last Name", text: $lastName)
+                                    .foregroundStyle(Color.white)
+                            }
+                            
+                            
+                            HStack {
+                                Button("Cancel", role: .cancel) {
+                                    editNamePopover = false
+                                }.foregroundColor(.red)
+                                Button("Save", role: .none) {
+                                    // change name
+                                    userController.changeName(firstName: firstName, lastName: lastName)
+                                }.foregroundColor(.blue)
+                            }
+                        }
                         
                         Spacer()
                     }
@@ -133,7 +138,7 @@ struct AccountInformation: View {
             }
         }
     }
-        
+    
     
     func getSignInProvider() -> String? {
         guard let user = Auth.auth().currentUser,

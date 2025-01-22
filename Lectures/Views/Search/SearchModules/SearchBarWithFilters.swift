@@ -40,15 +40,16 @@ struct SearchBarWithFilters: View {
                 // Submit search Button
                 if !searchController.searchText.isEmpty {
                     Button(action: {
-                        Task { @MainActor in
-                            await searchController.performSearch(courseController: courseController)
-                            //                        searchController.performSearchPlacerholder(courseController: courseController)
-                        }
+                        searchController.areFiltersShowing = false
+                        searchController.performSearch(courseController: courseController)
+                        hideKeyboard()
+                        
                     }) {
                         Image(systemName: "arrow.forward.circle.fill")
                             .foregroundStyle(Color.green)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .padding(.trailing, 10)
                 }
                 
                 // filters

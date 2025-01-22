@@ -114,6 +114,8 @@ struct HomeMainView: View {
                 courseController.focusedCourseStack = []
             }
         }
+        // Needed for iPad compliance
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

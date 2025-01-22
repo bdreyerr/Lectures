@@ -10,7 +10,7 @@ import SwiftUI
 struct CollectionsTrending: View {
     
     var collections = [
-        Collection(id: "1", image: "cs", title: "Introductory Computer Science", subText: "Freshman CS at Top Tech Schools", description: """
+        Collection(id: "1", image: "cs2", title: "Introductory Computer Science", subText: "Freshman CS at Top Tech Schools", description: """
     Dive into foundational computer science through curated introductory courses from world-leading institutions. This collection features core CS courses modeled after first-year curricula at universities like Stanford and MIT, providing a comprehensive introduction to computational thinking, programming fundamentals, and computer systems.
     
     Students begin with essential programming concepts, data structures, and algorithms while developing strong problem-solving skills. Through hands-on projects and carefully structured assignments, they'll master fundamental concepts that form the backbone of a computer science education. The curriculum emphasizes both theoretical understanding and practical implementation, preparing students for advanced study in areas like artificial intelligence, systems design, and software engineering.
@@ -41,7 +41,7 @@ Key areas covered include:
 
 Through careful analysis of primary texts, engaging discussions, and thoughtful writing assignments, students develop the interpretive skills and cultural literacy essential for meaningful participation in contemporary intellectual discourse. Whether you're interested in understanding the great conversations that have shaped our world or seeking to develop sophisticated analytical and communication skills, these courses provide a solid foundation in humanistic inquiry and expression.
 """, courseIdList: ["1", "2"]),
-        Collection(id: "3", image: "math1", title: "Ultimate Math", subText: "High Complexity Math to Break your Brain", description: """
+        Collection(id: "3", image: "math", title: "Ultimate Math", subText: "High Complexity Math to Break your Brain", description: """
 Journey through mathematics from foundational concepts to advanced theoretical frontiers. This comprehensive collection builds mathematical mastery through carefully sequenced courses covering pure and applied mathematics, designed to develop both computational fluency and deep conceptual understanding.
 
 Students progress from essential calculus and linear algebra through abstract algebra, real analysis, and beyond, building the robust mathematical foundation needed for advanced work in science, engineering, and mathematical research. Each course emphasizes rigorous proof techniques, problem-solving strategies, and the interconnections between different mathematical domains.

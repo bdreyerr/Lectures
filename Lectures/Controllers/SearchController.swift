@@ -16,6 +16,8 @@ class SearchController : ObservableObject {
     @Published var searchResultLectures: [Lecture] = []
     @Published var searchResultChannels: [Channel] = []
     
+    @Published var wasSearchPerformed = false
+    
     // Loading vars
     @Published var isCoursesLoading: Bool = false
     @Published var isLecturesLoading: Bool = false
@@ -50,70 +52,74 @@ class SearchController : ObservableObject {
         searchResultCourses = []
         searchResultLectures = []
         searchResultChannels = []
+        
+        isCoursesLoading = false
+        isLecturesLoading = false
+        isChannelsLoading = false
+        
+        self.wasSearchPerformed = false
     }
     
-    func performSearch(courseController: CourseController) async {
-        guard searchText.count >= 2 else {
-            searchResultCourses = []
-            searchResultLectures = []
-            searchResultChannels = []
-            return
-        }
-        
-        DispatchQueue.main.async {
+    func performSearch(courseController: CourseController) {
+        Task { @MainActor in
+            guard searchText.count >= 2 else {
+                searchResultCourses = []
+                searchResultLectures = []
+                searchResultChannels = []
+                return
+            }
+            self.wasSearchPerformed = false
+            
             self.searchResultCourses = []
             self.searchResultLectures = []
             self.searchResultChannels = []
-        }
-        
-        
-        // Create search terms for case-insensitive search
-        var searchTerms = searchText.lowercased().split(separator: " ").map(String.init)
-        
-        // search course
-        if isCourseFilterSelected {
-            DispatchQueue.main.async {
-                self.isCoursesLoading = true
+            
+            
+            
+            
+            // Create search terms for case-insensitive search
+            var searchTerms = searchText.lowercased().split(separator: " ").map(String.init)
+            
+            if !activeCategories.isEmpty {
+                
+                // add categories into search terms
+                for category in activeCategories {
+                    let categoryTerms = category.lowercased().split(separator: " ").map(String.init)
+                    for term in categoryTerms {
+                        searchTerms.append(term)
+                    }
+//                    print("we have categories, here's current search terms: ", searchTerms)
+                }
             }
             
-            do {
+            let trimmedSearchTerms = searchTerms.map { $0.trimmingCharacters(in: .whitespaces) }
+            
+            // search courses
+            if isCourseFilterSelected {
+                self.isCoursesLoading = true
                 
-                if !activeCategories.isEmpty {
-//                    courseQuery = courseQuery.whereField("categories", arrayContainsAny: activeCategories)
+                do {
+                    var courseQuery = db.collection("courses").whereField("searchTerms", arrayContainsAny: trimmedSearchTerms)
                     
-                    // instead of adding another arraycontains any, just add each selected category into the searchTerms
-                    
-                    for category in activeCategories {
-                        let categoryTerms = category.lowercased().split(separator: " ").map(String.init)
-                        for term in categoryTerms {
-                            searchTerms.append(term)
-                        }
-                        print("we have categories, here's current search terms: ", searchTerms)
+                    // Apply course size filters
+                    if lessThanFiveLectures {
+                        courseQuery = courseQuery.whereField("numLecturesInCourse", isLessThan: 5)
+                    } else if greaterThanFiveLectures {
+                        courseQuery = courseQuery.whereField("numLecturesInCourse", isGreaterThan: 5)
+                    } else if greaterThanTenLectures {
+                        courseQuery = courseQuery.whereField("numLecturesInCourse", isGreaterThan: 10)
                     }
-                }
-                
-                var courseQuery = db.collection("courses").whereField("searchTerms", arrayContainsAny: searchTerms)
-                
-                // Apply course size filters
-                if lessThanFiveLectures {
-                    courseQuery = courseQuery.whereField("numLecturesInCourse", isLessThan: 5)
-                } else if greaterThanFiveLectures {
-                    courseQuery = courseQuery.whereField("numLecturesInCourse", isGreaterThan: 5)
-                } else if greaterThanTenLectures {
-                    courseQuery = courseQuery.whereField("numLecturesInCourse", isGreaterThan: 10)
-                }
-                
-                // Apply sorting
-                if sortByMostWatched {
-                    // TODO: switch aggregate views to an int, rn it's a string
-                    courseQuery = courseQuery.order(by: "aggregateViews", descending: true)
-                } else if sortByMostLiked {
-                    courseQuery = courseQuery.order(by: "numLikesInApp", descending: true)
-                }
-                
-                let snapshot = try await courseQuery.limit(to: 8).getDocuments()
-                
-                DispatchQueue.main.async {
+                    
+                    // Apply sorting
+                    if sortByMostWatched {
+                        // TODO: switch aggregate views to an int, rn it's a string
+                        courseQuery = courseQuery.order(by: "aggregateViews", descending: true)
+                    } else if sortByMostLiked {
+                        courseQuery = courseQuery.order(by: "numLikesInApp", descending: true)
+                    }
+                    
+                    let snapshot = try await courseQuery.limit(to: 8).getDocuments()
+                    
                     self.searchResultCourses = snapshot.documents.compactMap { document -> Course? in
                         let course = try? document.data(as: Course.self)
                         
@@ -128,125 +134,83 @@ class SearchController : ObservableObject {
                         }
                         return course
                     }
+                    
+                } catch let error {
+                    print("error fetching courses: ", error.localizedDescription)
                 }
-            } catch let error {
-                print("error fetching courses: ", error.localizedDescription)
-            }
-            DispatchQueue.main.async {
+                
                 self.isCoursesLoading = false
             }
-        }
-    }
-    
-    func performSearchPlacerholder(courseController: CourseController) {
-        Task { @MainActor in
-            searchCourses(courseController: courseController)
-            searchLectures(courseController: courseController)
-            searchChannels(courseController: courseController)
-        }
-    }
-    
-    func searchCourses(courseController: CourseController) {
-        // just return the top 2 courses by num likes
-        self.searchResultCourses = []
-        isCoursesLoading = true
-        
-        Task { @MainActor in
-            do {
-                let querySnapshot = try await db.collection("courses").order(by: "numLikesInApp", descending: true).limit(to: 3).getDocuments()
+            
+            if isLectureFilterSelected {
+                self.isLecturesLoading = true
                 
-                if querySnapshot.isEmpty {
-                    print("no courses returned when looking up community favorites")
-                    return
-                }
-                
-                for document in querySnapshot.documents {
-                    if let course = try? document.data(as: Course.self) {
-                        self.searchResultCourses.append(course)
-                        
-                        // add the course to the cache
-                        courseController.cachedCourses[course.id!] = course
-                        
-                        // TODO: add some logic to avoid making duplicate calls
-                        // fetch the courses thumbnail
-                        courseController.getCourseThumbnail(courseId: course.id!)
-                        
-                        // fetch the channel
-                        courseController.retrieveChannel(channelId: course.channelId!)
+                do {
+                    var lectureQuery = db.collection("lectures").whereField("searchTerms", arrayContainsAny: trimmedSearchTerms)
+                    
+                    // for lectures, we'd prefer to show results for the earliest lecture in the course if possible, so let's try to order them by that field
+                    lectureQuery = lectureQuery.order(by: "lectureNumberInCourse")
+                    
+//                    // Apply sorting
+                    if sortByMostWatched {
+                        // TODO: switch views on Youtube to an int, rn it's a string
+                        lectureQuery = lectureQuery.order(by: "viewsOnYouTube", descending: true)
+                    } else if sortByMostLiked {
+                        lectureQuery = lectureQuery.order(by: "numLikesInApp", descending: true)
                     }
-                }
-                isCoursesLoading = false
-            } catch let error {
-                print("error: ", error.localizedDescription)
-            }
-        }
-    }
-    
-    func searchLectures(courseController: CourseController) {
-        // just return the top 2 lectures by num likes
-        self.searchResultLectures = []
-        isLecturesLoading = true
-        
-        Task { @MainActor in
-            do {
-                let querySnapshot = try await db.collection("lectures").order(by: "numLikesInApp", descending: true).limit(to: 3).getDocuments()
-                
-                if querySnapshot.isEmpty {
-                    print("no courses returned when looking up community favorites")
-                    return
-                }
-                
-                for document in querySnapshot.documents {
-                    if let lecture = try? document.data(as: Lecture.self) {
-                        self.searchResultLectures.append(lecture)
+                    
+                    
+                    
+                    
+                    let snapshot = try await lectureQuery.limit(to: 8).getDocuments()
+                    
+                    self.searchResultLectures = snapshot.documents.compactMap { document -> Lecture? in
+                        let lecture = try? document.data(as: Lecture.self)
                         
-                        
-                        // add the course to the cache
-                        courseController.cachedLectures[lecture.id!] = lecture
-                        
-                        // TODO: add some logic to avoid making duplicate calls
-                        // fetch the courses thumbnail
-                        courseController.getLectureThumnbnail(lectureId: lecture.id!)
-                        
-                        // fetch the channel
-                        courseController.retrieveChannel(channelId: lecture.channelId!)
+                        if let lecture = lecture {
+                            courseController.cachedLectures[lecture.id!] = lecture
+                            
+                            courseController.getLectureThumnbnail(lectureId: lecture.id!)
+                            
+                            courseController.retrieveChannel(channelId: lecture.channelId!)
+                        } else {
+                            print("lecture was nil")
+                        }
+                        return lecture
                     }
+                    
+                } catch let error {
+                    print("error searching lectures: ", error.localizedDescription)
                 }
-                isLecturesLoading = false
-            } catch let error {
-                print("error")
+                
+                self.isLecturesLoading = false
             }
-        }
-    }
-    
-    func searchChannels(courseController: CourseController) {
-        // just return top 2 channels by # course
-        self.searchResultLectures = []
-        isChannelsLoading = true
-        
-        Task { @MainActor in
-            do {
-                let querySnapshot = try await db.collection("channels").order(by: "numCourses", descending: true).limit(to: 3).getDocuments()
+            
+            if isChannelFilterSelected {
+                isChannelsLoading = true
                 
-                if querySnapshot.isEmpty {
-                    print("no courses returned when looking up community favorites")
-                    return
-                }
-                
-                for document in querySnapshot.documents {
-                    if let channel = try? document.data(as: Channel.self) {
-                        self.searchResultChannels.append(channel)
+                do {
+                    let channelQuery = db.collection("channels").whereField("searchTerms", arrayContainsAny: trimmedSearchTerms)
+                    
+                    let snapshot = try await channelQuery.limit(to: 8).getDocuments()
+                    
+                    self.searchResultChannels = snapshot.documents.compactMap { document -> Channel? in
+                        let channel = try? document.data(as: Channel.self)
                         
-                        courseController.cachedChannels[channel.id!] = channel
+                        if let channel = channel {
+                            courseController.cachedChannels[channel.id!] = channel
+                            
+                            courseController.getChannelThumbnail(channelId: channel.id ?? "0")
+                        }
                         
-                        courseController.getChannelThumbnail(channelId: channel.id!)
+                        return channel
                     }
+                } catch let error {
+                    print("error searching channels: ", error.localizedDescription)
                 }
-                isChannelsLoading = false
-            } catch let error {
-                print("error")
             }
+            
+            self.wasSearchPerformed = true
         }
     }
-    
 }

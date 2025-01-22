@@ -68,7 +68,7 @@ struct CourseSearchResult: View {
                 }
             }
         }
-        .frame(maxWidth: 330, maxHeight: 100)
+        .frame(maxWidth: 330)
         .buttonStyle(PlainButtonStyle())
         .simultaneousGesture(TapGesture().onEnded { _ in
             courseController.focusCourse(course)

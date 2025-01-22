@@ -187,4 +187,28 @@ class UserController : ObservableObject {
             }
         }
     }
+    
+    func changeName(firstName: String, lastName: String) {
+        Task { @MainActor in
+            // change the name in firestore
+            if let user = self.user, let id = user.id {
+                let userRef = db.collection("users").document(id)
+
+                // Set the "capital" field of the city 'DC'
+                do {
+                  try await userRef.updateData([
+                    "firstName": firstName,
+                    "lastName": lastName,
+                  ])
+                    
+                    // update it locally
+                    self.user?.firstName = firstName
+                    self.user?.lastName = lastName
+                  
+                } catch {
+                }
+            }
+            
+        }
+    }
 }

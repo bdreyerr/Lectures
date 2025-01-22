@@ -25,16 +25,17 @@ struct MyCoursesMainView: View {
                 TopBrandView()
                     .padding(.horizontal, 20)
                 
-                Spacer()
-                
                 Text("Sign in to see course history")
                     .font(.system(size: 13, design: .serif))
+                    .padding(.top, 10)
                     .padding(.bottom, 5)
+                    
                 
                 SignInWithApple(displaySignInSheet: .constant(false))
                 
                 SignInWithGoogle(displaySignInSheet: .constant(false))
-                    .padding(.bottom, 500)
+                    
+                Spacer()
             }
         } else {
             NavigationView {
@@ -97,6 +98,8 @@ struct MyCoursesMainView: View {
                 .navigationBarHidden(true)
                 .padding(.horizontal, 20)
             }
+            // Needed for iPad compliance
+            .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }
