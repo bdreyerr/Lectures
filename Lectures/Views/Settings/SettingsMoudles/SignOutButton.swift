@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SignOutButton: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     @EnvironmentObject var authController: AuthController
     @EnvironmentObject var userController: UserController
     
@@ -19,7 +21,7 @@ struct SignOutButton: View {
             userController.logOut()
         }) {
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.black, lineWidth: 1)
+                .stroke(lineWidth: 1)
                 .frame(height: 40)
                 .overlay(
                     Text("Log Out")

@@ -35,6 +35,8 @@ struct TopBrandView: View {
 }
 
 struct TimeBasedGreeting: View {
+    @EnvironmentObject var userController: UserController
+    
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
         switch hour {
@@ -48,12 +50,21 @@ struct TimeBasedGreeting: View {
     }
     
     var body: some View {
-        Text("\(greeting), Ben")
-            .font(.system(size: 10, design: .serif))
-            .opacity(0.6)
-            .lineLimit(1)
-            .truncationMode(.tail)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        if let user = userController.user, let firstName = user.firstName, firstName != "Guest" {
+            Text("\(greeting), \(firstName)")
+                .font(.system(size: 10, design: .serif))
+                .opacity(0.6)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        } else {
+            Text("\(greeting)")
+                .font(.system(size: 10, design: .serif))
+                .opacity(0.6)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 }
 

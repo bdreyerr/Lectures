@@ -10,6 +10,8 @@ import SwiftUI
 struct CourseView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var rateLimiter: RateLimiter
+    
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var userController: UserController
     @EnvironmentObject var homeController: HomeController
@@ -29,7 +31,7 @@ struct CourseView: View {
     
     var body: some View {
         Group {
-            if let course = courseController.focusedCourse {
+            if let course = courseController.focusedCourse, let courseId = course.id, let channelId = course.channelId, let courseDescription = course.courseDescription {
                 VStack {
                     // Course Cover Image?
                     ScrollView(showsIndicators: false) {
@@ -46,9 +48,14 @@ struct CourseView: View {
                                 // Like Course Button
                                 Button(action: {
                                     // if the user isn't a PRO member, they can't like courses
-                                    if let user = userController.user {
+                                    if let user = userController.user, let userId = user.id {
                                         if user.accountType == 1 {
-                                            userController.likeCourse(userId: user.id!, courseId: course.id!)
+                                            if let rateLimit = rateLimiter.processWrite() {
+                                                print(rateLimit)
+                                                return
+                                            }
+                                            
+                                            userController.likeCourse(userId: userId, courseId: courseId)
                                             withAnimation(.spring()) {
                                                 self.isCourseLiked.toggle()
                                             }
@@ -62,7 +69,7 @@ struct CourseView: View {
                                 }) {
                                     Image(systemName: isCourseLiked ? "heart.fill" : "heart")
                                         .font(.system(size: 18, design: .serif))
-                                        .foregroundStyle(isCourseLiked ? Color.red : Color.black)
+                                        .foregroundStyle(isCourseLiked ? Color.red : colorScheme == .light ? Color.black : Color.white)
                                 }
                                 
                             }
@@ -102,7 +109,7 @@ struct CourseView: View {
                             
                             HStack {
                                 // Play Button - links to lecture view and starts video
-                                if let lectures = courseController.lecturesInCourse[course.id!] {
+                                if let lectures = courseController.lecturesInCourse[courseId] {
                                     if lectures.count > 0 {
                                         PlayCourseButton(shouldPopCourseFromStack: $shouldPopCourseFromStackOnDissapear, lecture: lectures[0])
                                     } else {
@@ -122,25 +129,25 @@ struct CourseView: View {
                             HStack {
                                 // channel image - nav link to channel view
                                 NavigationLink(destination: ChannelView()) {
-                                    if let channelImage = courseController.channelThumbnails[course.channelId!] {
+                                    if let channelImage = courseController.channelThumbnails[channelId] {
                                         Image(uiImage: channelImage)
                                             .resizable()
                                         //                                        .clipShape(RoundedRectangle(cornerRadius: 10))
                                             .frame(width: 40, height: 40)
                                         
-                                        if let channel = courseController.cachedChannels[course.channelId!] {
+                                        if let channel = courseController.cachedChannels[channelId], let channelTitle = channel.title, let numCourses = channel.numCourses, let numLectures = channel.numLectures {
                                             VStack {
-                                                Text(channel.title!)
+                                                Text(channelTitle)
                                                     .font(.system(size: 14, design: .serif))
                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                                 
                                                 HStack {
-                                                    Text("\(channel.numCourses!) Courses")
+                                                    Text("\(numCourses) Courses")
                                                         .font(.system(size: 12))
 //                                                        .font(.system(size: 12, design: .serif))
                                                         .opacity(0.6)
                                                     
-                                                    Text("\(channel.numLectures!) Lectures")
+                                                    Text("\(numLectures) Lectures")
                                                         .font(.system(size: 12))
 //                                                        .font(.system(size: 12, design: .serif))
                                                         .opacity(0.6)
@@ -160,7 +167,7 @@ struct CourseView: View {
                                     self.shouldPopCourseFromStackOnDissapear = false
                                     
                                     // try to get the channel using course.channelId
-                                    if let channel = courseController.cachedChannels[course.channelId!] {
+                                    if let channel = courseController.cachedChannels[channelId] {
                                         courseController.focusChannel(channel)
                                     }
                                 })
@@ -169,9 +176,14 @@ struct CourseView: View {
                                 // Channel Follow Button
                                 Button(action: {
                                     // if the user isn't a PRO member, they can't follow accounts
-                                    if let user = userController.user {
+                                    if let user = userController.user, let userId = user.id {
                                         if user.accountType == 1 {
-                                            userController.followChannel(userId: user.id!, channelId: course.channelId!)
+                                            if let rateLimit = rateLimiter.processWrite() {
+                                                print(rateLimit)
+                                                return
+                                            }
+                                            
+                                            userController.followChannel(userId: userId, channelId: channelId)
                                             withAnimation(.spring()) {
                                                 isChannelFollowed.toggle()
                                             }
@@ -206,7 +218,7 @@ struct CourseView: View {
                             .cornerRadius(5)
                             
                             // Course Description
-                            ExpandableText(text: course.courseDescription!, maxLength: 150)
+                            ExpandableText(text: courseDescription, maxLength: 150)
                                 .padding(.top, 10)
                             
                             
@@ -286,7 +298,7 @@ struct CourseView: View {
                                 }
                                 
                                 Group {
-                                    if let lectures = courseController.lecturesInCourse[course.id!] {
+                                    if let lectures = courseController.lecturesInCourse[courseId] {
                                         ForEach(lectures, id: \.id) { lecture in
                                             NavigationLink(destination: LectureView()) {
                                                 LectureInCourseModule(lecture: lecture)
@@ -336,24 +348,7 @@ struct CourseView: View {
                                 }
                             }
                             
-                            // Logo
-                            if (colorScheme == .light) {
-                                Image("LogoTransparentWhiteBackground")
-                                    .resizable()
-                                    .frame(width: 80, height: 80)
-                            } else if (colorScheme == .dark) {
-                                Image("LogoBlackBackground")
-                                    .resizable()
-                                    .frame(width: 80, height: 80)
-                            }
-                            Text("Lectura")
-                                .font(.system(size: 15, design: .serif))
-                                .frame(maxWidth: .infinity, alignment: .bottom)
-                                .opacity(0.8)
-                            Text("version 1.1")
-                                .font(.system(size: 11, design: .serif))
-                                .frame(maxWidth: .infinity, alignment: .bottom)
-                                .opacity(0.8)
+                            BottomBrandView()
                         }
                         .padding(.horizontal, 20)
                     }
@@ -363,15 +358,15 @@ struct CourseView: View {
                 }
                 .onAppear {
                     // check if the user follows the course's channel and set the button accordingly
-                    if let user = userController.user {
-                        if user.followedChannelIds!.contains(course.channelId!) {
+                    if let user = userController.user, let followedChannelIds = user.followedChannelIds {
+                        if followedChannelIds.contains(channelId) {
                             self.isChannelFollowed = true
                         }
                     }
                     
                     // same if the user likes the course
-                    if let user = userController.user {
-                        if user.likedCourseIds!.contains(course.id!) {
+                    if let user = userController.user, let likedCourseIds = user.likedCourseIds {
+                        if likedCourseIds.contains(courseId) {
                             self.isCourseLiked = true
                         }
                     }
@@ -395,7 +390,7 @@ struct CourseView: View {
                     // get the lectures in this course
                     if let lectureIds = course.lectureIds {
                         print("retrieving lectures in course gang")
-                        courseController.retrieveLecturesInCourse(courseId: course.id!, lectureIds: lectureIds)
+                        courseController.retrieveLecturesInCourse(courseId: courseId, lectureIds: lectureIds)
                     }
                     
                     if self.shouldAddCourseToStack {

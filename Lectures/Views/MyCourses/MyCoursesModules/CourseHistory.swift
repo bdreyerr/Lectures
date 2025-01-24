@@ -26,16 +26,18 @@ struct CourseHistory: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(myCourseController.recentWatchHistories, id: \.id) { watchHistory in
-                    if let course = courseController.cachedCourses[watchHistory.courseId!] {
-                        NavigationLink(destination: CourseView()) {
-                            WatchedCourseCard(course: course, watchHistory: watchHistory)
+                    if let watchHistoryCourseId = watchHistory.courseId {
+                        if let course = courseController.cachedCourses[watchHistoryCourseId] {
+                            NavigationLink(destination: CourseView()) {
+                                WatchedCourseCard(course: course, watchHistory: watchHistory)
+                            }
+                            .simultaneousGesture(TapGesture().onEnded { _ in
+                                courseController.focusCourse(course)
+                            })
+                        } else {
+                            SkeletonLoader(width: 400 * 0.6, height: 150)
                         }
-                        .simultaneousGesture(TapGesture().onEnded { _ in
-                            courseController.focusCourse(course)
-                        })
-                    } else {
-                        SkeletonLoader(width: 400 * 0.6, height: 150)
-                    }
+                    }   
                 }
                 Button(action: {
                     

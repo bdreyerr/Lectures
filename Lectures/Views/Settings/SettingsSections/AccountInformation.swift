@@ -12,6 +12,8 @@ struct AccountInformation: View {
     // Light / Dark Theme
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var rateLimiter: RateLimiter
+    
     @EnvironmentObject var userController: UserController
     
     @State private var signInMethod: String?
@@ -43,6 +45,11 @@ struct AccountInformation: View {
                         
                         // edit button
                         Button(action: {
+                            if let rateLimit = rateLimiter.processWrite() {
+                                print(rateLimit)
+                                return
+                            }
+                            
                             editNamePopover = true
                         }) {
                             Image(systemName: "square.and.pencil")
@@ -70,8 +77,10 @@ struct AccountInformation: View {
                                     editNamePopover = false
                                 }.foregroundColor(.red)
                                 Button("Save", role: .none) {
-                                    // change name
-                                    userController.changeName(firstName: firstName, lastName: lastName)
+                                    if firstName != "" && lastName != "" {
+                                        // change name
+                                        userController.changeName(firstName: firstName, lastName: lastName)
+                                    }
                                 }.foregroundColor(.blue)
                             }
                         }

@@ -12,87 +12,73 @@ struct LectureCardView: View {
     
     var lecture: Lecture
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            if let image = courseController.lectureThumbnails[lecture.id!] {
-                Image(uiImage: image)
+        if let id = lecture.id, let lectureTitle = lecture.lectureTitle, let channelId = lecture.channelId {
+            ZStack(alignment: .bottomLeading) {
+                if let image = courseController.lectureThumbnails[id] {
+                    Image(uiImage: image)
+                        .resizable()
+                        .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                        .aspectRatio(contentMode: .fill)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                } else {
+                    // default image when not loaded
+                    SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                }
+                
+                // Add semi-transparent gradient overlay
+                LinearGradient(
+                    gradient: Gradient(colors: [.clear, .black.opacity(0.85)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                
+                // Play button overlay in center
+                Image(systemName: "play.circle.fill") // SF Symbol for play button
                     .resizable()
-                    .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
-                    .aspectRatio(contentMode: .fill)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            } else {
-                // default image when not loaded
-                SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
-            }
-            
-            // Add semi-transparent gradient overlay
-            LinearGradient(
-                gradient: Gradient(colors: [.clear, .black.opacity(0.85)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            
-            // Play button overlay in center
-            Image(systemName: "play.circle.fill") // SF Symbol for play button
-                .resizable()
-                .frame(width: 50, height: 50)
-                .foregroundColor(.white)
-                .shadow(radius: 5)
-                .position(x: UIScreen.main.bounds.width * 0.3, y: 75) // Center of the card
-            
-            
-//            Circle()
-//                .fill(.black.opacity(0.6))
-//                .frame(width: 50, height: 50)
-//                .overlay(
-//                    Image(systemName: "play.fill")
-//                        .foregroundColor(.red)
-//                        .font(.system(size: 20))
-//                )
-//                .position(x: UIScreen.main.bounds.width * 0.3, y: 75) // Center of the card
-            
-            VStack(spacing: 0) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text(lecture.lectureTitle!)
-                                .font(.system(size: 18, design: .serif))
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                                .multilineTextAlignment(.leading) // Ensure text aligns to the left
-                                .lineLimit(2) // Limit to two lines if necessary
-                                .truncationMode(.tail)
-                            Spacer()
-                        }
-                        
-                        HStack {
-                            // TODO: Add back university name
-                            if let channel = courseController.cachedChannels[lecture.channelId!] {
-                                Text(channel.title!)
-                                    .lineLimit(1) // Limit to a single line
-                                    .truncationMode(.tail) // Use ellipsis for truncation
-                                    .font(.system(size: 14, design: .serif))
-                                    .foregroundColor(.white.opacity(0.8))
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(.white)
+                    .shadow(radius: 5)
+                    .position(x: UIScreen.main.bounds.width * 0.3, y: 75) // Center of the card
+                
+                VStack(spacing: 0) {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text(lectureTitle)
+                                    .font(.system(size: 18, design: .serif))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.leading) // Ensure text aligns to the left
+                                    .lineLimit(2) // Limit to two lines if necessary
+                                    .truncationMode(.tail)
+                                Spacer()
                             }
                             
-//                            Text("\(course.numLecturesInCourse!) Lectures")
-//                                .font(.system(size: 14, design: .serif))
-//                                .foregroundColor(.white.opacity(0.8))
-//                            Text("\(course.watchTimeInHrs!)hrs")
-//                                .font(.system(size: 14, design: .serif))
-//                                .foregroundColor(.white.opacity(0.8))
+                            HStack {
+                                // TODO: Add back university name
+                                if let channel = courseController.cachedChannels[channelId] {
+                                    if let title = channel.title {
+                                        Text(title)
+                                            .lineLimit(1) // Limit to a single line
+                                            .truncationMode(.tail) // Use ellipsis for truncation
+                                            .font(.system(size: 14, design: .serif))
+                                            .foregroundColor(.white.opacity(0.8))
+                                    }
+                                }
+                            }
                         }
+                        Spacer()
                     }
-                    Spacer()
+                    .padding()
                 }
-                .padding()
+                .padding(.bottom, 1)
+                
             }
-            .padding(.bottom, 1)
-            
+            .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
+            .shadow(radius: 2.5)
         }
-        .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
-        .shadow(radius: 2.5)
     }
 }
 

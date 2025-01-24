@@ -123,45 +123,47 @@ class AuthController : UIViewController, ObservableObject {
                         if let err = err {
                             print(err.localizedDescription)
                         } else {
-                            if querySnapshot!.documents.isEmpty {
-                                // User doesn't exist in the database yet, create a new user object
-                                
-                                // The only field not populated is profilePicture. User needs to add that themselves.
-                                let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, likedCourseIds: [], likedLectureIds: [], followedChannelIds: [], isAdmin: false)
-                                
-                                // Add the user to firestore user collection
-                                let collectionRef = self.db.collection("users")
-                                do {
-                                    try collectionRef.document(user.uid).setData(from: userObject)
+                            if let querySnapshot = querySnapshot {
+                                if querySnapshot.documents.isEmpty {
+                                    // User doesn't exist in the database yet, create a new user object
+                                    
+                                    // The only field not populated is profilePicture. User needs to add that themselves.
+                                    let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, likedCourseIds: [], likedLectureIds: [], followedChannelIds: [], isAdmin: false)
+                                    
+                                    // Add the user to firestore user collection
+                                    let collectionRef = self.db.collection("users")
+                                    do {
+                                        try collectionRef.document(user.uid).setData(from: userObject)
+                                        self.isSignedIn = true
+                                        
+                                        
+                                        self.isFinishedSigningIn = true
+                                        
+                                        print("a new user signed in")
+                                        
+                                        // close the sign in sheet when sign in finishes, if a
+                                        if displaySignInSheet.wrappedValue {
+                                            displaySignInSheet.wrappedValue = false
+                                        }
+                                    } catch {
+                                        print("Error saving the new user to firestore")
+                                    }
+                                } else {
+                                    // An existing user is signing back in
+                                    if let user = Auth.auth().currentUser {
+                                        print("current user signed in ", user.uid)
+                                    }
                                     self.isSignedIn = true
-                                    
-                                    
+                                    // Set user defaults
+                                    //                                UserDefaults.standard.set(self.isSignedIn, forKey: loginStatusKey)
                                     self.isFinishedSigningIn = true
                                     
-                                    print("a new user signed in")
+                                    print("an existing user signed in")
                                     
-                                    // close the sign in sheet when sign in finishes, if a
-                                    if displaySignInSheet.wrappedValue {
-                                        displaySignInSheet.wrappedValue = false
-                                    }
-                                } catch {
-                                    print("Error saving the new user to firestore")
+                                    
+                                    // make it so the paywall goes away -
+                                    self.hasUserSeenPaywall = true
                                 }
-                            } else {
-                                // An existing user is signing back in
-                                if let user = Auth.auth().currentUser {
-                                print("current user signed in ", user.uid)
-                                }
-                                self.isSignedIn = true
-                                // Set user defaults
-                                //                                UserDefaults.standard.set(self.isSignedIn, forKey: loginStatusKey)
-                                self.isFinishedSigningIn = true
-                                
-                                print("an existing user signed in")
-                                
-                                
-                                // make it so the paywall goes away -
-                                self.hasUserSeenPaywall = true
                             }
                         }
                     }
@@ -238,38 +240,40 @@ class AuthController : UIViewController, ObservableObject {
                     if let err = err {
                         print(err.localizedDescription)
                     } else {
-                        if querySnapshot!.documents.isEmpty {
-                            // User doesn't exist in the database yet, create a new user object
-                            
-                            let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, likedCourseIds: [], likedLectureIds: [], followedChannelIds: [], isAdmin: false)
-                            
-                            // Add the user to firestore user collection
-                            let collectionRef = self.db.collection("users")
-                            do {
-                                try collectionRef.document(user.uid).setData(from: userObject)
+                        if let querySnapshot = querySnapshot {
+                            if querySnapshot.documents.isEmpty {
+                                // User doesn't exist in the database yet, create a new user object
+                                
+                                let userObject = User(firstName: self.firstName, lastName: self.lastName, email: self.email, accountType: 0, likedCourseIds: [], likedLectureIds: [], followedChannelIds: [], isAdmin: false)
+                                
+                                // Add the user to firestore user collection
+                                let collectionRef = self.db.collection("users")
+                                do {
+                                    try collectionRef.document(user.uid).setData(from: userObject)
+                                    self.isSignedIn = true
+                                    
+                                    self.isFinishedSigningIn = true
+                                    
+                                    // close the sign in sheet when sign in finishes, if a
+                                    if displaySignInSheet.wrappedValue {
+                                        displaySignInSheet.wrappedValue = false
+                                    }
+                                    
+                                } catch {
+                                    print("Error saving the new user to firestore")
+                                }
+                            } else {
+                                // An existing user is signing back in
+                                if let user = Auth.auth().currentUser {
+                                    print("current user signed in ", user.uid)
+                                }
                                 self.isSignedIn = true
                                 
                                 self.isFinishedSigningIn = true
                                 
-                                // close the sign in sheet when sign in finishes, if a
-                                if displaySignInSheet.wrappedValue {
-                                    displaySignInSheet.wrappedValue = false
-                                }
-                                
-                            } catch {
-                                print("Error saving the new user to firestore")
+                                // make it so the paywall goes away -
+                                self.hasUserSeenPaywall = true
                             }
-                        } else {
-                            // An existing user is signing back in
-                            if let user = Auth.auth().currentUser {
-                                print("current user signed in ", user.uid)
-                            }
-                            self.isSignedIn = true
-                            
-                            self.isFinishedSigningIn = true
-                            
-                            // make it so the paywall goes away -
-                            self.hasUserSeenPaywall = true
                         }
                     }
                 }
@@ -390,33 +394,6 @@ extension AuthController: ASAuthorizationControllerDelegate {
                 } else {
                     print("no display name")
                 }
-                
-                print("we signed in okay?")
-                
-                //                // delete the account after sign in
-                //                do {
-                //                    if let user = Auth.auth().currentUser {
-                //                        // set bit on firestore field
-                //                        self.db.collection("users").document(user.uid).updateData([
-                //                            "isUserDeleted": true,
-                //                            "email": "deleted@deleted.com"
-                //                        ]) { err in
-                //                            if let err = err {
-                //                                print("error updating user in firestore as deleted: ", err.localizedDescription)
-                //                            } else {
-                //                                print("successfully set bit")
-                //                                Task {
-                //                                    try Auth.auth().revokeToken(withAuthorizationCode: String(data: appleIDCredential.authorizationCode!, encoding: .utf8)!)
-                //                                    try user.delete()
-                //                                    self.logOut()
-                //                                }
-                //                            }
-                //                        }
-                //
-                //                    }
-                //                } catch {
-                //                    print(error)
-                //                }
             }
         default:
             break

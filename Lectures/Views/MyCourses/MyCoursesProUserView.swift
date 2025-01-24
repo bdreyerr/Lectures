@@ -18,7 +18,7 @@ struct MyCoursesProUserView: View {
     var body: some View {
         Group {
             if myCourseController.isWatchHistoryLoading {
-                HomeLoadingView()
+                MyCoursesLoadingView()
             } else {
                 
                 CourseHistory()
@@ -39,10 +39,10 @@ struct MyCoursesProUserView: View {
             if let user = Auth.auth().currentUser {
                 myCourseController.retrieveRecentWatchHistories(userId: user.uid, courseController: courseController)
                 // TODO: we don't need to do this every time
-                if let user = userController.user {
-                    myCourseController.retrieveFollowedChannels(channelIds: user.followedChannelIds!, courseController: courseController)
-                    myCourseController.retrieveLikedCourses(courseIds: user.likedCourseIds!, courseController: courseController)
-                    myCourseController.retrieveLikedLectures(lectureIds: user.likedLectureIds!, courseController: courseController)
+                if let user = userController.user, let followedChannelIds = user.followedChannelIds, let likedCourseIds = user.likedCourseIds, let likedLectureIds = user.likedLectureIds {
+                    myCourseController.retrieveFollowedChannels(channelIds:followedChannelIds, courseController: courseController)
+                    myCourseController.retrieveLikedCourses(courseIds: likedCourseIds, courseController: courseController)
+                    myCourseController.retrieveLikedLectures(lectureIds: likedLectureIds, courseController: courseController)
                 }
             } else {
                 print("user isn't auth'd yet? idk")

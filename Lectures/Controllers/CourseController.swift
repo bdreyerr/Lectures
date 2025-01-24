@@ -144,6 +144,7 @@ class CourseController : ObservableObject {
                 
                 do {
                     let lecture = try await docRef.getDocument(as: Lecture.self)
+                    
                     lectures.append(lecture)
                     
                     // add the newly fetched lecture to the cache
@@ -153,7 +154,9 @@ class CourseController : ObservableObject {
                     self.getLectureThumnbnail(lectureId: lectureId)
                     
                     // fetch the channel
-                    self.retrieveChannel(channelId: lecture.channelId!)
+                    if let lectureChannelId = lecture.channelId {
+                        self.retrieveChannel(channelId: lectureChannelId)
+                    }
                 } catch {
                     print("Error decoding lecture: \(error)")
                 }
@@ -165,35 +168,41 @@ class CourseController : ObservableObject {
     
     // ---------- Focus Functions ----------
     func focusCourse(_ course: Course) {
-        self.focusedCourse = nil
-        self.focusedCourse = course
-        
-        // TODO: add some logic to avoid duplicate calls to storage
-        // When a course gets focused we want to make sure the channel's thumbnail is loaded and ready to display on Courseview
-        self.getChannelThumbnail(channelId: course.channelId!)
+        if let channelId = course.channelId {
+            self.focusedCourse = nil
+            self.focusedCourse = course
+            
+            // TODO: add some logic to avoid duplicate calls to storage
+            // When a course gets focused we want to make sure the channel's thumbnail is loaded and ready to display on Courseview
+            self.getChannelThumbnail(channelId: channelId)
+        }
     }
     
     func focusLecture(_ lecture: Lecture) {
-        print("lecture is being focused")
-        self.focusedLecture = nil
-        self.focusedLecture = lecture
-        
-        // When a lecture gets focused we want to make sure the channel's thumbnail is loaded and ready to display on LectureView
-        self.getChannelThumbnail(channelId: lecture.channelId!)
+        if let channelId = lecture.channelId {
+            print("lecture is being focused")
+            self.focusedLecture = nil
+            self.focusedLecture = lecture
+            
+            // When a lecture gets focused we want to make sure the channel's thumbnail is loaded and ready to display on LectureView
+            self.getChannelThumbnail(channelId: channelId)
+        }
     }
     
     func focusChannel(_ channel: Channel) {
-        self.focusedChannel = nil
-        self.focusedChannel = channel
-        
-        // get channel thumbnail
-        self.getChannelThumbnail(channelId: channel.id!)
-        
-        // When we're focusing the channel, we know we want to look at the list of that channel's courses
-        // we have a list of each courseId under this channel, we should retrieve each one and cache them if they are not already cached
-        
-        for courseId in channel.courseIds! {
-            self.retrieveCourse(courseId: courseId)
+        if let channelId = channel.id, let courseIds = channel.courseIds {
+            self.focusedChannel = nil
+            self.focusedChannel = channel
+            
+            // get channel thumbnail
+            self.getChannelThumbnail(channelId: channelId)
+            
+            // When we're focusing the channel, we know we want to look at the list of that channel's courses
+            // we have a list of each courseId under this channel, we should retrieve each one and cache them if they are not already cached
+            
+            for courseId in courseIds {
+                self.retrieveCourse(courseId: courseId)
+            }
         }
     }
     
@@ -238,10 +247,12 @@ class CourseController : ObservableObject {
                     self.courseThumbnailRequestQueue[courseId] = false
                     return
                 } else {
-                    // Data for image is returned
-                    let image = UIImage(data: data!)
-                    // Add image to cache
-                    self.courseThumbnails[courseId] = image
+                    if let data = data {
+                        // Data for image is returned
+                        let image = UIImage(data: data)
+                        // Add image to cache
+                        self.courseThumbnails[courseId] = image
+                    }
                 }
             }
         }
@@ -283,10 +294,12 @@ class CourseController : ObservableObject {
                     // There was an issue with the image or the image doesn't exist, either way set both prompt and promptImage back to nil
                     return
                 } else {
-                    // Data for image is returned
-                    let image = UIImage(data: data!)
-                    // Add image to cache
-                    self.lectureThumbnails[lectureId] = image
+                    if let data = data {
+                        // Data for image is returned
+                        let image = UIImage(data: data)
+                        // Add image to cache
+                        self.lectureThumbnails[lectureId] = image
+                    }
                 }
             }
         }
@@ -328,10 +341,12 @@ class CourseController : ObservableObject {
                     self.channelThumbnailRequestQueue[channelId] = false
                     return
                 } else {
-                    // Data for image is returned
-                    let image = UIImage(data: data!)
-                    // Add image to cache
-                    self.channelThumbnails[channelId] = image
+                    if let data = data {
+                        // Data for image is returned
+                        let image = UIImage(data: data)
+                        // Add image to cache
+                        self.channelThumbnails[channelId] = image
+                    }
                 }
             }
         }

@@ -13,7 +13,7 @@ struct CourseByChannelModule: View {
     
     var courseId: String
     var body: some View {
-        if let course = courseController.cachedCourses[courseId] {
+        if let course = courseController.cachedCourses[courseId], let courseTitle = course.courseTitle, let numLecturesInCourse = course.numLecturesInCourse, let watchTimeInHrs = course.watchTimeInHrs, let aggregateViews = course.aggregateViews {
             // Other Lectures in the course
             HStack {
                 // Image
@@ -24,10 +24,7 @@ struct CourseByChannelModule: View {
                         .frame(width: 40, height: 40)
                         .aspectRatio(contentMode: .fill)
                 } else {
-                    Image("google_logo")
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                        .aspectRatio(contentMode: .fill)
+                    SkeletonLoader(width: 40, height: 40)
                 }
                 
                 // Lecture Name
@@ -37,7 +34,7 @@ struct CourseByChannelModule: View {
                     .overlay {
                         VStack {
                             HStack {
-                                Text(course.courseTitle ?? "Course Title")
+                                Text(courseTitle)
                                     .font(.system(size: 14, design: .serif))
                                     .lineLimit(1)
                                     .truncationMode(.tail)
@@ -47,18 +44,18 @@ struct CourseByChannelModule: View {
                             
                             HStack {
                                 // num Lectures
-                                Text("\(course.numLecturesInCourse!) Lectures")
+                                Text("\(numLecturesInCourse) Lectures")
                                     .font(.system(size: 12))
                                     .opacity(0.8)
                                 
                                 
                                 // Watch time
-                                Text("\(course.watchTimeInHrs!)Hrs")
+                                Text("\(watchTimeInHrs)Hrs")
                                     .font(.system(size: 12))
                                     .opacity(0.8)
                                 
                                 // Views
-                                Text("\(course.aggregateViews!) Views")
+                                Text("\(aggregateViews) Views")
                                     .font(.system(size: 12))
                                     .opacity(0.8)
                                 

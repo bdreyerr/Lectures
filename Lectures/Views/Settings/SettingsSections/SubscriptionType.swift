@@ -42,6 +42,7 @@ struct SubscriptionType: View {
                                 isUpgradeSheetShowing = true
                             }) {
                                 Text("Upgrade")
+                                    .font(.system(size: 10))
                                     .foregroundColor(.white)
                                     .padding(5)
                                     .background(Color.orange)

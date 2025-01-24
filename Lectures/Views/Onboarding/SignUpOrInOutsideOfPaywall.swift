@@ -18,16 +18,11 @@ struct SignUpOrInOutsideOfPaywall: View {
         VStack {
             HStack {
                 // Small Logo
-                if (colorScheme == .light) {
-                    Image("LogoTransparentWhiteBackground")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                } else if (colorScheme == .dark) {
-                    Image("LogoBlackBackground")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                }
                 
+                Image("AppIconLight")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .cornerRadius(10)
                 Text("Lectura")
                     .font(.system(size: 16, design: .serif))
                     .bold()

@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct SearchBarWithFilters: View {
+    @Environment(\.colorScheme) var colorScheme
+    
+    @EnvironmentObject var rateLimiter: RateLimiter
+    
     @EnvironmentObject var searchController: SearchController
     @EnvironmentObject var courseController: CourseController
     
@@ -21,6 +25,16 @@ struct SearchBarWithFilters: View {
                 TextField("Search", text: $searchController.searchText)
                     .font(.system(size: 16))
                     .textFieldStyle(PlainTextFieldStyle())
+                    .onSubmit {
+                        if let rateLimit = rateLimiter.processWrite() {
+                            print(rateLimit)
+                            return
+                        }
+                        
+                        searchController.areFiltersShowing = false
+                        searchController.performSearch(courseController: courseController)
+                        hideKeyboard()
+                    }
                 
                 
                 // Clear Button (X Icon)
@@ -40,6 +54,11 @@ struct SearchBarWithFilters: View {
                 // Submit search Button
                 if !searchController.searchText.isEmpty {
                     Button(action: {
+                        if let rateLimit = rateLimiter.processWrite() {
+                            print(rateLimit)
+                            return
+                        }
+                        
                         searchController.areFiltersShowing = false
                         searchController.performSearch(courseController: courseController)
                         hideKeyboard()
@@ -179,9 +198,9 @@ struct SearchBarWithFilters: View {
             }
         }
         .padding(10)
-        .background(Color.black.opacity(0.05)) // Dark background
+        .background(colorScheme == .light ? Color.black.opacity(0.05) : Color.white.opacity(0.2))
         .cornerRadius(20) // Rounded corners
-//        .padding(.horizontal)
+
         .padding(.top, 10)
         
     }

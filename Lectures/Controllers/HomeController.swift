@@ -74,15 +74,19 @@ class HomeController : ObservableObject {
                     if let course = try? document.data(as: Course.self) {
                         self.curatedCourses.append(course)
                         
-                        // add the course to the cache
-                        courseController.cachedCourses[course.id!] = course
+                       
+                        if let courseId = course.id {
+                            // add the course to the cache
+                            courseController.cachedCourses[courseId] = course
                         
-                        // TODO: add some logic to avoid making duplicate calls
-                        // fetch the courses thumbnail
-                        courseController.getCourseThumbnail(courseId: course.id!)
-                        
-                        // fetch the channel
-                        courseController.retrieveChannel(channelId: course.channelId!)
+                            // fetch the courses thumbnail
+                            courseController.getCourseThumbnail(courseId: courseId)
+                            
+                            // fetch the channel
+                            if let channelId = course.channelId {
+                                courseController.retrieveChannel(channelId: channelId)
+                            }
+                        }
                     }
                 }
                 
@@ -112,14 +116,18 @@ class HomeController : ObservableObject {
                         
                         self.communityFavorites.append(course)
                         
-                        // add the course to the cache
-                        courseController.cachedCourses[course.id!] = course
-                        
-                        // fetch the courses thumbnail
-                        courseController.getCourseThumbnail(courseId: course.id!)
-                        
-                        // fetch the channel
-                        courseController.retrieveChannel(channelId: course.channelId!)
+                        if let courseId = course.id {
+                            // add the course to the cache
+                            courseController.cachedCourses[courseId] = course
+                            
+                            // fetch the courses thumbnail
+                            courseController.getCourseThumbnail(courseId: courseId)
+                            
+                            // fetch the channel
+                            if let channelId = course.channelId {
+                                courseController.retrieveChannel(channelId: channelId)
+                            }
+                        }
                     }
                 }
                 

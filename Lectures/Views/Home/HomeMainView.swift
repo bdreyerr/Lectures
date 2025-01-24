@@ -74,24 +74,7 @@ struct HomeMainView: View {
                     
                     Spacer()
                     
-                    // Logo
-                    if (colorScheme == .light) {
-                        Image("LogoTransparentWhiteBackground")
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                    } else if (colorScheme == .dark) {
-                        Image("LogoBlackBackground")
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                    }
-                    Text("Lectura")
-                        .font(.system(size: 15, design: .serif))
-                        .frame(maxWidth: .infinity, alignment: .bottom)
-                        .opacity(0.8)
-                    Text("version 1.1")
-                        .font(.system(size: 11, design: .serif))
-                        .frame(maxWidth: .infinity, alignment: .bottom)
-                        .opacity(0.8)
+                   BottomBrandView()
                 }
                 
             }

@@ -9,6 +9,8 @@ import FirebaseFirestore
 import SwiftUI
 
 struct ReportIssues: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     @EnvironmentObject var userController: UserController
     
     @State var issueText: String = ""
@@ -41,7 +43,7 @@ struct ReportIssues: View {
                     }
                 }
                 .padding(10)
-                .background(Color.black.opacity(0.05)) // Dark background
+                .background(colorScheme == .light ? Color.black.opacity(0.05) : Color.white.opacity(0.2))
                 .cornerRadius(20) // Rounded corners
         //        .padding(.horizontal)
                 .padding(.top, 10)

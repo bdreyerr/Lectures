@@ -10,7 +10,7 @@ import SwiftUI
 struct CollectionsTrending: View {
     
     var collections = [
-        Collection(id: "1", image: "cs2", title: "Introductory Computer Science", subText: "Freshman CS at Top Tech Schools", description: """
+        Collection(id: "1", image: "cs", title: "Introductory Computer Science", subText: "Freshman CS at Top Tech Schools", description: """
     Dive into foundational computer science through curated introductory courses from world-leading institutions. This collection features core CS courses modeled after first-year curricula at universities like Stanford and MIT, providing a comprehensive introduction to computational thinking, programming fundamentals, and computer systems.
     
     Students begin with essential programming concepts, data structures, and algorithms while developing strong problem-solving skills. Through hands-on projects and carefully structured assignments, they'll master fundamental concepts that form the backbone of a computer science education. The curriculum emphasizes both theoretical understanding and practical implementation, preparing students for advanced study in areas like artificial intelligence, systems design, and software engineering.
@@ -71,66 +71,77 @@ Through challenging problem sets, theoretical explorations, and practical applic
                 Spacer()
             }
             
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 16) {
-                    let groupedUniversities = stride(from: 0, to: collections.count, by: 2).map { index in
-                        Array(collections[index..<min(index + 2, collections.count)])
-                    }
-                    
-                    ForEach(groupedUniversities.indices, id: \.self) { groupIndex in
-                        let group = groupedUniversities[groupIndex]
-                        VStack(spacing: 16) {
-                            ForEach(group, id: \.id) { collection in
-                                CollectionCard(collection: collection)
-                            }
-                        }
-                        .padding(.trailing, 10)
-                    }
-                }
+            
+            
+            
+            ForEach(collections, id: \.id) { collection in
+                CollectionCard(collection: collection)
             }
+            
+            
+            
+            
+            
+            //            ScrollView(.horizontal, showsIndicators: false) {
+            //                HStack(alignment: .top, spacing: 16) {
+            //                    let groupedUniversities = stride(from: 0, to: collections.count, by: 2).map { index in
+            //                        Array(collections[index..<min(index + 2, collections.count)])
+            //                    }
+            //
+            //                    ForEach(groupedUniversities.indices, id: \.self) { groupIndex in
+            //                        let group = groupedUniversities[groupIndex]
+            //                        VStack(spacing: 16) {
+            //                            ForEach(group, id: \.id) { collection in
+            //                                CollectionCard(collection: collection)
+            //                            }
+            //                        }
+            //                        .padding(.trailing, 10)
+            //                    }
+            //                }
+            //            }
         }
         .frame(maxHeight: 220)
         
         
         
         
-//        HStack {
-//            Text("Trending Collections")
-//                .font(.system(size: 14, design: .serif))
-//                .bold()
-//            
-//            Spacer()
-//        }
-//        
-//        ScrollView(.horizontal, showsIndicators: false) {
-//            HStack {
-//                let groupedCollections = stride(from: 0, to: collections.count, by: 2).map { index in
-//                    Array(collections[index..<min(index + 2, collections.count)])
-//                }
-//                
-//                ForEach(groupedCollections.indices, id: \.self) { groupIndex in
-//                    let group = groupedCollections[groupIndex]
-//                    VStack {
-//                        ForEach(group, id: \.id) { collection in
-//                            CollectionCard(collection: collection)
-//                        }
-//                        Spacer()
-//                    }
-//                }
-//            }
-//        }
-         
-//        ScrollView(.horizontal, showsIndicators: false) {
-//            HStack(spacing: 10) {
-//                
-//                CollectionCard(collection: collections[0])
-//                
-//                CollectionCard(collection: collections[1])
-//                
-//                CollectionCard(collection: collections[2])
-//                
-//            }
-//        }
+        //        HStack {
+        //            Text("Trending Collections")
+        //                .font(.system(size: 14, design: .serif))
+        //                .bold()
+        //
+        //            Spacer()
+        //        }
+        //
+        //        ScrollView(.horizontal, showsIndicators: false) {
+        //            HStack {
+        //                let groupedCollections = stride(from: 0, to: collections.count, by: 2).map { index in
+        //                    Array(collections[index..<min(index + 2, collections.count)])
+        //                }
+        //
+        //                ForEach(groupedCollections.indices, id: \.self) { groupIndex in
+        //                    let group = groupedCollections[groupIndex]
+        //                    VStack {
+        //                        ForEach(group, id: \.id) { collection in
+        //                            CollectionCard(collection: collection)
+        //                        }
+        //                        Spacer()
+        //                    }
+        //                }
+        //            }
+        //        }
+        
+        //        ScrollView(.horizontal, showsIndicators: false) {
+        //            HStack(spacing: 10) {
+        //
+        //                CollectionCard(collection: collections[0])
+        //
+        //                CollectionCard(collection: collections[1])
+        //
+        //                CollectionCard(collection: collections[2])
+        //
+        //            }
+        //        }
     }
 }
 

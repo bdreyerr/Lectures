@@ -14,90 +14,48 @@ struct CollectionCard : View {
     var collection: Collection
     
     var body: some View {
-        NavigationLink(destination: FullCollectionView(collection: collection)) {
-            HStack {
-                
-                Image(collection.image!)
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .aspectRatio(contentMode: .fill)
+        if let image = collection.image, let title = collection.title, let subText = collection.subText, let courseIdList = collection.courseIdList {
+            
+            NavigationLink(destination: FullCollectionView(collection: collection)) {
                 
                 
-                VStack {
-                    Text(collection.title!)
-                        .font(.system(size: 14, design: .serif))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                // Collection Title
+                HStack {
+                    Image(image)
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                        .aspectRatio(contentMode: .fill)
                     
-                    HStack {
-                        Text(collection.subText!)
-                            .font(.system(size: 12))
-                            .opacity(0.6)
+                    VStack {
+                        HStack {
+                            Text(title)
+                                .font(.system(size: 14, design: .serif))
+                            
+                            Spacer()
+                        }
                         
-                        Spacer()
+                        HStack {
+                            Text(subText)
+                                .font(.system(size: 12, design: .serif))
+                                .opacity(0.8)
+                            
+                            Spacer()
+                        }
                     }
+                    
+                    Spacer()
                 }
+                .cornerRadius(5)
             }
-            .cornerRadius(5)
+            .simultaneousGesture(TapGesture().onEnded { _ in
+                // retrieve the courses in this collection
+                for courseId in courseIdList {
+                    courseController.retrieveCourse(courseId: courseId)
+                }
+            })
+            .buttonStyle(PlainButtonStyle())
         }
-        .simultaneousGesture(TapGesture().onEnded { _ in
-            // retrieve the courses in this collection
-            for courseId in collection.courseIdList! {
-                courseController.retrieveCourse(courseId: courseId)
-            }
-        })
-        .buttonStyle(PlainButtonStyle())
-        
-//        NavigationLink(destination: FullCollectionView(collection: collection)) {
-//            ZStack(alignment: .bottomLeading) {
-//                Image(collection.image!)
-//                    .resizable()
-//                    .frame(width: 200, height: 200)
-//                    .aspectRatio(contentMode: .fill)
-//                    .clipShape(RoundedRectangle(cornerRadius: 10))
-//                
-//                // Add semi-transparent gradient overlay
-//                LinearGradient(
-//                    gradient: Gradient(colors: [.clear, .black.opacity(0.75)]),
-//                    startPoint: .bottom,
-//                    endPoint: .top
-//                )
-//                .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
-//                .clipShape(RoundedRectangle(cornerRadius: 10))
-//                
-//                
-//                VStack(spacing: 0) {
-//                    HStack {
-//                        VStack(alignment: .leading) {
-//                            Text(collection.title!)
-//                                .font(.system(size: 16, design: .serif))
-//                                .fontWeight(.bold)
-//                                .foregroundColor(.white)
-//                            
-//                            HStack {
-//                                Text(collection.subText!)
-//                                    .font(.system(size: 12, design: .serif))
-//                                    .foregroundColor(.white.opacity(0.8))
-//                            }
-//                            Spacer()
-//                            
-//                        }
-//                        Spacer()
-//                    }
-//                    .padding()
-//                }
-//                .padding(.bottom, 1)
-//                
-//            }
-//            .frame(width: 200, height: 200)
-//            .shadow(radius: 2.5)
-//        }
-//        .simultaneousGesture(TapGesture().onEnded { _ in
-//            // retrieve the courses in this collection
-//            for courseId in collection.courseIdList! {
-//                courseController.retrieveCourse(courseId: courseId)
-//            }
-//        })
-//        .buttonStyle(PlainButtonStyle())
+
     }
 }
 

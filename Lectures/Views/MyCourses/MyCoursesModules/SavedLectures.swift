@@ -29,14 +29,14 @@ struct SavedLectures: View {
                 HStack {
                     
                     ForEach(likedLectureIds, id: \.self) { lectureId in
-                        if let lecture = courseController.cachedLectures[lectureId] {
+                        if let lecture = courseController.cachedLectures[lectureId], let courseId = lecture.courseId {
                             NavigationLink(destination: LectureView()) {
                                 LectureCardView(lecture: lecture)
                             }
                             .buttonStyle(PlainButtonStyle())
                             .simultaneousGesture(TapGesture().onEnded {
                                 courseController.focusLecture(lecture)
-                                courseController.retrieveCourse(courseId: lecture.courseId!)
+                                courseController.retrieveCourse(courseId: courseId)
                             })
                         }
                     }

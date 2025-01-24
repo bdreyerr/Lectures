@@ -1,16 +1,16 @@
 //
-//  HomeLoadingView.swift
+//  MyCoursesLoadingView.swift
 //  Lectures
 //
-//  Created by Ben Dreyer on 1/8/25.
+//  Created by Ben Dreyer on 1/24/25.
 //
 
 import SwiftUI
 
-struct HomeLoadingView: View {
+struct MyCoursesLoadingView: View {
     var body: some View {
         VStack {
-            // Categories
+            // Course History
             HStack {
                 SkeletonLoader(width: 250, height: 20)
                     .padding(.top, 10)
@@ -103,5 +103,5 @@ struct HomeLoadingView: View {
 }
 
 #Preview {
-    HomeLoadingView()
+    MyCoursesLoadingView()
 }

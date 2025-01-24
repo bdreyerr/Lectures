@@ -50,14 +50,11 @@ class UserController : ObservableObject {
     func deleteUser() {
         // Delete the current user in firestore (not auth)
         Task { @MainActor in
-            if let user = self.user {
+            if let user = self.user, let id = user.id {
                 do {
-                    try await db.collection("users").document(user.id!).delete()
-                    print("Document successfully removed!")
+                    try await db.collection("users").document(id).delete()
                     
                     self.logOut()
-                    
-                    
                 } catch {
                     print("Error removing document: \(error)")
                 }
@@ -87,17 +84,17 @@ class UserController : ObservableObject {
             var follow: Bool = false
             
             // figure out if following or unfollowing
-            if let user = self.user {
-                if user.followedChannelIds!.contains(channelId) {
+            if let user = self.user, let followedChannelIds = user.followedChannelIds {
+                if followedChannelIds.contains(channelId) {
                     follow = false
                     if let _ = self.user {
-                        self.user!.followedChannelIds!.removeAll(where: {$0 == channelId})
+                        self.user?.followedChannelIds?.removeAll(where: {$0 == channelId})
                     }
                 } else {
                     follow = true
                     // also update local user var
                     if let _ = self.user {
-                        self.user!.followedChannelIds!.append(channelId)
+                        self.user?.followedChannelIds?.append(channelId)
                     }
                 }
             }
@@ -122,17 +119,17 @@ class UserController : ObservableObject {
             // determine if we are liking or unliking this course
             var isLiking: Bool = false
             
-            if let user = self.user {
-                if user.likedCourseIds!.contains(courseId) {
+            if let user = self.user, let likedCourseIds = user.likedCourseIds {
+                if likedCourseIds.contains(courseId) {
                     isLiking = false
                     if let _ = self.user {
-                        self.user!.likedCourseIds!.removeAll(where: {$0 == courseId})
+                        self.user?.likedCourseIds?.removeAll(where: {$0 == courseId})
                     }
                 } else {
                     isLiking = true
                     // also update local user var
                     if let _ = self.user {
-                        self.user!.likedCourseIds!.append(courseId)
+                        self.user?.likedCourseIds?.append(courseId)
                     }
                 }
             }
@@ -158,17 +155,17 @@ class UserController : ObservableObject {
             // determine if we are liking or unliking this course
             var isLiking: Bool = false
             
-            if let user = self.user {
-                if user.likedLectureIds!.contains(lectureId) {
+            if let user = self.user, let likedLectureIds = user.likedLectureIds {
+                if likedLectureIds.contains(lectureId) {
                     isLiking = false
                     if let _ = self.user {
-                        self.user!.likedLectureIds!.removeAll(where: {$0 == lectureId})
+                        self.user?.likedLectureIds?.removeAll(where: {$0 == lectureId})
                     }
                 } else {
                     isLiking = true
                     // also update local user var
                     if let _ = self.user {
-                        self.user!.likedLectureIds!.append(lectureId)
+                        self.user?.likedLectureIds?.append(lectureId)
                     }
                 }
             }

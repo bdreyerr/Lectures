@@ -12,7 +12,7 @@ struct CoursesByChannel: View {
     @EnvironmentObject var homeController: HomeController
     
     var body: some View {
-        if let channel = courseController.focusedChannel {
+        if let channel = courseController.focusedChannel, let courseIds = channel.courseIds {
             VStack {
                 HStack {
                     Text("Courses by")
@@ -29,7 +29,7 @@ struct CoursesByChannel: View {
                 
                 Group {
                     
-                    ForEach(channel.courseIds!, id: \.self) { courseId in
+                    ForEach(courseIds, id: \.self) { courseId in
                         NavigationLink(destination: CourseView()){
                             // CourseByChannelModule
                             CourseByChannelModule(courseId: courseId)

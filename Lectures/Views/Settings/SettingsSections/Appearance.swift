@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct Appearance: View {
+    @AppStorage("isDarkMode") private var isDarkMode = false
+    
     @EnvironmentObject var userController: UserController
     
     @State var isUpgradeSheetShowing: Bool = false
     
-    @State var isDarkModeEnabled = false
+    @State private var selectedIcon: String? = nil
+    private let appIcons = [
+        (name: "Default", iconName: nil),
+        (name: "Dark", iconName: "AppIconDark"),
+        (name: "Light", iconName: "AppIconLight")
+    ]
+    
+    
     var body: some View {
         VStack {
             ScrollView(showsIndicators: false) {
@@ -64,8 +73,17 @@ struct Appearance: View {
                                 .font(.system(size: 14, design: .serif))
                             
                             
-                            Toggle("", isOn: $isDarkModeEnabled)
+                            Toggle("", isOn: $isDarkMode)
                                 .padding(.trailing, 5)
+                                .onChange(of: isDarkMode) { newValue in
+                                    // Code to run when the toggle changes
+                                    if newValue {
+                                        isDarkMode = true
+                                    } else {
+                                        isDarkMode = false
+                                    }
+                                }
+                                
                             
                             Spacer()
                             
@@ -83,17 +101,16 @@ struct Appearance: View {
                             Text("App Icon")
                                 .font(.system(size: 14, design: .serif))
                             
-                            
-                            Spacer()
-                            
                             Button(action: {
                                 print("user wanted to change the app icon")
                             }) {
-                                Image(systemName: "square.and.pencil.circle.fill")
+                                Image(systemName: "square.and.pencil.circle")
                                     .imageScale(.medium)
                                     .padding(.leading, 4)  // Add some space before the button
                             }
                             .buttonStyle(PlainButtonStyle())
+                            
+                            Spacer()
                         }
                     }
                 }

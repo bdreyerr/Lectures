@@ -14,6 +14,7 @@ struct ContentView: View {
     @StateObject var tabbarController = TabBarController()
     @State private var selectedTab: CustomTabBar.TabItemKind = .home
     
+    @AppStorage("isDarkMode") private var isDarkMode = false
     @AppStorage("isSignedIn") private var isSignedIn = false
     @AppStorage("hasUserSeenPaywall") private var hasUserSeenPaywall = false
     
@@ -32,8 +33,12 @@ struct ContentView: View {
     @StateObject var homeworkController = HomeworkController()
     @StateObject var homeworkAnswersController = HomeworkAnswersController()
     
+    // Rate Limiter
+    @StateObject var rateLimiter = RateLimiter()
+    
     var body: some View {
         ZStack {
+            
             if hasUserSeenPaywall {
                 switch selectedTab {
                 case .home:
@@ -44,6 +49,11 @@ struct ContentView: View {
                     SearchMainView()
                 case .settings:
                     SettingsMainView()
+                }
+                
+                // show rate limit popup if applicable
+                if rateLimiter.shouldRateLimitPopupShow {
+                    RateLimitPopUp()
                 }
                 
                 VStack {
@@ -69,6 +79,7 @@ struct ContentView: View {
         .environmentObject(homeworkAnswersController)
         .environmentObject(myCourseController)
         .environmentObject(courseController)
+        .environmentObject(rateLimiter)
         .onChange(of: isSignedIn) {
             if isSignedIn == true {
                 if let user = Auth.auth().currentUser {
@@ -95,4 +106,5 @@ struct ContentView: View {
         .environmentObject(MyCourseController())
         .environmentObject(CourseController())
         .environmentObject(ResourceController())
+        .environmentObject(RateLimiter())
 }

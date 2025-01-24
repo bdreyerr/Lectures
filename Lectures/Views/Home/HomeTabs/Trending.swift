@@ -17,8 +17,8 @@ struct Trending: View {
         } else {
 //                        Categories()
 //                            .padding(.top, 10)
-            CollectionsTrending()
-                .padding(.top, 10)
+//            CollectionsTrending()
+//                .padding(.top, 10)
             
             
             CuratedCourses()

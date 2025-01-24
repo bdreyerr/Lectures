@@ -11,6 +11,8 @@ import YouTubePlayerKit
 struct LectureView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var rateLimiter: RateLimiter
+    
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var userController: UserController
     @EnvironmentObject var homeController: HomeController
@@ -34,7 +36,7 @@ struct LectureView: View {
     
     var body: some View {
         Group {
-            if let lecture = courseController.focusedLecture {
+            if let lecture = courseController.focusedLecture, let lectureId = lecture.id, let courseId = lecture.courseId, let professorName = lecture.professorName, let channelId = lecture.channelId, let viewsOnYouTube = lecture.viewsOnYouTube, let datePostedonYoutube = lecture.datePostedonYoutube, let lectureDescription = lecture.lectureDescription {
                 VStack {
                     // YouTubePlayer (starts video on page load)
                     ZStack(alignment: .bottomLeading) {
@@ -74,9 +76,14 @@ struct LectureView: View {
                                 // Like Lecture button
                                 Button(action: {
                                     // if the user isn't a PRO member, they can't like courses
-                                    if let user = userController.user {
+                                    if let user = userController.user, let userId = user.id {
                                         if user.accountType == 1 {
-                                            userController.likeLecture(userId: user.id!, lectureId: lecture.id!)
+                                            if let rateLimit = rateLimiter.processWrite() {
+                                                print(rateLimit)
+                                                return
+                                            }
+                                            
+                                            userController.likeLecture(userId: userId, lectureId: lectureId)
                                             withAnimation(.spring()) {
                                                 self.isLectureLiked.toggle()
                                             }
@@ -90,51 +97,22 @@ struct LectureView: View {
                                 }) {
                                     Image(systemName: isLectureLiked ? "heart.fill" : "heart")
                                         .font(.system(size: 18, design: .serif))
-                                        .foregroundStyle(isLectureLiked ? Color.red : Color.black)
+                                        .foregroundStyle(isLectureLiked ? Color.red : colorScheme == .light ? Color.black : Color.white)
                                 }
-                                
-                                
-//                                if !isLectureLiked {
-//                                    Image(systemName: "heart")
-//                                        .font(.system(size: 18, design: .serif))
-//                                        .onTapGesture {
-//                                            // if the user isn't a PRO member, they can't like courses
-//                                            if let user = userController.user {
-//                                                if user.accountType == 1 {
-//                                                    withAnimation(.spring()) {
-//                                                        self.isLectureLiked.toggle()
-//                                                    }
-//                                                    // TODO: add logic to like a course
-//                                                    return
-//                                                }
-//                                            }
-//                                            
-//                                            // show the upgrade account sheet
-//                                            self.isUpgradeAccountSheetShowing = true
-//                                            
-//                                        }
-//                                } else {
-//                                    Image(systemName: "heart.fill")
-//                                        .font(.system(size: 18, design: .serif))
-//                                        .foregroundStyle(Color.red)
-//                                        .onTapGesture {
-//                                            self.isLectureLiked.toggle()
-//                                        }
-//                                }
                             }
                             
                             // Professor if avaialble
-                            Text(lecture.professorName ?? "")
+                            Text(professorName)
                                 .font(.system(size: 14, design: .serif))
                                 .opacity(0.8)
                             
                             HStack {
-                                Text("\(lecture.viewsOnYouTube ?? "0") Views")
+                                Text("\(viewsOnYouTube) Views")
                                     .font(.system(size: 12))
 //                                    .font(.system(size: 12, design: .serif))
                                     .opacity(0.8)
                                 
-                                Text(lecture.datePostedonYoutube ?? "")
+                                Text(datePostedonYoutube)
                                     .font(.system(size: 12))
 //                                    .font(.system(size: 12, design: .serif))
                                     .opacity(0.8)
@@ -146,7 +124,7 @@ struct LectureView: View {
                                 // Profile Picture
                                 // channel image - nav link to channel view
                                 NavigationLink(destination: ChannelView()) {
-                                    if let channelImage = courseController.channelThumbnails[lecture.channelId!] {
+                                    if let channelImage = courseController.channelThumbnails[channelId] {
                                         Image(uiImage: channelImage)
                                             .resizable()
                                         //                                        .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -163,7 +141,7 @@ struct LectureView: View {
                                     self.shouldPopLectureFromStackOnDissapear = false
                                     
                                     // focus a channel
-                                    if let channel = courseController.cachedChannels[lecture.channelId!] {
+                                    if let channel = courseController.cachedChannels[channelId] {
                                         courseController.focusChannel(channel)
                                         
                                         
@@ -185,7 +163,7 @@ struct LectureView: View {
                                             self.shouldPopLectureFromStackOnDissapear = false
                                             
                                             // focus a channel
-                                            if let channel = courseController.cachedChannels[lecture.channelId!] {
+                                            if let channel = courseController.cachedChannels[channelId] {
                                                 courseController.focusChannel(channel)
                                             }
                                         })
@@ -194,10 +172,10 @@ struct LectureView: View {
                                         Spacer()
                                         
                                         // TODO: add back channel stats
-                                        if let course = courseController.cachedCourses[lecture.courseId!] {
-                                            if let channel = courseController.cachedChannels[course.channelId!] {
+                                        if let course = courseController.cachedCourses[courseId] {
+                                            if let channel = courseController.cachedChannels[channelId], let numCourses = channel.numCourses, let numLectures = channel.numLectures {
                                                 // TODO: Channel stats
-                                                Text("\(channel.numCourses!) Courses | \(channel.numLectures!) Lectures")
+                                                Text("\(numCourses) Courses | \(numLectures) Lectures")
                                                     .font(.system(size: 12))
 //                                                    .font(.system(size: 12, design: .serif))
                                                     .opacity(0.7)
@@ -212,7 +190,7 @@ struct LectureView: View {
                             
                             
                             // Lecture Description
-                            ExpandableText(text: lecture.lectureDescription!, maxLength: 150)
+                            ExpandableText(text: lectureDescription, maxLength: 150)
                                 .padding(.top, 10)
                             
                             // Notes
@@ -298,24 +276,7 @@ struct LectureView: View {
                         
                         Divider()
                         
-                        // Logo
-                        if (colorScheme == .light) {
-                            Image("LogoTransparentWhiteBackground")
-                                .resizable()
-                                .frame(width: 80, height: 80)
-                        } else if (colorScheme == .dark) {
-                            Image("LogoBlackBackground")
-                                .resizable()
-                                .frame(width: 80, height: 80)
-                        }
-                        Text("Lectura")
-                            .font(.system(size: 15, design: .serif))
-                            .frame(maxWidth: .infinity, alignment: .bottom)
-                            .opacity(0.8)
-                        Text("version 1.1")
-                            .font(.system(size: 11, design: .serif))
-                            .frame(maxWidth: .infinity, alignment: .bottom)
-                            .opacity(0.8)
+                        BottomBrandView()
                     }
                 }
                 .sheet(isPresented: $isUpgradeAccountSheetShowing) {
@@ -323,19 +284,19 @@ struct LectureView: View {
                 }
                 .onAppear {
                     // there's a chance we came directly to lecture view, not visiting course view first, meaning we need to load the other lectures in this course.
-                    if let course = courseController.cachedCourses[lecture.courseId!] {
+                    if let course = courseController.cachedCourses[courseId], let courseId = course.id, let lectureIds = course.lectureIds {
                         print("we're gonna get the rest of the lectures in course")
-                        courseController.retrieveLecturesInCourse(courseId: course.id!, lectureIds: course.lectureIds!)
+                        courseController.retrieveLecturesInCourse(courseId: courseId, lectureIds: lectureIds)
                         // for some reason if the lectures were already cached but the thumbnails we're requested lets get those
-                        for lectureId in course.lectureIds! {
-                            courseController.getLectureThumnbnail(lectureId: lectureId)
+                        for courseLectureId in lectureIds {
+                            courseController.getLectureThumnbnail(lectureId: courseLectureId)
                         }
                     }
                     
                     
                     // if the user already likes this lecture, change the heart view to red
-                    if let user = userController.user {
-                        if user.likedLectureIds!.contains(lecture.id!) {
+                    if let user = userController.user, let likedLectureIds = user.likedLectureIds {
+                        if likedLectureIds.contains(lectureId) {
                             self.isLectureLiked = true
                         }
                     }
@@ -370,13 +331,13 @@ struct LectureView: View {
                             courseController.focusedLectureStack.append(lecture)
                             
                             // save a new watch history state
-                            if let user = userController.user {
+                            if let user = userController.user, let userId = user.id {
                                 // only if the user is PRO member
                                 if user.accountType == 1 {
                                     // we should make sure we have the course somewhere, if we don't have the course what do we do?? Theres a case where lecture view can appear without first focusing a course
-                                    if let course = courseController.cachedCourses[lecture.courseId!] {
+                                    if let course = courseController.cachedCourses[courseId] {
                                         // TODO: add a rate limit
-                                        myCourseController.updateWatchHistory(userId: user.id!, course: course, lecture: lecture)
+                                        myCourseController.updateWatchHistory(userId: userId, course: course, lecture: lecture)
                                     }
                                 }
                             }
@@ -406,9 +367,9 @@ struct LectureView: View {
         }
         .onAppear {
             // TODO: how can we speed this up?
-            if let lecture = courseController.focusedLecture {
+            if let lecture = courseController.focusedLecture, let youtubeVideoUrl = lecture.youtubeVideoUrl {
                 // load the youtube video
-                self.player.source = .url(lecture.youtubeVideoUrl!)
+                self.player.source = .url(youtubeVideoUrl)
             }
             
             
