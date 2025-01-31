@@ -13,6 +13,7 @@ struct MoreLecturesInSameCourseModule: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
+    
 //    @Binding var playerSource: YouTubePlayer.Source?
     @ObservedObject var player: YouTubePlayer
     
@@ -55,6 +56,9 @@ struct LectureInSameCourseModule: View {
     @EnvironmentObject var notesController: NotesController
     @EnvironmentObject var homeworkController: HomeworkController
     @EnvironmentObject var homeworkAnswersController: HomeworkAnswersController
+    
+    @EnvironmentObject var userController: UserController
+    @EnvironmentObject var myCourseController: MyCourseController
     
     var lecture: Lecture
     
@@ -109,6 +113,16 @@ struct LectureInSameCourseModule: View {
                         
                         // change source url on youtube player
                         player.source = .url(lecture.youtubeVideoUrl ?? "")
+                        
+                        // update watch history
+                        if let user = userController.user, let userId = user.id {
+                            if let courseId = lecture.courseId {
+                                if let course = courseController.cachedCourses[courseId] {
+                                    myCourseController.updateWatchHistory(userId: userId, course: course, lecture: lecture)
+                                }
+                            }
+                        }
+                        
                         
                         // we also gotta get the new lectures resources
                         if let lecture = courseController.focusedLecture {

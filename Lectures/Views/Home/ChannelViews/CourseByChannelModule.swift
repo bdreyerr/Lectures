@@ -55,7 +55,7 @@ struct CourseByChannelModule: View {
                                     .opacity(0.8)
                                 
                                 // Views
-                                Text("\(aggregateViews) Views")
+                                Text("\(formatIntViewsToString(numViews: aggregateViews)) Views")
                                     .font(.system(size: 12))
                                     .opacity(0.8)
                                 
@@ -67,6 +67,21 @@ struct CourseByChannelModule: View {
             }
             .cornerRadius(5)
         }
+    }
+    
+    func formatIntViewsToString(numViews: Int) -> String {
+        switch numViews {
+            case 0..<1_000:
+                return String(numViews)
+            case 1_000..<1_000_000:
+                let thousands = Double(numViews) / 1_000.0
+                return String(format: "%.0fk", thousands)
+            case 1_000_000...:
+                let millions = Double(numViews) / 1_000_000.0
+                return String(format: "%.0fM", millions)
+            default:
+                return "0"
+            }
     }
 }
 

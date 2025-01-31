@@ -122,7 +122,7 @@ struct ChannelView: View {
                 }
             }
         } else {
-            Text("no focused channel")
+            ErrorLoadingView()
         }
     }
 }

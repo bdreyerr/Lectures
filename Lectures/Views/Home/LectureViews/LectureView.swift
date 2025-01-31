@@ -107,7 +107,7 @@ struct LectureView: View {
                                 .opacity(0.8)
                             
                             HStack {
-                                Text("\(viewsOnYouTube) Views")
+                                Text("\(formatIntViewsToString(numViews: viewsOnYouTube)) Views")
                                     .font(.system(size: 12))
 //                                    .font(.system(size: 12, design: .serif))
                                     .opacity(0.8)
@@ -193,12 +193,11 @@ struct LectureView: View {
                             ExpandableText(text: lectureDescription, maxLength: 150)
                                 .padding(.top, 10)
                             
-                            // Notes
+                            
                             HStack {
-                                Text("Notes")
+                                Text("Resources")
                                     .font(.system(size: 14))
 //                                    .font(.system(size: 14, design: .serif))
-                                    .bold()
                                 Image(systemName: "sparkles")
                                     .foregroundStyle(Color.blue)
                                     .font(.system(size: 14, design: .serif))
@@ -206,9 +205,11 @@ struct LectureView: View {
                             }
                             .padding(.top, 20)
                             
+                            // Notes
                             if let noteId = lecture.notesResourceId {
                                 if let note = notesController.cachedNotes[noteId] {
                                     ResourceChip(resource: note, shouldPopFromStack: $shouldPopLectureFromStackOnDissapear)
+                                        .padding(.bottom, 2)
                                 } else {
                                     HStack {
                                         SkeletonLoader(width: 300, height: 40)
@@ -219,21 +220,10 @@ struct LectureView: View {
                             
                             
                             // Homework Assignment
-                            HStack {
-                                Text("Homework")
-                                    .font(.system(size: 14))
-//                                    .font(.system(size: 14, design: .serif))
-                                    .bold()
-                                Image(systemName: "sparkles")
-                                    .foregroundStyle(Color.blue)
-                                    .font(.system(size: 14, design: .serif))
-                                Spacer()
-                            }
-                            .padding(.top, 2)
-                            
                             if let homeworkId = lecture.homeworkResourceId {
                                 if let homework = homeworkController.cachedHomeworks[homeworkId] {
                                     ResourceChip(resource: homework, shouldPopFromStack: $shouldPopLectureFromStackOnDissapear)
+                                        .padding(.bottom, 2)
                                 } else {
                                     HStack {
                                         SkeletonLoader(width: 300, height: 40)
@@ -243,21 +233,10 @@ struct LectureView: View {
                             }
                             
                             // Homework Assignment
-                            HStack {
-                                Text("Homework Answers")
-                                    .font(.system(size: 14))
-//                                    .font(.system(size: 14, design: .serif))
-                                    .bold()
-                                Image(systemName: "sparkles")
-                                    .foregroundStyle(Color.blue)
-                                    .font(.system(size: 14, design: .serif))
-                                Spacer()
-                            }
-                            .padding(.top, 2)
-                            
                             if let homeworkAnswerId = lecture.homeworkAnswersResourceId {
                                 if let homeworkAnswer = homeworkAnswersController.cachedHomeworkAnswers[homeworkAnswerId] {
                                     ResourceChip(resource: homeworkAnswer, shouldPopFromStack: $shouldPopLectureFromStackOnDissapear)
+                                        .padding(.bottom, 2)
                                 } else {
                                     HStack {
                                         SkeletonLoader(width: 300, height: 40)
@@ -265,6 +244,12 @@ struct LectureView: View {
                                     }
                                 }
                             }
+                            
+                            // Play on youtube button
+                            if let url = lecture.youtubeVideoUrl {
+                                WatchOnYouTubeButton(videoUrl: url)
+                            }
+                            
                             
                             
                             // Next Lessons
@@ -362,10 +347,11 @@ struct LectureView: View {
                     }
                 }
             } else {
-                Text("We couldn't load that lecture.")
+                ErrorLoadingView()
             }
         }
         .onAppear {
+            
             // TODO: how can we speed this up?
             if let lecture = courseController.focusedLecture, let youtubeVideoUrl = lecture.youtubeVideoUrl {
                 // load the youtube video
@@ -389,6 +375,21 @@ struct LectureView: View {
                 }
             }
         }
+    }
+    
+    func formatIntViewsToString(numViews: Int) -> String {
+        switch numViews {
+            case 0..<1_000:
+                return String(numViews)
+            case 1_000..<1_000_000:
+                let thousands = Double(numViews) / 1_000.0
+                return String(format: "%.0fk", thousands)
+            case 1_000_000...:
+                let millions = Double(numViews) / 1_000_000.0
+                return String(format: "%.0fM", millions)
+            default:
+                return "0"
+            }
     }
 }
 

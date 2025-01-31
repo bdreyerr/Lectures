@@ -71,6 +71,31 @@ struct SubscriptionType: View {
                         }
                         Divider()
                     }
+                    
+                    // Restore Purchase
+                    HStack {
+                        // icon
+                        Image(systemName: "arrow.uturn.forward")
+                        
+                        // text
+                        
+                        Button(action: {
+                            //
+                        }) {
+                            Text("Restore Purchases")
+                                .font(.system(size: 10))
+                                .foregroundColor(.white)
+                                .padding(5)
+                                .background(Color.blue)
+                                .cornerRadius(5)
+                        
+                        Spacer()
+                        
+                        
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
+                    }
                 }
             }
         }

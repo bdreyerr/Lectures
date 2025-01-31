@@ -14,11 +14,14 @@ import Foundation
 
 class MyCourseController : ObservableObject {
     
-    @Published var recentWatchHistories : [WatchHistory] = []
+    @Published var watchHistories: [WatchHistory] = []
+    
+    // Pagination
+    @Published var lastWatchHistoryDoc: QueryDocumentSnapshot?
+    @Published var noWatchHistoriesLeftToLoad: Bool = false
     
     // CourseId : WatchHistory
-    @Published var cachedWatchHistories : [String : WatchHistory] = [:]
-    
+    @Published var cachedWatchHistories: [String : WatchHistory] = [:]
     
     // Loading
     @Published var isWatchHistoryLoading: Bool = false
@@ -109,22 +112,25 @@ class MyCourseController : ObservableObject {
     // get a user's recently watched courses (on app open)
     func retrieveRecentWatchHistories(userId: String, courseController: CourseController) {
         // TODO: find a better way to refresh this? for now if it's already filled we won't check firestore again
-        if self.recentWatchHistories.count > 0 {
+        if self.watchHistories.count > 0 {
             print("skipping getting recent watch history again")
             return
         }
         
         self.isWatchHistoryLoading = true
         Task { @MainActor in
-            self.recentWatchHistories = []
+            self.watchHistories = []
             do {
-                let querySnapshot = try await db.collection("watchHistories").whereField("userId", isEqualTo: userId).order(by: "courseLastWatched", descending: true).limit(to: 10).getDocuments()
+                let querySnapshot = try await db.collection("watchHistories").whereField("userId", isEqualTo: userId).order(by: "courseLastWatched", descending: true).limit(to: 6).getDocuments()
+                
+                
+                if querySnapshot.documents.isEmpty { noWatchHistoriesLeftToLoad = true }
                 
                 for document in querySnapshot.documents {
                     // build the watchHistory object and add it
                     if let watchHistory = try? document.data(as: WatchHistory.self) {
                         if let watchHistoryCourseId = watchHistory.courseId, let watchHistoryChannelId = watchHistory.channelId {
-                            self.recentWatchHistories.append(watchHistory)
+                            self.watchHistories.append(watchHistory)
                             self.cachedWatchHistories[watchHistoryCourseId] = watchHistory
                             
                             
@@ -138,6 +144,15 @@ class MyCourseController : ObservableObject {
                     }
                 }
                 
+                // get the last doc for pagination
+                guard let lastDocument = querySnapshot.documents.last else {
+                    // the collection is empty
+                    isWatchHistoryLoading = false
+                    return
+                }
+                
+                self.lastWatchHistoryDoc = lastDocument
+                
                 self.isWatchHistoryLoading = false
             } catch {
                 print("Error getting documents: \(error)")
@@ -148,21 +163,31 @@ class MyCourseController : ObservableObject {
     
     func refreshCourseHistory(userId: String) {
         Task { @MainActor in
-            self.recentWatchHistories = []
+            self.watchHistories = []
             do {
-                let querySnapshot = try await db.collection("watchHistories").whereField("userId", isEqualTo: userId).order(by: "courseLastWatched", descending: true).limit(to: 10).getDocuments()
+                let querySnapshot = try await db.collection("watchHistories").whereField("userId", isEqualTo: userId).order(by: "courseLastWatched", descending: true).limit(to: 6).getDocuments()
+                
+                if querySnapshot.documents.isEmpty { noWatchHistoriesLeftToLoad = true }
                 
                 for document in querySnapshot.documents {
                     // build the watchHistory object and add it
                     if let watchHistory = try? document.data(as: WatchHistory.self) {
                         if let watchHistoryCourseId = watchHistory.courseId {
-                            self.recentWatchHistories.append(watchHistory)
+                            self.watchHistories.append(watchHistory)
                             self.cachedWatchHistories[watchHistoryCourseId] = watchHistory
                         }
                     } else {
                         print("couldn't convert the document to a watch history")
                     }
                 }
+                
+                // get the last doc for pagination
+                guard let lastDocument = querySnapshot.documents.last else {
+                    // the collection is empty
+                    return
+                }
+                
+                self.lastWatchHistoryDoc = lastDocument
                 
                 self.isWatchHistoryLoading = false
             } catch {
@@ -194,6 +219,50 @@ class MyCourseController : ObservableObject {
             for lectureId in lectureIds {
                 courseController.retrieveLecture(lectureId: lectureId)
                 courseController.getLectureThumnbnail(lectureId: lectureId)
+            }
+        }
+    }
+    
+    // pagination of watch history
+    func getMoreWatchHistories(userId: String, courseController: CourseController) {
+        if let lastDoc = self.lastWatchHistoryDoc {
+            Task { @MainActor in
+                do {
+                    let querySnapshot = try await db.collection("watchHistories").whereField("userId", isEqualTo: userId).order(by: "courseLastWatched", descending: true).start(afterDocument: lastDoc).limit(to: 6).getDocuments()
+                    
+                    
+                    if querySnapshot.documents.isEmpty { noWatchHistoriesLeftToLoad = true }
+                    
+                    for document in querySnapshot.documents {
+                        // build the watchHistory object and add it
+                        if let watchHistory = try? document.data(as: WatchHistory.self) {
+                            if let watchHistoryCourseId = watchHistory.courseId, let watchHistoryChannelId = watchHistory.channelId {
+                                self.watchHistories.append(watchHistory)
+                                self.cachedWatchHistories[watchHistoryCourseId] = watchHistory
+                                
+                                
+                                courseController.retrieveCourse(courseId: watchHistoryCourseId)
+                                courseController.retrieveChannel(channelId: watchHistoryChannelId)
+                                courseController.getCourseThumbnail(courseId: watchHistoryCourseId)
+                            }
+                            
+                        } else {
+                            print("couldn't convert the document to a watch history")
+                        }
+                    }
+                    
+                    // get the last doc for pagination
+                    guard let lastDocument = querySnapshot.documents.last else {
+                        // the collection is empty
+                        return
+                    }
+                    
+                    self.lastWatchHistoryDoc = lastDocument
+                    
+                    self.isWatchHistoryLoading = false
+                } catch {
+                    print("Error getting documents: \(error)")
+                }
             }
         }
     }

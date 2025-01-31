@@ -27,6 +27,8 @@ struct Resource : Codable {
     
     var title: String?
     
+    var content: String?
+    
     var createdAt: Timestamp?
     var updatedAt: Timestamp?
     
@@ -36,6 +38,7 @@ struct Resource : Codable {
         case lectureId
         case resourceType
         case title
+        case content
         case createdAt
         case updatedAt
     }

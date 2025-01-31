@@ -25,7 +25,12 @@ struct Channel : Codable, Identifiable {
     var numCourses: Int?
     var numLectures: Int?
     
+    // youtube link
+    var channelYouTubeLink: String?
+    
     var searchTerms: [String]?
+    
+    var thumbnailUrl: String?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -34,8 +39,8 @@ struct Channel : Codable, Identifiable {
         case courseIds
         case numCourses
         case numLectures
+        case channelYouTubeLink
         case searchTerms
+        case thumbnailUrl
     }
-    
-    // MIT, Stanford, Yale, Harvard, Oxford
 }

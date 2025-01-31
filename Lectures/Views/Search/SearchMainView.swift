@@ -16,6 +16,9 @@ struct SearchMainView: View {
     @StateObject var searchController = SearchController()
     
     @State var isUpgradeAccountPopupShowing: Bool = false
+    @State var isSignUpSheetShowing: Bool = false
+    
+    @State var isUserPro: Bool = false
     
     var body: some View {
         NavigationView {
@@ -24,7 +27,12 @@ struct SearchMainView: View {
                     TopBrandView()
                     
                     ScrollView(showsIndicators: false) {
-                        SearchBarWithFilters()
+                        if let user = userController.user, let accountType = user.accountType {
+                            SearchBarWithFilters(accountType: accountType)
+                        } else {
+                            SearchBarWithFilters()
+                        }
+                        
                         
                         
 //                        SearchLoadingView()
@@ -121,6 +129,7 @@ struct SearchMainView: View {
                                                     .font(.system(size: 10))
                                                     .opacity(0.8)
                                             }
+                                            .buttonStyle(PlainButtonStyle())
                                         }
                                     }
                                     Spacer()
@@ -176,6 +185,7 @@ struct SearchMainView: View {
                                                     .font(.system(size: 10))
                                                     .opacity(0.8)
                                             }
+                                            .buttonStyle(PlainButtonStyle())
                                         }
                                     }
                                     Spacer()
@@ -243,6 +253,7 @@ struct SearchMainView: View {
                                                     .font(.system(size: 10))
                                                     .opacity(0.8)
                                             }
+                                            .buttonStyle(PlainButtonStyle())
                                         }
                                     }
                                     Spacer()
@@ -251,6 +262,45 @@ struct SearchMainView: View {
                             }
                         }
                     }
+                    
+                    Group {
+                        if userController.user == nil {
+                            // Sign in to see full search results
+                            
+                            
+                            Text("Sign in for full search functionality")
+                                .font(.system(size: 13, design: .serif))
+                                .padding(.top, 20)
+                                .padding(.bottom, 5)
+                            
+                            
+                            SignInWithApple(displaySignInSheet: .constant(false))
+                            
+                            SignInWithGoogle(displaySignInSheet: .constant(false))
+                                .padding(.bottom, 200)
+                        }
+                        
+                        if let user = userController.user, let accountType = user.accountType {
+                            if accountType == 0 {
+                                Button(action: {
+                                    isUpgradeAccountPopupShowing = true
+                                }) {
+                                    Text("Upgrade")
+                                        .font(.system(size: 13, design: .serif))
+                                        .foregroundStyle(Color.orange)
+                                        .opacity(0.8)
+                                }
+                                .padding(.top, 40)
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Text("for full search functionality")
+                                    .font(.system(size: 13, design: .serif))
+                                    .padding(.bottom, 150)
+                                    .opacity(0.8)
+                            }
+                        }
+                    }
+                    
                 }
                 .padding(.horizontal, 20)
                 .scrollDismissesKeyboard(.interactively)
@@ -263,6 +313,20 @@ struct SearchMainView: View {
         // Needed for iPad compliance
         .navigationViewStyle(StackNavigationViewStyle())
         .environmentObject(searchController)
+        .onAppear {
+            // set filters depending on user status
+            if let user = userController.user, let accountType = user.accountType {
+                if accountType == 1 {
+                    searchController.isCourseFilterSelected = true
+                    searchController.isLectureFilterSelected = true
+                    searchController.isChannelFilterSelected = true
+                } else {
+                    searchController.isCourseFilterSelected = true
+                    searchController.isLectureFilterSelected = false
+                    searchController.isChannelFilterSelected = false
+                }
+            }
+        }
     }
 }
 

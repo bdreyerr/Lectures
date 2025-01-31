@@ -10,38 +10,43 @@ import SwiftUI
 struct ResourceChip: View {
     var resource: Resource
     
+    var exampleText: String = """
+# Header 1\n## Header 2\n### Header 3
+"""
+
+    
     @Binding var shouldPopFromStack: Bool
     var body: some View {
-        
-        
-        
         HStack {
             
-            NavigationLink(destination: ResourceView(resource: resource)) {
+//            NavigationLink(destination: ResourceView(resource: resource)) {
+            NavigationLink(destination: ResourceNativeView(resourceTitle: resource.title ?? "", resourceContent: resource.content ?? "")) {
                 // Main content container
                 HStack(spacing: 5) {
-                    Image(systemName: "doc.circle")
-                        .font(.system(size: 18, design: .serif))
+                    Image(systemName: "doc.fill")
+                        .font(.system(size: 16, design: .serif))
+                        .foregroundStyle(Color.blue.opacity(0.8))
                     
                     Text(resource.title?.prefix(50) ?? "")
                         .font(.system(size: 12, design: .serif))
-                        .underline(color: .blue)
+                        .opacity(0.9)
                         .lineLimit(1)
+                        .underline(color: .gray)
                 }
-                .padding(.horizontal, 10)
+//                .padding(.horizontal, 10)
                 .padding(.vertical, 5)
                 // Background and border styling
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [.red, .orange, .yellow, .green, .blue, .purple],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                )
+//                .background(
+//                    RoundedRectangle(cornerRadius: 20)
+//                        .strokeBorder(
+//                            LinearGradient(
+//                                colors: [.red, .orange, .yellow, .green, .blue, .purple],
+//                                startPoint: .topLeading,
+//                                endPoint: .bottomTrailing
+//                            ).opacity(0.6),
+//                            lineWidth: 1
+//                        )
+//                )
             }
             .buttonStyle(PlainButtonStyle())
             .simultaneousGesture(TapGesture().onEnded { _ in

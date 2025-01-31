@@ -28,18 +28,32 @@ struct CourseView: View {
     @State private var shouldAddCourseToStack: Bool = true
     
     @State private var isUpgradeAccountSheetShowing: Bool = false
+    @State private var isSignInSheetShowing: Bool = false
     
     var body: some View {
         Group {
-            if let course = courseController.focusedCourse, let courseId = course.id, let channelId = course.channelId, let courseDescription = course.courseDescription {
+            if let course = courseController.focusedCourse, let courseId = course.id, let channelId = course.channelId, let courseTitle = course.courseTitle,  let courseDescription = course.courseDescription, let numLecturesInCourse = course.numLecturesInCourse, let watchTimeInHrs = course.watchTimeInHrs, let aggregateViews = course.aggregateViews {
                 VStack {
-                    // Course Cover Image?
                     ScrollView(showsIndicators: false) {
+//                        if let courseImage = courseController.courseThumbnails[courseId] {
+//                            ZStack(alignment: .bottomLeading) {
+//                                Image(uiImage: courseImage)
+//                                    .resizable()
+//                                    .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.4)
+//                                
+//                            }
+//                            .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.4)
+//                            .shadow(radius: 2.5)
+//                        }
                         VStack(spacing: 5) {
+                            // Course Cover Image
+                           
+                            
+                            
                             HStack {
                                 // Course title and University
                                 VStack {
-                                    Text(course.courseTitle ?? "")
+                                    Text(courseTitle)
                                         .font(.system(size: 18, design: .serif))
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
@@ -76,17 +90,17 @@ struct CourseView: View {
                             
                             // Course Info
                             HStack {
-                                Text("\(course.numLecturesInCourse ?? 1) Lectures")
+                                Text("\(numLecturesInCourse) Lectures")
                                     .font(.system(size: 12))
 //                                    .font(.system(size: 12, design: .serif))
                                     .opacity(0.6)
                                 
-                                Text("\(course.watchTimeInHrs ?? 1)Hr Watch Time")
+                                Text("\(watchTimeInHrs)Hr Watch Time")
                                     .font(.system(size: 12))
 //                                    .font(.system(size: 12, design: .serif))
                                     .opacity(0.6)
                                 
-                                Text("\(course.aggregateViews ?? "0") Views")
+                                Text("\(formatIntViewsToString(numViews: aggregateViews)) Views")
                                     .font(.system(size: 12))
 //                                    .font(.system(size: 12, design: .serif))
                                     .opacity(0.6)
@@ -121,7 +135,7 @@ struct CourseView: View {
                                 
                                 Spacer()
                             }
-                            .padding(.bottom, 10)
+                            .padding(.bottom, 12)
                             
                             
                             
@@ -222,13 +236,12 @@ struct CourseView: View {
                                 .padding(.top, 10)
                             
                             
-                            // Exam
-                            
+                            // Resources
                             HStack {
-                                Text("Exam")
+                                Text("Resources")
                                     .font(.system(size: 14))
 //                                    .font(.system(size: 14, design: .serif))
-                                    .bold()
+//                                    .bold()
                                 Image(systemName: "sparkles")
                                     .foregroundStyle(Color.blue)
                                     .font(.system(size: 14, design: .serif))
@@ -237,9 +250,24 @@ struct CourseView: View {
                             .padding(.top, 20)
                             
                             
+                            // Exam
+//                            HStack {
+//                                Text("Exam")
+//                                    .font(.system(size: 14))
+////                                    .font(.system(size: 14, design: .serif))
+//                                    .bold()
+//                                Image(systemName: "sparkles")
+//                                    .foregroundStyle(Color.blue)
+//                                    .font(.system(size: 14, design: .serif))
+//                                Spacer()
+//                            }
+//                            .padding(.top, 20)
+                            
+                            
                             if let examId = course.examResourceId {
                                 if let exam = examController.cachedExams[examId] {
                                     ResourceChip(resource: exam, shouldPopFromStack: $shouldPopCourseFromStackOnDissapear)
+                                        .padding(.bottom, 2)
                                 } else {
                                     HStack {
                                         SkeletonLoader(width: 300, height: 40)
@@ -253,17 +281,17 @@ struct CourseView: View {
                             
                             
                             // Exam Answers
-                            HStack {
-                                Text("Exam Answers")
-                                    .font(.system(size: 14))
+//                            HStack {
+//                                Text("Exam Answers")
+//                                    .font(.system(size: 14))
+////                                    .font(.system(size: 14, design: .serif))
+//                                    .bold()
+//                                Image(systemName: "sparkles")
+//                                    .foregroundStyle(Color.blue)
 //                                    .font(.system(size: 14, design: .serif))
-                                    .bold()
-                                Image(systemName: "sparkles")
-                                    .foregroundStyle(Color.blue)
-                                    .font(.system(size: 14, design: .serif))
-                                Spacer()
-                            }
-                            .padding(.top, 2)
+//                                Spacer()
+//                            }
+//                            .padding(.top, 2)
                             
                             if let examAnswerId = course.examAnswersResourceId {
                                 if let examAnswer = examAnswerController.cachedExamAnswers[examAnswerId] {
@@ -328,30 +356,64 @@ struct CourseView: View {
                             
                             // Related Courses
                             HStack {
-                                Text("Courses related to")
+                                Text("Related Courses")
                                     .font(.system(size: 14))
 //                                    .font(.system(size: 14, design: .serif))
-                                    .bold()
+//                                    .bold()
+                                    .padding(.bottom, 10)
                                 
                                 
-                                Text(course.courseTitle ?? "")
-                                    .font(.system(size: 14, design: .serif))
-                                    .lineLimit(1)
-                                    .truncationMode(.tail)
+//                                Text(course.courseTitle ?? "")
+//                                    .font(.system(size: 14, design: .serif))
+//                                    .lineLimit(1)
+//                                    .truncationMode(.tail)
                                 
-                                Spacer()
+//                                Spacer()
                             }
                             
-                            Group {
-                                ForEach(homeController.communityFavorites, id: \.id) { course in
-                                    RelatedCourse(course: course)
+                            if userController.user == nil {
+                                Text("Sign in to view related courses")
+                                    .font(.system(size: 14))
+                                
+                                Button(action: {
+                                    isSignInSheetShowing = true
+                                }) {
+                                    Text("Sign In / Create Account")
+                                        .font(.system(size: 14))
                                 }
                             }
+                            
+                            if let user = userController.user, let accountType = user.accountType {
+                                if accountType == 0 {
+                                    Text("Upgrade to see course recommendations")
+                                        .font(.system(size: 12))
+                                    
+                                    Button(action: {
+                                        isUpgradeAccountSheetShowing = true
+                                    }) {
+                                        Text("Upgrade")
+                                            .font(.system(size: 14))
+                                            .foregroundStyle(Color.orange)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                } else {
+                                    Group {
+                                        ForEach(homeController.communityFavorites, id: \.id) { course in
+                                            RelatedCourse(course: course)
+                                        }
+                                    }
+                                }
+                            }
+                            
                             
                             BottomBrandView()
                         }
                         .padding(.horizontal, 20)
                     }
+                }
+                .sheet(isPresented: $isSignInSheetShowing) {
+                    FirstOpenSignUpSheet(text: "Sign In", displaySheet: $isSignInSheetShowing)
+                        .presentationDetents([.fraction(0.4), .medium]) // User can drag between these heights
                 }
                 .sheet(isPresented: $isUpgradeAccountSheetShowing) {
                     UpgradeAccountPaywallWithoutFreeTrial()
@@ -423,7 +485,7 @@ struct CourseView: View {
                     }
                 }
             } else {
-                Text("no focused course")
+                ErrorLoadingView()
             }
         }
         .onAppear {
@@ -442,6 +504,21 @@ struct CourseView: View {
         .onDisappear {
             print("ON DISAPPEAR - num things in the course stack: \(courseController.focusedCourseStack.count)")
         }
+    }
+    
+    func formatIntViewsToString(numViews: Int) -> String {
+        switch numViews {
+            case 0..<1_000:
+                return String(numViews)
+            case 1_000..<1_000_000:
+                let thousands = Double(numViews) / 1_000.0
+                return String(format: "%.0fk", thousands)
+            case 1_000_000...:
+                let millions = Double(numViews) / 1_000_000.0
+                return String(format: "%.0fM", millions)
+            default:
+                return "0"
+            }
     }
 }
 

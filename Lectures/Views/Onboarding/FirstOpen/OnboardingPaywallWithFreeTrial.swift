@@ -20,43 +20,45 @@ struct OnboardingPaywallWithFreeTrial: View {
             LatticeBackground()
             
             VStack {
-                // Skip button
-                Button(action: {
-                    // let the user skip to the app, without creating an account
-                    hasUserSeenPaywall = true
-                }) {
-                    HStack {
-                        Spacer()
-                        Text("Skip")
+                HStack {
+                    Image("lectura-icon")
+                        .resizable()
+                        .frame(width: 35, height: 35)
+        //                .clipShape(RoundedRectangle(cornerRadius: 10))
+                    
+                    VStack {
+                        Text("Lectura")
                             .font(.system(size: 16, design: .serif))
-                            .opacity(0.8)
-                            .padding(.trailing, 20)
-                            .foregroundColor(.white)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(Color.white)
                     }
+                    
+                    Spacer()
+                    
+                    // Skip button
+                    Button(action: {
+                        // let the user skip to the app, without creating an account
+                        hasUserSeenPaywall = true
+                    }) {
+                        HStack {
+                            Spacer()
+                            Text("Skip")
+                                .font(.system(size: 16, design: .serif))
+                                .opacity(0.8)
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
-                .buttonStyle(PlainButtonStyle())
+                .cornerRadius(5)
+                .padding(.horizontal, 20)
                 
                 ScrollView(showsIndicators: false ) {
                     // Header with logo and title
                     VStack {
-                        
-                        
-                        // Logo and app details
-                        HStack {
-                            Image("lectura-icon")
-                                .resizable()
-                                .frame(width: 50, height: 50)
-                            
-                            VStack(alignment: .leading) {
-                                Text("Lectura")
-                                    .font(.system(size: 18, design: .serif))
-                                Text("Learn Anything")
-                                    .font(.system(size: 12, design: .serif))
-                                    .opacity(0.6)
-                            }
-                        }
-                        .cornerRadius(5)
-                        
+                        Text("Start your learning journey with a")
+                            .font(.system(size: 16, design: .serif))
                         Text("7 day free trial")
                             .font(.system(size: 22, design: .serif))
                     }
@@ -106,8 +108,9 @@ struct OnboardingPaywallWithFreeTrial: View {
                         }
                         SubscriptionPlanView(
                             title: "3 months",
-                            price: "$12.90",
-                            subPrice: "$4.33 per month",
+                            price: "$14.99",
+                            subPrice: "$4.99 per month",
+                            discount: "Save 20%",
                             isSelected: selectedPlan == "3 months"
                         ) {
                             selectedPlan = "3 months"
@@ -115,7 +118,7 @@ struct OnboardingPaywallWithFreeTrial: View {
                         SubscriptionPlanView(
                             title: "12 months",
                             price: "$34.99",
-                            subPrice: "$2.91 per month",
+                            subPrice: "$2.99 per month",
                             discount: "Save 50%",
                             isSelected: selectedPlan == "12 months"
                         ) {
@@ -244,7 +247,7 @@ struct SubscriptionPlanView: View {
         HStack {
             VStack(alignment: .leading, spacing: 5) {
                 Text(title)
-                    .font(.system(size: 20, design: .serif))
+                    .font(.system(size: 16, design: .serif))
                 if let subPrice = subPrice {
                     Text(subPrice)
                         .font(.subheadline)
@@ -254,10 +257,10 @@ struct SubscriptionPlanView: View {
             Spacer()
             VStack(alignment: .trailing) {
                 Text(price)
-                    .font(.system(size: 20, design: .serif))
+                    .font(.system(size: 16, design: .serif))
                 if let discount = discount {
                     Text(discount)
-                        .font(.system(size: 18, design: .serif))
+                        .font(.system(size: 14, design: .serif))
                         .foregroundColor(.orange)
                         .bold()
                 }
@@ -325,24 +328,11 @@ struct ProFeaturesSheet: View {
                     FeatureRow(icon: "checkmark.circle.fill", text: "Ad-free experience.")
                     FeatureRow(icon: "checkmark.circle.fill", text: "Personalized Learning (Course Progress, Saved Lectures, Follow Universities)")
                     FeatureRow(icon: "checkmark.circle.fill", text: "Free access to all course and lecture resources (notes, homework, exams)")
-                    FeatureRow(icon: "checkmark.circle.fill", text: "Customize app appearance")
+                    FeatureRow(icon: "checkmark.circle.fill", text: "Share resources outside the app")
                 }
                 .padding(.top)
                 
                 Spacer()
-                
-//                Button(action: {
-//                    // Dismiss the sheet or perform an action
-//                }) {
-//                    Text("Start Your Free Trial")
-//                        .font(.headline)
-//                        .foregroundColor(.white)
-//                        .padding()
-//                        .frame(maxWidth: .infinity)
-//                        .background(Color.orange)
-//                        .cornerRadius(10)
-//                }
-//                .padding(.horizontal, 20)
             }
             .padding()
         }

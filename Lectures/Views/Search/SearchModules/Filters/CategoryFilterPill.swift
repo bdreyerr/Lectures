@@ -11,23 +11,31 @@ struct CategoryFilterPill: View {
     @EnvironmentObject var searchController: SearchController
     
     var text: String
+    var accountType: Int?
     
     @State private var isSelected: Bool = false
+    @State var isUpgradeAccountPopupShowing: Bool = false
     
     var body: some View {
         Button(action: {
-            // Action for the button
-            withAnimation(.spring()) {
-                // either add or remove this category from the list in the controller
-                if isSelected {
-                    // remove
-                    searchController.activeCategories.removeAll { $0 == text }
+            if let accountType = accountType {
+                if accountType == 0 {
+                    isUpgradeAccountPopupShowing = true
                 } else {
-                    // add
-                    searchController.activeCategories.append(text)
+                    // Action for the button
+                    withAnimation(.spring()) {
+                        // either add or remove this category from the list in the controller
+                        if isSelected {
+                            // remove
+                            searchController.activeCategories.removeAll { $0 == text }
+                        } else {
+                            // add
+                            searchController.activeCategories.append(text)
+                        }
+                        
+                        isSelected.toggle()
+                    }
                 }
-                
-                isSelected.toggle()
             }
         }) {
             HStack {
@@ -41,6 +49,9 @@ struct CategoryFilterPill: View {
             .clipShape(Capsule())
         }
         .buttonStyle(PlainButtonStyle()) // To prevent default button styling
+        .sheet(isPresented: $isUpgradeAccountPopupShowing) {
+            UpgradeAccountPaywallWithoutFreeTrial()
+        }
     }
 }
 

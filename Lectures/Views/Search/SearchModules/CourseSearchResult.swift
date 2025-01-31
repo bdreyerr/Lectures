@@ -50,7 +50,7 @@ struct CourseSearchResult: View {
                                 .font(.system(size: 12))
                                 .opacity(0.6)
                             
-                            Text("\(aggregateViews) Views")
+                            Text("\(formatIntViewsToString(numViews: aggregateViews)) Views")
                                 .font(.system(size: 12))
                                 .opacity(0.6)
                             Spacer()
@@ -70,12 +70,27 @@ struct CourseSearchResult: View {
                     }
                 }
             }
-            .frame(maxWidth: 330)
+            .frame(maxWidth: 280)
             .buttonStyle(PlainButtonStyle())
             .simultaneousGesture(TapGesture().onEnded { _ in
                 courseController.focusCourse(course)
             })
         }
+    }
+    
+    func formatIntViewsToString(numViews: Int) -> String {
+        switch numViews {
+            case 0..<1_000:
+                return String(numViews)
+            case 1_000..<1_000_000:
+                let thousands = Double(numViews) / 1_000.0
+                return String(format: "%.0fk", thousands)
+            case 1_000_000...:
+                let millions = Double(numViews) / 1_000_000.0
+                return String(format: "%.0fM", millions)
+            default:
+                return "0"
+            }
     }
     
 }

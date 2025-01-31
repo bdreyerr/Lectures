@@ -18,20 +18,15 @@ struct Course : Codable, Identifiable, Hashable {
     // Course Metadata
     var courseTitle: String?
     var courseDescription: String?
-    // TODO(): Consider making the university it's own model
-//    var university: String?
     var professorName: String?
     var numLecturesInCourse: Int?
     var watchTimeInHrs: Int?
-    var aggregateViews: String?
+    var aggregateViews: Int?
     var categories: [String]?
     var numLikesInApp: Int?
     
     
     // Resource Information
-    var hasExam: Bool?
-    var hasExamAnswers: Bool?
-    
     var examResourceId: String?
     var examAnswersResourceId: String?
     
@@ -40,6 +35,9 @@ struct Course : Codable, Identifiable, Hashable {
     
     // Terms used to search for this course (title, channel, categories, etc..)
     var searchTerms: [String]?
+    
+    // link to thumbnail on the web (not in storage, we'll download it from this link)
+    var thumbnailUrl: String?
     
     
     enum CodingKeys: String, CodingKey {
@@ -53,11 +51,12 @@ struct Course : Codable, Identifiable, Hashable {
         case aggregateViews
         case categories
         case numLikesInApp
-        case hasExam
-        case hasExamAnswers
+//        case hasExam
+//        case hasExamAnswers
         case examResourceId
         case examAnswersResourceId
         case lectureIds
         case searchTerms
+        case thumbnailUrl
     }
 }

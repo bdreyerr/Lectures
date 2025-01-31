@@ -24,25 +24,20 @@ struct Lecture : Codable, Identifiable, Hashable {
     var channelName: String?
     var lectureDescription: String?
     var lectureNumberInCourse: Int?
-    var viewsOnYouTube: String?
+    var viewsOnYouTube: Int?
     var datePostedonYoutube: String?
     var numLikesInApp: Int?
     
     // Resources
-    var hasNotes: Bool?
     var notesResourceId: String?
-    
-    var hasHomework: Bool?
     var homeworkResourceId: String?
-    
-    var hasHomeworkAnswers: Bool?
     var homeworkAnswersResourceId: String?
     
-    // thumbail and YouTube Info
-    var thumbnailUrl: String?
     var youtubeVideoUrl: String?
     
     var searchTerms: [String]?
+    
+    var thumbnailUrl: String?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -57,14 +52,11 @@ struct Lecture : Codable, Identifiable, Hashable {
         case viewsOnYouTube
         case datePostedonYoutube
         case numLikesInApp
-        case hasNotes
         case notesResourceId
-        case hasHomework
         case homeworkResourceId
-        case hasHomeworkAnswers
         case homeworkAnswersResourceId
-        case thumbnailUrl
         case youtubeVideoUrl
         case searchTerms
+        case thumbnailUrl
     }
 }

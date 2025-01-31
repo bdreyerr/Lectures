@@ -54,7 +54,6 @@ class HomeController : ObservableObject {
                     print("Error decoding channel: \(error)")
                 }
             }
-            
             self.isUniversityLoading = false
         }
     }
@@ -67,6 +66,7 @@ class HomeController : ObservableObject {
                 
                 if querySnapshot.isEmpty {
                     print("no courses returned when looking up community favorites")
+                    self.isCuratedCoursesLoading = false
                     return
                 }
                 
@@ -108,6 +108,7 @@ class HomeController : ObservableObject {
                 
                 if querySnapshot.isEmpty {
                     print("no courses returned when looking up community favorites")
+                    self.isCommunityFavoritesLoading = false
                     return
                 }
                 

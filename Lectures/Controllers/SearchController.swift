@@ -151,12 +151,9 @@ class SearchController : ObservableObject {
                     }
                     
                     // get the last doc for pagination
-                    guard let lastCourseDocument = courseSnapshot.documents.last else {
-                        // the collection is empty
-                        return
+                    if let lastCourseDocument = courseSnapshot.documents.last {
+                        self.lastDocCourse = lastCourseDocument
                     }
-                    
-                    self.lastDocCourse = lastCourseDocument
                     
                 } catch let error {
                     print("error fetching courses: ", error.localizedDescription)
@@ -205,12 +202,9 @@ class SearchController : ObservableObject {
                     }
                     
                     // get the last doc for pagination
-                    guard let lastLectureDocument = lectureSnapshot.documents.last else {
-                        // the collection is empty
-                        return
+                    if let lastLectureDocument = lectureSnapshot.documents.last {
+                        self.lastDocLecture = lastLectureDocument
                     }
-                    
-                    self.lastDocLecture = lastLectureDocument
                     
                 } catch let error {
                     print("error searching lectures: ", error.localizedDescription)
@@ -242,12 +236,9 @@ class SearchController : ObservableObject {
                     }
                     
                     // get the last doc for pagination
-                    guard let lastChannelDocument = channelSnapshot.documents.last else {
-                        // the collection is empty
-                        return
+                    if let lastChannelDocument = channelSnapshot.documents.last {
+                        self.lastDocChannel = lastChannelDocument
                     }
-                    
-                    self.lastDocChannel = lastChannelDocument
                     
                 } catch let error {
                     print("error searching channels: ", error.localizedDescription)
