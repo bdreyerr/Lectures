@@ -12,11 +12,17 @@ import SwiftUI
 struct SignInWithApple: View {
     // Light / Dark Theme
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("hasUserSeenPaywall") private var hasUserSeenPaywall = false
     
     @EnvironmentObject var authController: AuthController
     
+    @EnvironmentObject var subscriptionController: SubscriptionController
+    
     var disablePadding: Bool?
     @Binding var displaySignInSheet: Bool
+    
+    var closePaywallOnSignIn: Bool?
+    
     var body: some View {
         SignInWithAppleButton(
             onRequest: { request in
@@ -29,6 +35,13 @@ struct SignInWithApple: View {
                 
                 Task {
                     authController.appleSignInButtonOnCompletion(result: result, displaySignInSheet: $displaySignInSheet)
+                    
+                    // restore purchases with revenue cat (will return the user's pro status)
+                    await subscriptionController.restorePurchases()
+                    
+                    if let _ = closePaywallOnSignIn {
+                        hasUserSeenPaywall = true
+                    }
                 }
             }
         )

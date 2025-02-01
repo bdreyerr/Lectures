@@ -12,6 +12,7 @@ struct SignOutButton: View {
     
     @EnvironmentObject var authController: AuthController
     @EnvironmentObject var userController: UserController
+    @EnvironmentObject var subscriptionController: SubscriptionController
     
     var body: some View {
         // Log Out
@@ -19,6 +20,8 @@ struct SignOutButton: View {
             // Sign out of account - auth
             authController.logOut()
             userController.logOut()
+            subscriptionController.logOutOfSubscriptionAccount()
+            
         }) {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(lineWidth: 1)

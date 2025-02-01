@@ -17,8 +17,8 @@ struct CourseView: View {
     @EnvironmentObject var homeController: HomeController
     @EnvironmentObject var examController: ExamController
     @EnvironmentObject var examAnswerController: ExamAnswerController
-    // Youtube player
-//    @EnvironmentObject var youTubePlayerController: YouTubePlayerController
+
+    @EnvironmentObject var subscriptionController: SubscriptionController
     
     // TODO: move these into user controller rather than local on this view
     @State var isCourseLiked: Bool = false
@@ -62,22 +62,33 @@ struct CourseView: View {
                                 // Like Course Button
                                 Button(action: {
                                     // if the user isn't a PRO member, they can't like courses
-                                    if let user = userController.user, let userId = user.id {
-                                        if user.accountType == 1 {
-                                            if let rateLimit = rateLimiter.processWrite() {
-                                                print(rateLimit)
-                                                return
-                                            }
-                                            
+                                    if subscriptionController.isPro {
+                                        if let rateLimit = rateLimiter.processWrite() {
+                                            print(rateLimit)
+                                            return
+                                        }
+                                        if let user = userController.user, let userId = user.id {
                                             userController.likeCourse(userId: userId, courseId: courseId)
                                             withAnimation(.spring()) {
                                                 self.isCourseLiked.toggle()
                                             }
-                                            // TODO: add logic to like a course
-                                            return
                                         }
+                                        return
                                     }
                                     
+//                                    if let user = userController.user, let userId = user.id {
+//                                        if user.accountType == 1 {
+//                                            if let rateLimit = rateLimiter.processWrite() {
+//                                                print(rateLimit)
+//                                                return
+//                                            }
+//                                            userController.likeCourse(userId: userId, courseId: courseId)
+//                                            withAnimation(.spring()) {
+//                                                self.isCourseLiked.toggle()
+//                                            }
+//                                            return
+//                                        }
+//                                    }
                                     // show the upgrade account sheet
                                     self.isUpgradeAccountSheetShowing = true
                                 }) {
@@ -190,22 +201,40 @@ struct CourseView: View {
                                 // Channel Follow Button
                                 Button(action: {
                                     // if the user isn't a PRO member, they can't follow accounts
-                                    if let user = userController.user, let userId = user.id {
-                                        if user.accountType == 1 {
-                                            if let rateLimit = rateLimiter.processWrite() {
-                                                print(rateLimit)
-                                                return
-                                            }
-                                            
+                                    if subscriptionController.isPro {
+                                        if let rateLimit = rateLimiter.processWrite() {
+                                            print(rateLimit)
+                                            return
+                                        }
+                                        
+                                        if let user = userController.user, let userId = user.id {
                                             userController.followChannel(userId: userId, channelId: channelId)
                                             withAnimation(.spring()) {
                                                 isChannelFollowed.toggle()
                                             }
-                                        } else {
-                                            // show the upgrade account sheet
-                                            self.isUpgradeAccountSheetShowing = true
                                         }
+                                        return
                                     }
+                                    
+                                    self.isUpgradeAccountSheetShowing = true
+                                    
+                                    
+//                                    if let user = userController.user, let userId = user.id {
+//                                        if user.accountType == 1 {
+//                                            if let rateLimit = rateLimiter.processWrite() {
+//                                                print(rateLimit)
+//                                                return
+//                                            }
+//                                            
+//                                            userController.followChannel(userId: userId, channelId: channelId)
+//                                            withAnimation(.spring()) {
+//                                                isChannelFollowed.toggle()
+//                                            }
+//                                        } else {
+//                                            // show the upgrade account sheet
+//                                            self.isUpgradeAccountSheetShowing = true
+//                                        }
+//                                    }
                                     
                                 }) {
                                     HStack(spacing: 8) {
@@ -383,28 +412,26 @@ struct CourseView: View {
                                 }
                             }
                             
-                            if let user = userController.user, let accountType = user.accountType {
-                                if accountType == 0 {
-                                    Text("Upgrade to see course recommendations")
-                                        .font(.system(size: 12))
-                                    
-                                    Button(action: {
-                                        isUpgradeAccountSheetShowing = true
-                                    }) {
-                                        Text("Upgrade")
-                                            .font(.system(size: 14))
-                                            .foregroundStyle(Color.orange)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                } else {
-                                    Group {
-                                        ForEach(homeController.communityFavorites, id: \.id) { course in
-                                            RelatedCourse(course: course)
-                                        }
+                            
+                            if !subscriptionController.isPro {
+                                Text("Upgrade to see course recommendations")
+                                    .font(.system(size: 12))
+                                
+                                Button(action: {
+                                    isUpgradeAccountSheetShowing = true
+                                }) {
+                                    Text("Upgrade")
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(Color.orange)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            } else {
+                                Group {
+                                    ForEach(homeController.communityFavorites, id: \.id) { course in
+                                        RelatedCourse(course: course)
                                     }
                                 }
                             }
-                            
                             
                             BottomBrandView()
                         }
@@ -416,7 +443,7 @@ struct CourseView: View {
                         .presentationDetents([.fraction(0.4), .medium]) // User can drag between these heights
                 }
                 .sheet(isPresented: $isUpgradeAccountSheetShowing) {
-                    UpgradeAccountPaywallWithoutFreeTrial()
+                    UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
                 }
                 .onAppear {
                     // check if the user follows the course's channel and set the button accordingly

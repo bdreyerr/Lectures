@@ -13,6 +13,8 @@ struct MyCoursesMainView: View {
     
     @AppStorage("isSignedIn") private var isSignedIn = false
     
+    @EnvironmentObject var subscriptionController: SubscriptionController
+    
     //    @EnvironmentObject var authController: AuthController
     @EnvironmentObject var userController: UserController
     @EnvironmentObject var myCourseController: MyCourseController
@@ -44,33 +46,66 @@ struct MyCoursesMainView: View {
                     
                     ScrollView(showsIndicators: false) {
                         
-                        if let user = userController.user {
-                            if user.accountType! == 0 {
-                                // Free user, show the paywall and tell them they can't access this feature
-                                Text("Upgrade your account to access watch history and personalized learning features")
-                                    .font(.system(size: 14, design: .serif))
-                                    .padding(.top, 40)
-                                    .multilineTextAlignment(.center) 
-                                
-                                Button(action: {
-                                    upgradeAccountSheetShowing = true
-                                }) {
-                                    Text("Upgrade to PRO")
-                                        .font(.system(size: 16, design: .serif))
-                                        .bold()
-                                        .foregroundColor(.white)
-                                        .padding()
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.green.opacity(0.8))
-                                        .cornerRadius(10)
-                                }
-                                .padding(.horizontal, 30)
-                                .sheet(isPresented: $upgradeAccountSheetShowing) {
-                                    UpgradeAccountPaywallWithoutFreeTrial()
-                                }
-                            } else {
-                                MyCoursesProUserView()
+                        if !subscriptionController.isPro {
+                            // Free user, show the paywall and tell them they can't access this feature
+                            Text("Upgrade your account to access watch history and personalized learning features")
+                                .font(.system(size: 14, design: .serif))
+                                .padding(.top, 40)
+                                .multilineTextAlignment(.center)
+                            
+                            Button(action: {
+                                upgradeAccountSheetShowing = true
+                            }) {
+                                Text("Upgrade to PRO")
+                                    .font(.system(size: 16, design: .serif))
+                                    .bold()
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.green.opacity(0.8))
+                                    .cornerRadius(10)
                             }
+                            .padding(.horizontal, 30)
+                            .sheet(isPresented: $upgradeAccountSheetShowing) {
+                                UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $upgradeAccountSheetShowing)
+                            }
+                        } else {
+                            MyCoursesProUserView()
+                        }
+                        
+                        
+                        
+                        if let user = userController.user {
+                            
+                            
+                            
+                            
+//                            if user.accountType! == 0 {
+//                                // Free user, show the paywall and tell them they can't access this feature
+//                                Text("Upgrade your account to access watch history and personalized learning features")
+//                                    .font(.system(size: 14, design: .serif))
+//                                    .padding(.top, 40)
+//                                    .multilineTextAlignment(.center) 
+//                                
+//                                Button(action: {
+//                                    upgradeAccountSheetShowing = true
+//                                }) {
+//                                    Text("Upgrade to PRO")
+//                                        .font(.system(size: 16, design: .serif))
+//                                        .bold()
+//                                        .foregroundColor(.white)
+//                                        .padding()
+//                                        .frame(maxWidth: .infinity)
+//                                        .background(Color.green.opacity(0.8))
+//                                        .cornerRadius(10)
+//                                }
+//                                .padding(.horizontal, 30)
+//                                .sheet(isPresented: $upgradeAccountSheetShowing) {
+//                                    UpgradeAccountPaywallWithoutFreeTrial()
+//                                }
+//                            } else {
+//                                MyCoursesProUserView()
+//                            }
                         }
                         
                         Spacer()

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CategoryFilterPill: View {
     @EnvironmentObject var searchController: SearchController
+    @EnvironmentObject var subscriptionController: SubscriptionController
     
     var text: String
     var accountType: Int?
@@ -18,23 +19,21 @@ struct CategoryFilterPill: View {
     
     var body: some View {
         Button(action: {
-            if let accountType = accountType {
-                if accountType == 0 {
-                    isUpgradeAccountPopupShowing = true
-                } else {
-                    // Action for the button
-                    withAnimation(.spring()) {
-                        // either add or remove this category from the list in the controller
-                        if isSelected {
-                            // remove
-                            searchController.activeCategories.removeAll { $0 == text }
-                        } else {
-                            // add
-                            searchController.activeCategories.append(text)
-                        }
-                        
-                        isSelected.toggle()
+            if !subscriptionController.isPro {
+                isUpgradeAccountPopupShowing = true
+            } else {
+                // Action for the button
+                withAnimation(.spring()) {
+                    // either add or remove this category from the list in the controller
+                    if isSelected {
+                        // remove
+                        searchController.activeCategories.removeAll { $0 == text }
+                    } else {
+                        // add
+                        searchController.activeCategories.append(text)
                     }
+                    
+                    isSelected.toggle()
                 }
             }
         }) {
@@ -50,7 +49,7 @@ struct CategoryFilterPill: View {
         }
         .buttonStyle(PlainButtonStyle()) // To prevent default button styling
         .sheet(isPresented: $isUpgradeAccountPopupShowing) {
-            UpgradeAccountPaywallWithoutFreeTrial()
+            UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountPopupShowing)
         }
     }
 }

@@ -16,6 +16,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
         
+        // TODO: change to info for prod build
         Purchases.logLevel = .debug
         Purchases.configure(withAPIKey: Secrets().revenueCatProjectKey)
         return true

@@ -10,6 +10,8 @@ struct OnboardingPaywallWithFreeTrial: View {
 //    @EnvironmentObject var authController: AuthController
     @EnvironmentObject var userController: UserController
     
+    @StateObject private var subscriptionController = SubscriptionController.shared
+    
     @State private var selectedPlan: String = "3 months" // Default selected plan
     @State private var showProFeaturesSheet: Bool = false
     @State private var showSignUpSheet: Bool = false
@@ -95,6 +97,11 @@ struct OnboardingPaywallWithFreeTrial: View {
                         .font(.system(size: 16, design: .serif))
                         .foregroundColor(.gray)
                         .padding(.top, 10)
+                    
+                    
+                    ForEach(subscriptionController.packages, id: \.identifier) { package in
+                        Text("1 package!")
+                    }
                     
                     // Subscription plans
                     VStack(spacing: 15) {

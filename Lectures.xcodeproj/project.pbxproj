@@ -130,6 +130,8 @@
 		1AE7B5BE2D4C907700A601EB /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1AE7B5BD2D4C907700A601EB /* RevenueCatUI */; };
 		1AE7B5C02D4C912100A601EB /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE7B5BF2D4C912100A601EB /* Secrets.swift */; };
 		1AE7B5C62D4D6A3D00A601EB /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 1AE7B5C52D4D6A3D00A601EB /* .gitignore */; };
+		1AE7B5CB2D4D73A000A601EB /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE7B5CA2D4D739F00A601EB /* StoreKit.framework */; };
+		1AE7B5CF2D4D768300A601EB /* SubscriptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE7B5CE2D4D768300A601EB /* SubscriptionController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -250,6 +252,8 @@
 		1AE7B5B82D4C2C6B00A601EB /* ResourceNativeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceNativeView.swift; sourceTree = "<group>"; };
 		1AE7B5BF2D4C912100A601EB /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		1AE7B5C52D4D6A3D00A601EB /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		1AE7B5CA2D4D739F00A601EB /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		1AE7B5CE2D4D768300A601EB /* SubscriptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,6 +268,7 @@
 				1AE7B5BC2D4C907700A601EB /* RevenueCat in Frameworks */,
 				1AE7B5BE2D4C907700A601EB /* RevenueCatUI in Frameworks */,
 				1A6495CD2D2495ED00EA16D2 /* GoogleSignInSwift in Frameworks */,
+				1AE7B5CB2D4D73A000A601EB /* StoreKit.framework in Frameworks */,
 				1A7E9AAD2D22451400CBEF99 /* FirebaseCore in Frameworks */,
 				1A7E9AAB2D2244B400CBEF99 /* FirebaseStorage in Frameworks */,
 			);
@@ -493,6 +498,7 @@
 			isa = PBXGroup;
 			children = (
 				1AA40D762D0FE56700BB311F /* Lectures */,
+				1AE7B5C92D4D739F00A601EB /* Frameworks */,
 				1AA40D752D0FE56700BB311F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -578,6 +584,7 @@
 				1A7C33A12D38C3EA0009647E /* CourseController.swift */,
 				1AAE239F2D3CAFCD00E5DB9A /* SearchController.swift */,
 				1A4F6F132D42F19A00A11D11 /* RateLimiter.swift */,
+				1AE7B5CE2D4D768300A601EB /* SubscriptionController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -633,6 +640,14 @@
 				1AA40DA82D137D4400BB311F /* SearchMainView.swift */,
 			);
 			path = Search;
+			sourceTree = "<group>";
+		};
+		1AE7B5C92D4D739F00A601EB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1AE7B5CA2D4D739F00A601EB /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -809,6 +824,7 @@
 				1A7E9A7B2D14A7AD00CBEF99 /* LectureView.swift in Sources */,
 				1A4F6F0C2D41A85200A11D11 /* ReportIssues.swift in Sources */,
 				1A4F6F162D441C2000A11D11 /* MyCoursesLoadingView.swift in Sources */,
+				1AE7B5CF2D4D768300A601EB /* SubscriptionController.swift in Sources */,
 				1A56856E2D2A4BCE00CD3427 /* ChannelCard.swift in Sources */,
 				1A21B98D2D3451F200A492D0 /* FullCollectionView.swift in Sources */,
 				1A4F8DF02D34C65000F1E854 /* OnboardingPaywallWithFreeTrial.swift in Sources */,

@@ -8,10 +8,14 @@
 import SwiftUI
 
 struct SearchMainView: View {
+    @AppStorage("isSignedIn") private var isSignedIn = false
+    
     @Environment(\.colorScheme) var colorScheme
     
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var userController: UserController
+    
+    @EnvironmentObject var subscriptionController: SubscriptionController
     
     @StateObject var searchController = SearchController()
     
@@ -25,6 +29,44 @@ struct SearchMainView: View {
             ZStack {
                 VStack {
                     TopBrandView()
+                    
+                    
+                    Group {
+                        if userController.user == nil || !isSignedIn {
+                            // Sign in to see full search results
+                            
+                            
+                            Text("Sign in for full search functionality")
+                                .font(.system(size: 13, design: .serif))
+                                .padding(.top, 20)
+                                .padding(.bottom, 5)
+                            
+                            
+                            SignInWithApple(displaySignInSheet: .constant(false))
+                            
+                            SignInWithGoogle(displaySignInSheet: .constant(false))
+                                .padding(.bottom, 20)
+                        } else {
+                            // switch with subscription
+                            if !subscriptionController.isPro {
+                                Button(action: {
+                                    isUpgradeAccountPopupShowing = true
+                                }) {
+                                    Text("Upgrade")
+                                        .font(.system(size: 13, design: .serif))
+                                        .foregroundStyle(Color.orange)
+                                        .opacity(0.8)
+                                }
+                                .padding(.top, 40)
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Text("for full search functionality")
+                                    .font(.system(size: 13, design: .serif))
+//                                    .padding(.bottom, 20)
+                                    .opacity(0.8)
+                            }
+                        }
+                    }
                     
                     ScrollView(showsIndicators: false) {
                         if let user = userController.user, let accountType = user.accountType {
@@ -263,43 +305,7 @@ struct SearchMainView: View {
                         }
                     }
                     
-                    Group {
-                        if userController.user == nil {
-                            // Sign in to see full search results
-                            
-                            
-                            Text("Sign in for full search functionality")
-                                .font(.system(size: 13, design: .serif))
-                                .padding(.top, 20)
-                                .padding(.bottom, 5)
-                            
-                            
-                            SignInWithApple(displaySignInSheet: .constant(false))
-                            
-                            SignInWithGoogle(displaySignInSheet: .constant(false))
-                                .padding(.bottom, 200)
-                        }
-                        
-                        if let user = userController.user, let accountType = user.accountType {
-                            if accountType == 0 {
-                                Button(action: {
-                                    isUpgradeAccountPopupShowing = true
-                                }) {
-                                    Text("Upgrade")
-                                        .font(.system(size: 13, design: .serif))
-                                        .foregroundStyle(Color.orange)
-                                        .opacity(0.8)
-                                }
-                                .padding(.top, 40)
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Text("for full search functionality")
-                                    .font(.system(size: 13, design: .serif))
-                                    .padding(.bottom, 150)
-                                    .opacity(0.8)
-                            }
-                        }
-                    }
+                    
                     
                 }
                 .padding(.horizontal, 20)
@@ -307,7 +313,7 @@ struct SearchMainView: View {
             }
             .navigationBarHidden(true)
             .sheet(isPresented: $isUpgradeAccountPopupShowing) {
-                UpgradeAccountPaywallWithoutFreeTrial()
+                UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountPopupShowing)
             }
         }
         // Needed for iPad compliance

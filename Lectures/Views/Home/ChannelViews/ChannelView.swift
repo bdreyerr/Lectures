@@ -15,6 +15,8 @@ struct ChannelView: View {
     @EnvironmentObject var userController: UserController
     @EnvironmentObject var myCourseController: MyCourseController
     
+    @EnvironmentObject var subscriptionController: SubscriptionController
+    
     @State private var isChannelFollowed = false
     @State private var isUpgradeAccountSheetShowing: Bool = false
     var body: some View {
@@ -58,8 +60,8 @@ struct ChannelView: View {
                             // follow button
                             Button(action: {
                                 // if the user isn't a PRO member, they can't follow accounts
-                                if let user = userController.user, let userId = user.id {
-                                    if user.accountType == 1 {
+                                if subscriptionController.isPro {
+                                    if let user = userController.user, let userId = user.id {
                                         if let rateLimit = rateLimiter.processWrite() {
                                             print(rateLimit)
                                             return
@@ -69,11 +71,11 @@ struct ChannelView: View {
                                         withAnimation(.spring()) {
                                             isChannelFollowed.toggle()
                                         }
-                                    } else {
-                                        // show the upgrade account sheet
-                                        self.isUpgradeAccountSheetShowing = true
                                     }
+                                    return
                                 }
+                                
+                                self.isUpgradeAccountSheetShowing = true
                             }) {
                                 HStack(spacing: 8) {
                                     Image(systemName: isChannelFollowed ? "heart.fill" : "heart")
@@ -111,7 +113,7 @@ struct ChannelView: View {
                 }
             }
             .sheet(isPresented: $isUpgradeAccountSheetShowing) {
-                UpgradeAccountPaywallWithoutFreeTrial()
+                UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
             }
             .onAppear {
                 // check if the user follows the course's channel and set the button accordingly

@@ -10,6 +10,7 @@ import SwiftUI
 struct FilterSearchResultType: View {
     @EnvironmentObject var searchController: SearchController
     @EnvironmentObject var userController: UserController
+    @EnvironmentObject var subscriptionController: SubscriptionController
     
     @State var isUpgradeAccountPopupShowing: Bool = false
     
@@ -68,14 +69,12 @@ struct FilterSearchResultType: View {
             
             // Lecture
             Button(action: {
-                if let accountType = accountType {
-                    if accountType == 0 {
-                        isUpgradeAccountPopupShowing = true
-                    } else {
-                        // Action for the button
-                        withAnimation(.spring()) {
-                            searchController.isLectureFilterSelected.toggle()
-                        }
+                if !subscriptionController.isPro {
+                    isUpgradeAccountPopupShowing = true
+                } else {
+                    // Action for the button
+                    withAnimation(.spring()) {
+                        searchController.isLectureFilterSelected.toggle()
                     }
                 }
             }) {
@@ -96,14 +95,12 @@ struct FilterSearchResultType: View {
             
             // Course
             Button(action: {
-                if let accountType = accountType {
-                    if accountType == 0 {
-                        isUpgradeAccountPopupShowing = true
-                    } else {
-                        // Action for the button
-                        withAnimation(.spring()) {
-                            searchController.isCourseFilterSelected.toggle()
-                        }
+                if !subscriptionController.isPro {
+                    isUpgradeAccountPopupShowing = true
+                } else {
+                    // Action for the button
+                    withAnimation(.spring()) {
+                        searchController.isCourseFilterSelected.toggle()
                     }
                 }
             }) {
@@ -124,14 +121,12 @@ struct FilterSearchResultType: View {
             
             // Channel
             Button(action: {
-                if let accountType = accountType {
-                    if accountType == 0 {
-                        isUpgradeAccountPopupShowing = true
-                    } else {
-                        // Action for the button
-                        withAnimation(.spring()) {
-                            searchController.isChannelFilterSelected.toggle()
-                        }
+                if !subscriptionController.isPro {
+                    isUpgradeAccountPopupShowing = true
+                } else {
+                    // Action for the button
+                    withAnimation(.spring()) {
+                        searchController.isChannelFilterSelected.toggle()
                     }
                 }
             }) {
@@ -151,7 +146,7 @@ struct FilterSearchResultType: View {
             .buttonStyle(PlainButtonStyle()) // To prevent default button styling
         }
         .sheet(isPresented: $isUpgradeAccountPopupShowing) {
-            UpgradeAccountPaywallWithoutFreeTrial()
+            UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountPopupShowing)
         }
     }
 }

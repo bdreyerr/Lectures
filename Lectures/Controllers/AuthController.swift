@@ -162,7 +162,7 @@ class AuthController : UIViewController, ObservableObject {
                                     
                                     
                                     // make it so the paywall goes away -
-                                    self.hasUserSeenPaywall = true
+//                                    self.hasUserSeenPaywall = true
                                 }
                             }
                         }
@@ -272,7 +272,7 @@ class AuthController : UIViewController, ObservableObject {
                                 self.isFinishedSigningIn = true
                                 
                                 // make it so the paywall goes away -
-                                self.hasUserSeenPaywall = true
+//                                self.hasUserSeenPaywall = true
                             }
                         }
                     }

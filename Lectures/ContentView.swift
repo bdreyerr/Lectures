@@ -36,6 +36,9 @@ struct ContentView: View {
     // Rate Limiter
     @StateObject var rateLimiter = RateLimiter()
     
+    // subscriptions
+    @StateObject private var subscriptionController = SubscriptionController.shared
+    
     var body: some View {
         ZStack {
             
@@ -64,7 +67,9 @@ struct ContentView: View {
                     
                 }
             } else {
-                OnboardingPaywallWithFreeTrial()
+//                OnboardingPaywallWithFreeTrial()
+                // this isn't a sheet so don't pass a binding
+                UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: .constant(false))
             }
         }
         .environmentObject(tabbarController)
@@ -80,6 +85,7 @@ struct ContentView: View {
         .environmentObject(myCourseController)
         .environmentObject(courseController)
         .environmentObject(rateLimiter)
+        .environmentObject(subscriptionController)
         .onChange(of: isSignedIn) {
             if isSignedIn == true {
                 if let user = Auth.auth().currentUser {

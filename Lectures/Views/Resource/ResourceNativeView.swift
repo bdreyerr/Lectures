@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct ResourceNativeView: View {
+//    @AppStorage("isSignedIn") private var isSignedIn = false
+    
     @EnvironmentObject var userController: UserController
     
+    @EnvironmentObject var subscriptionController: SubscriptionController
     
     var resourceTitle: String
     var resourceContent: String
@@ -89,20 +92,13 @@ Visit our [internal wiki](https://wiki.example.com) for more details.\n
                     Spacer()
                     
                     // share button
-                    
-                    
                     Button(action: {
                         // case where no user
-                        if userController.user == nil {
-                            self.showingSignInSheet = true
-                            return
-                        }
                         
-                        if let user = userController.user, let accountType = user.accountType {
-                            if accountType == 0 {
-                                self.showingUpgradeSheet = true
-                                return
-                            }
+                        // only check is pro
+                        if !subscriptionController.isPro {
+                            self.showingUpgradeSheet = true
+                            return
                         }
                         
                         showingShare = true
@@ -124,7 +120,7 @@ Visit our [internal wiki](https://wiki.example.com) for more details.\n
                 .presentationDetents([.fraction(0.4), .medium]) // User can drag between these heights
         }
         .sheet(isPresented: $showingUpgradeSheet) {
-            UpgradeAccountPaywallWithoutFreeTrial()
+            UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $showingUpgradeSheet)
         }
         .sheet(isPresented: $showingShare) {
             ShareSheetHelper(items: [generatePDF()])

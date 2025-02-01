@@ -18,6 +18,8 @@ struct LectureView: View {
     @EnvironmentObject var homeController: HomeController
     @EnvironmentObject var myCourseController: MyCourseController
     
+    @EnvironmentObject var subscriptionController: SubscriptionController
+    
     // resource controllers
     @EnvironmentObject var notesController: NotesController
     @EnvironmentObject var homeworkController: HomeworkController
@@ -75,9 +77,8 @@ struct LectureView: View {
                                 
                                 // Like Lecture button
                                 Button(action: {
-                                    // if the user isn't a PRO member, they can't like courses
-                                    if let user = userController.user, let userId = user.id {
-                                        if user.accountType == 1 {
+                                    if subscriptionController.isPro {
+                                        if let user = userController.user, let userId = user.id {
                                             if let rateLimit = rateLimiter.processWrite() {
                                                 print(rateLimit)
                                                 return
@@ -87,12 +88,10 @@ struct LectureView: View {
                                             withAnimation(.spring()) {
                                                 self.isLectureLiked.toggle()
                                             }
-                                            // TODO: add logic to like a course
-                                            return
                                         }
+                                        return
                                     }
-                                    
-                                    // show the upgrade account sheet
+
                                     self.isUpgradeAccountSheetShowing = true
                                 }) {
                                     Image(systemName: isLectureLiked ? "heart.fill" : "heart")
@@ -265,7 +264,7 @@ struct LectureView: View {
                     }
                 }
                 .sheet(isPresented: $isUpgradeAccountSheetShowing) {
-                    UpgradeAccountPaywallWithoutFreeTrial()
+                    UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
                 }
                 .onAppear {
                     // there's a chance we came directly to lecture view, not visiting course view first, meaning we need to load the other lectures in this course.

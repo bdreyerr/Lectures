@@ -39,7 +39,7 @@ struct SettingsMainView: View {
                     SingleSettingsLink(iconName: "wallet.pass", settingName: "Subscription Type", destination: SubscriptionType())
 //                    SingleSettingsLink(iconName: "dollarsign.square", settingName: "Purchase History", destination: PurchaseHistory())
                     SingleSettingsLink(iconName: "moon", settingName: "Appearance", destination: Appearance())
-                    SingleSettingsLink(iconName: "bell", settingName: "Notifications", destination: Notifications())
+//                    SingleSettingsLink(iconName: "bell", settingName: "Notifications", destination: Notifications())
                     
                     Text("Support")
                         .font(.system(size: 15, design: .serif))

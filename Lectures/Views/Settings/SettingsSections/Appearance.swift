@@ -11,6 +11,7 @@ struct Appearance: View {
     @AppStorage("isDarkMode") private var isDarkMode = false
     
     @EnvironmentObject var userController: UserController
+    @EnvironmentObject var subscriptionController: SubscriptionController
     
     @State var isUpgradeSheetShowing: Bool = false
     
@@ -32,93 +33,69 @@ struct Appearance: View {
                     .bold()
                     .padding(.bottom, 10)
                 
-                if let user = userController.user, let accountType = user.accountType {
-                    if accountType == 0 {
-                        HStack {
-                            // icon
-                            Image(systemName: "wallet.pass")
-                            
-                            // text
-                            
-                            Text("Upgrade to customize app appearance")
-                                .font(.system(size: 14, design: .serif))
-                            
-                            
-                            
-                            Spacer()
-                            
-                            // edit button
-                            Button(action: {
-                                isUpgradeSheetShowing = true
-                            }) {
-                                Text("Upgrade")
-                                    .foregroundColor(.white)
-                                    .padding(5)
-                                    .background(Color.orange)
-                                    .cornerRadius(5)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
+                if !subscriptionController.isPro {
+                    HStack {
+                        // icon
+                        Image(systemName: "wallet.pass")
                         
-                        Divider()
-                    } else {
-                        // Dark Mode
-                        HStack {
-                            // icon
-                            Image(systemName: "moon")
-                            
-                            // text
-                            
-                            Text("Dark Mode")
-                                .font(.system(size: 14, design: .serif))
-                            
-                            
-                            Toggle("", isOn: $isDarkMode)
-                                .padding(.trailing, 5)
-                                .onChange(of: isDarkMode) { newValue in
-                                    // Code to run when the toggle changes
-                                    if newValue {
-                                        isDarkMode = true
-                                    } else {
-                                        isDarkMode = false
-                                    }
-                                }
-                                
-                            
-                            Spacer()
-                            
-                            
-                        }
-                        Divider()
+                        // text
                         
-                        // App Icon
-                        HStack {
-                            // icon
-                            Image(systemName: "app.badge")
-                            
-                            // text
-                            
-                            Text("App Icon")
-                                .font(.system(size: 14, design: .serif))
-                            
-                            Button(action: {
-                                print("user wanted to change the app icon")
-                            }) {
-                                Image(systemName: "square.and.pencil.circle")
-                                    .imageScale(.medium)
-                                    .padding(.leading, 4)  // Add some space before the button
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            
-                            Spacer()
+                        Text("Upgrade to customize app appearance")
+                            .font(.system(size: 14, design: .serif))
+                        
+                        
+                        
+                        Spacer()
+                        
+                        // edit button
+                        Button(action: {
+                            isUpgradeSheetShowing = true
+                        }) {
+                            Text("Upgrade")
+                                .foregroundColor(.white)
+                                .padding(5)
+                                .background(Color.orange)
+                                .cornerRadius(5)
                         }
+                        .buttonStyle(PlainButtonStyle())
                     }
+                    
+                    Divider()
+                } else {
+                    // Dark Mode
+                    HStack {
+                        // icon
+                        Image(systemName: "moon")
+                        
+                        // text
+                        
+                        Text("Dark Mode")
+                            .font(.system(size: 14, design: .serif))
+                        
+                        
+                        Toggle("", isOn: $isDarkMode)
+                            .padding(.trailing, 5)
+                            .onChange(of: isDarkMode) { newValue in
+                                // Code to run when the toggle changes
+                                if newValue {
+                                    isDarkMode = true
+                                } else {
+                                    isDarkMode = false
+                                }
+                            }
+                            
+                        
+                        Spacer()
+                        
+                        
+                    }
+                    Divider()
                 }
             }
         }
         .padding(.horizontal, 20)
         .sheet(isPresented: $isUpgradeSheetShowing) {
-            UpgradeAccountPaywallWithoutFreeTrial()
+            UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeSheetShowing)
         }
     }
 }

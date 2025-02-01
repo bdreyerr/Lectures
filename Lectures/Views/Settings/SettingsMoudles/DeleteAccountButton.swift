@@ -10,6 +10,7 @@ import SwiftUI
 struct DeleteAccountButton: View {
     @EnvironmentObject var authController: AuthController
     @EnvironmentObject var userController: UserController
+    @EnvironmentObject var subscriptionController: SubscriptionController
     
     @State private var isHolding = false
     @State private var holdTime: CGFloat = 0.0
@@ -56,11 +57,7 @@ struct DeleteAccountButton: View {
                 // delete auth
                 authController.deleteAuthUser()
                 
-                // TODO: fill in if we need to clear any local vars in the app once a delete happens
-                //                    DispatchQueue.main.async {
-                
-                //                    }
-                
+                subscriptionController.logOutOfSubscriptionAccount()
             }
             
             Button("Cancel", role: .cancel) { }

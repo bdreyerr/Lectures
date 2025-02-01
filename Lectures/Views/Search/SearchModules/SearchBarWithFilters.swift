@@ -15,6 +15,8 @@ struct SearchBarWithFilters: View {
     @EnvironmentObject var searchController: SearchController
     @EnvironmentObject var courseController: CourseController
     
+    @EnvironmentObject var subscriptionController: SubscriptionController
+    
     @State var isUpgradeAccountPopupShowing: Bool = false
     
     var accountType: Int?
@@ -141,49 +143,43 @@ struct SearchBarWithFilters: View {
                     
                     HStack {
                         PlainSearchFilterPill(text: "<5 lecture", isSelected: $searchController.lessThanFiveLectures, onTap: { isSelected in
-                            if let accountType = accountType {
-                                if accountType == 0 {
-                                    isUpgradeAccountPopupShowing = true
+                            if !subscriptionController.isPro {
+                                isUpgradeAccountPopupShowing = true
+                            } else {
+                                if isSelected {
+                                    searchController.lessThanFiveLectures = false
                                 } else {
-                                    if isSelected {
-                                        searchController.lessThanFiveLectures = false
-                                    } else {
-                                        searchController.lessThanFiveLectures = true
-                                        searchController.greaterThanFiveLectures = false
-                                        searchController.greaterThanTenLectures = false
-                                    }
+                                    searchController.lessThanFiveLectures = true
+                                    searchController.greaterThanFiveLectures = false
+                                    searchController.greaterThanTenLectures = false
                                 }
                             }
                         })
                         
                         
                         PlainSearchFilterPill(text: ">5 lecture", isSelected: $searchController.greaterThanFiveLectures, onTap: { isSelected in
-                            if let accountType = accountType {
-                                if accountType == 0 {
-                                    isUpgradeAccountPopupShowing = true
+                            if !subscriptionController.isPro {
+                                isUpgradeAccountPopupShowing = true
+                            } else {
+                                if isSelected {
+                                    searchController.greaterThanFiveLectures = false
                                 } else {
-                                    if isSelected {
-                                        searchController.greaterThanFiveLectures = false
-                                    } else {
-                                        searchController.lessThanFiveLectures = false
-                                        searchController.greaterThanFiveLectures = true
-                                        searchController.greaterThanTenLectures = false
-                                    }
+                                    searchController.lessThanFiveLectures = false
+                                    searchController.greaterThanFiveLectures = true
+                                    searchController.greaterThanTenLectures = false
                                 }
                             }
                         })
                         PlainSearchFilterPill(text: ">10 lecture", isSelected: $searchController.greaterThanTenLectures, onTap: { isSelected in
-                            if let accountType = accountType {
-                                if accountType == 0 {
-                                    isUpgradeAccountPopupShowing = true
+                            if !subscriptionController.isPro {
+                                isUpgradeAccountPopupShowing = true
+                            } else {
+                                if isSelected {
+                                    searchController.greaterThanTenLectures = false
                                 } else {
-                                    if isSelected {
-                                        searchController.greaterThanTenLectures = false
-                                    } else {
-                                        searchController.lessThanFiveLectures = false
-                                        searchController.greaterThanFiveLectures = false
-                                        searchController.greaterThanTenLectures = true
-                                    }
+                                    searchController.lessThanFiveLectures = false
+                                    searchController.greaterThanFiveLectures = false
+                                    searchController.greaterThanTenLectures = true
                                 }
                             }
                         })
@@ -204,14 +200,12 @@ struct SearchBarWithFilters: View {
                     
                     HStack {
                         PlainSearchFilterPill(text: "Most Watched", isSelected: $searchController.sortByMostWatched, onTap: { isSelected in
-                            if let accountType = accountType {
-                                if accountType == 0 {
-                                    isUpgradeAccountPopupShowing = true
-                                } else {
-                                    if !isSelected {
-                                        searchController.sortByMostWatched = true
-                                        searchController.sortByMostLiked = false
-                                    }
+                            if !subscriptionController.isPro {
+                                isUpgradeAccountPopupShowing = true
+                            } else {
+                                if !isSelected {
+                                    searchController.sortByMostWatched = true
+                                    searchController.sortByMostLiked = false
                                 }
                             }
                         })
@@ -241,7 +235,7 @@ struct SearchBarWithFilters: View {
         .cornerRadius(20) // Rounded corners
         .padding(.top, 10)
         .sheet(isPresented: $isUpgradeAccountPopupShowing) {
-            UpgradeAccountPaywallWithoutFreeTrial()
+            UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountPopupShowing)
         }
         
     }
