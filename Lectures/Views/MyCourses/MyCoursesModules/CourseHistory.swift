@@ -18,9 +18,13 @@ struct CourseHistory: View {
         Group {
             // Coure History (preview)
             HStack {
+                Image(systemName: "play.circle")
+                    .font(.system(size: 10))
+                    .opacity(0.8)
+                
                 Text("Course History")
-                    .font(.system(size: 13, design: .serif))
-                    .bold()
+                    .font(.system(size: 10))
+                    .opacity(0.8)
                 
                 Spacer()
             }

@@ -37,8 +37,10 @@ struct MyCoursesProUserView: View {
             courseController.focusedCourseStack = []
             
             if let user = Auth.auth().currentUser {
+                // get recent watch histories (will not update if already fetched)
                 myCourseController.retrieveRecentWatchHistories(userId: user.uid, courseController: courseController)
-                // TODO: we don't need to do this every time
+                
+                // fetch followed channels, liked courses and lectures, need to change every time
                 if let user = userController.user, let followedChannelIds = user.followedChannelIds, let likedCourseIds = user.likedCourseIds, let likedLectureIds = user.likedLectureIds {
                     myCourseController.retrieveFollowedChannels(channelIds:followedChannelIds, courseController: courseController)
                     myCourseController.retrieveLikedCourses(courseIds: likedCourseIds, courseController: courseController)

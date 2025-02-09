@@ -18,8 +18,8 @@ struct MoreLecturesInSameCourseModule: View {
     @ObservedObject var player: YouTubePlayer
     
     var body: some View {
-        if let lecture = courseController.focusedLecture, let courseId = lecture.courseId {
-            if let lectures = courseController.lecturesInCourse[courseId] {
+        if let focusedLecture = courseController.focusedLecture, let courseId = focusedLecture.courseId {
+            if let lectures = courseController.lecturesInSameCourse[courseId] {
                 VStack {
                     HStack {
                         Text("More in")
@@ -36,8 +36,10 @@ struct MoreLecturesInSameCourseModule: View {
                         Spacer()
                     }
                     
-                    ForEach(lectures, id: \.id) { lecture in
-                        LectureInSameCourseModule(lecture: lecture, player: player)
+                    // if
+                    
+                    ForEach(lectures, id: \.id) { lectureInCourse in
+                        LectureInSameCourseModule(lecture: lectureInCourse, player: player)
                     }
                 }
             } else {
@@ -67,9 +69,6 @@ struct LectureInSameCourseModule: View {
     var body: some View {
         if let id = lecture.id, let lectureTitle = lecture.lectureTitle, let lectureNumberInCourse = lecture.lectureNumberInCourse {
             if let focusedLecture = courseController.focusedLecture, let focusedLectureId = focusedLecture.id {
-                
-                
-                
                 // Other Lectures in the course
                 HStack {
                     // Image
@@ -91,9 +90,9 @@ struct LectureInSameCourseModule: View {
                                     Spacer()
                                     
                                     // Lecture Number
-                                    Text("\(toRoman(lectureNumberInCourse))")
-                                        .font(.system(size: 14, design: .serif))
-                                        .padding(.trailing, 20)
+                                    Text("Lecture \(toRoman(lectureNumberInCourse))")
+                                        .font(.system(size: 9, design: .serif))
+//                                        .padding(.trailing, 20)
                                 }
                             }
                     } else {
@@ -111,8 +110,19 @@ struct LectureInSameCourseModule: View {
                     if focusedLectureId != lecture.id {
                         courseController.focusLecture(lecture)
                         
-                        // change source url on youtube player
-                        player.source = .url(lecture.youtubeVideoUrl ?? "")
+                        // Stop current video and change source
+                        player.pause()
+                        if let youtubeVideoUrl = lecture.youtubeVideoUrl {
+//                            print(player.source)
+                            
+//                            print("new youtube video url: ", youtubeVideoUrl)
+                            player.source = .url(youtubeVideoUrl)
+//                            print(player.source)
+                            // Start playing the new video after a brief delay to allow source change
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                player.play()
+                            }
+                        }
                         
                         // update watch history
                         if let user = userController.user, let userId = user.id {
@@ -131,20 +141,6 @@ struct LectureInSameCourseModule: View {
                                 notesController.retrieveNote(noteId: noteId)
                             } else {
                                 print("lecture didn't have an notes Id")
-                            }
-                            
-                            // homework
-                            if let homeworkId = lecture.homeworkResourceId {
-                                homeworkController.retrieveHomework(homeworkId: homeworkId)
-                            } else {
-                                print("lecture didn't have an homework Id")
-                            }
-                            
-                            // homework answers
-                            if let homeworkAnswersId = lecture.homeworkAnswersResourceId {
-                                homeworkAnswersController.retrieveHomeworkAnswer(homeworkAnswerId: homeworkAnswersId)
-                            } else {
-                                print("course didn't have an exam Id")
                             }
                             
                         } else {

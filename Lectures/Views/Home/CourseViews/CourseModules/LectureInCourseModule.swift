@@ -39,7 +39,7 @@ struct LectureInCourseModule: View {
                                 
                                 // Lecture Number
                                 Text(toRoman(lecture.lectureNumberInCourse ?? 1))
-                                    .font(.system(size: 14, design: .serif))
+                                    .font(.system(size: 11, design: .serif))
                                     .padding(.trailing, 20)
                             }
                         }

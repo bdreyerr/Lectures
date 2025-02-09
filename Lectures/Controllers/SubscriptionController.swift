@@ -115,8 +115,22 @@ class SubscriptionController: NSObject, ObservableObject {
             self.isLoading = false
         }
     }
+
+    func loginRevenueCat(userId: String) {
+        Task {
+            Purchases.shared.logIn(userId) { (customerInfo, created, error) in
+                if let customerInfo = customerInfo {
+                    // customerInfo updated for my_app_user_id
+                    self.customerInfo = customerInfo
+
+                    // Check if user has pro access
+                    self.isPro = customerInfo.entitlements["Lectura Pro"]?.isActive == true
+                }
+            }
+        }
+    }
     
-    func logOutOfSubscriptionAccount() {
+    func logOutRevenueCat() {
         Purchases.shared.logOut { customerInfo ,_ in
             if let customerInfo = customerInfo {
                 self.customerInfo = customerInfo

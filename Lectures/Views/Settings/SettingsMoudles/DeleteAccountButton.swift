@@ -35,6 +35,7 @@ struct DeleteAccountButton: View {
                         .foregroundColor(.red)
                 }
                 .frame(height: 40)
+                .padding(.horizontal, 1)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in
@@ -57,7 +58,7 @@ struct DeleteAccountButton: View {
                 // delete auth
                 authController.deleteAuthUser()
                 
-                subscriptionController.logOutOfSubscriptionAccount()
+                subscriptionController.logOutRevenueCat()
             }
             
             Button("Cancel", role: .cancel) { }

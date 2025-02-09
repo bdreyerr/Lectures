@@ -17,9 +17,13 @@ struct SavedCourses: View {
     var body: some View {
         Group {
             HStack {
+                Image(systemName: "mail.stack")
+                    .font(.system(size: 10))
+                    .opacity(0.8)
+                
                 Text("Saved Courses")
-                    .font(.system(size: 13, design: .serif))
-                    .bold()
+                    .font(.system(size: 10))
+                    .opacity(0.8)
                 
                 Spacer()
             }
@@ -28,18 +32,24 @@ struct SavedCourses: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(likedCourseIds, id: \.self) { courseId in
-                        if let course = courseController.cachedCourses[courseId] {
-                            NavigationLink(destination: CourseView()) {
-                                if let watchHistory = myCourseController.cachedWatchHistories[courseId] {
+                        if let course = courseController.cachedCourses[courseId] {                            
+                            if let watchHistory = myCourseController.cachedWatchHistories[courseId], let lectureNumberInCourse = watchHistory.lectureNumberInCourse, let lectureId = watchHistory.lectureId {
+                                NavigationLink(destination: NewCourse(course: course, isLecturePlaying: true, lastWatchedLectureId: lectureId, lastWatchedLectureNumber: lectureNumberInCourse)) {
                                     WatchedCourseCard(course: course, watchHistory: watchHistory)
-                                } else {
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .simultaneousGesture(TapGesture().onEnded {
+                                    courseController.focusCourse(course)
+                                })
+                            } else {
+                                NavigationLink(destination: NewCourse(course: course, isLecturePlaying: false)) {
                                     CourseCardView(course: course)
                                 }
+                                .buttonStyle(PlainButtonStyle())
+                                .simultaneousGesture(TapGesture().onEnded {
+                                    courseController.focusCourse(course)
+                                })
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .simultaneousGesture(TapGesture().onEnded {
-                                courseController.focusCourse(course)
-                            })
                         }
                     }
                 }

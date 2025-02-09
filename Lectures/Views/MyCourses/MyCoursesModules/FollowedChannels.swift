@@ -17,9 +17,13 @@ struct FollowedChannels: View {
         Group {
             // Followed Channels
             HStack {
-                Text("Channels you Follow")
-                    .font(.system(size: 13, design: .serif))
-                    .bold()
+                Image(systemName: "graduationcap")
+                    .font(.system(size: 10))
+                    .opacity(0.8)
+                
+                Text("Channels You Follow")
+                    .font(.system(size: 10))
+                    .opacity(0.8)
                 
                 Spacer()
             }

@@ -9,11 +9,11 @@ import CryptoKit
 import FirebaseAuth
 import FirebaseCore
 import FirebaseFirestore
-//import FirebaseFirestoreSwift
 import Foundation
 import GoogleSignIn
 import GoogleSignInSwift
 import SwiftUI
+import RevenueCat
 
 class AuthController : UIViewController, ObservableObject {
     // Controls which views the user can access based on login status.
@@ -40,7 +40,7 @@ class AuthController : UIViewController, ObservableObject {
     
     @available(iOS 13, *)
     // The function called in the onComplete closure of the SignInWithAppleButton in the RegisterView
-    func appleSignInButtonOnCompletion(result: Result<ASAuthorization, Error>, displaySignInSheet: Binding<Bool>) {
+    func appleSignInButtonOnCompletion(result: Result<ASAuthorization, Error>, displaySignInSheet: Binding<Bool>, closePaywallOnSignIn: Bool) {
         switch result {
         case .success(let authResults):
             print("GETTING RESULT IN ON SIGN IN BUTTON COMPLETEION")
@@ -93,7 +93,6 @@ class AuthController : UIViewController, ObservableObject {
                                                                rawNonce: nonce,
                                                                fullName: appleIDCredential.fullName)
                 
-                //                let credential = OAuthProvider.credential(withProviderID: "apple.com",idToken: idTokenString, rawNonce: nonce)
                 Auth.auth().signIn(with: credential) { (authResult, error) in
                     if (error != nil) {
                         // Error. If error.code == .MissingOrInvalidNonce, make sure
@@ -115,6 +114,11 @@ class AuthController : UIViewController, ObservableObject {
                     
                     print("signed in with apple")
                     print("\(String(describing: user.uid))")
+                    
+                    // close the paywall if necessary
+                    if closePaywallOnSignIn {
+                        self.hasUserSeenPaywall = true
+                    }
                     
                     // Figure out if the user already has an account and is signing in
                     // or if this is their first time signing up. (check on email)
@@ -176,7 +180,7 @@ class AuthController : UIViewController, ObservableObject {
         }
     }
     
-    func signInWithGoogle(displaySignInSheet: Binding<Bool>) {
+    func signInWithGoogle(displaySignInSheet: Binding<Bool>, closePaywallOnSignIn: Bool) {
         // get app client id
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         
@@ -232,6 +236,11 @@ class AuthController : UIViewController, ObservableObject {
                 }
                 
                 self.email = user.email ?? ""
+                
+                // close paywall if necessary
+                if closePaywallOnSignIn {
+                    self.hasUserSeenPaywall = true
+                }
                 
                 // Figure out if the user already has an account and is signing in
                 // or if this is their first time signing up. (check on email)

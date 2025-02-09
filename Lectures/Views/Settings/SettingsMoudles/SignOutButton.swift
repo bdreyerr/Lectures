@@ -12,6 +12,7 @@ struct SignOutButton: View {
     
     @EnvironmentObject var authController: AuthController
     @EnvironmentObject var userController: UserController
+    @EnvironmentObject var myCourseController: MyCourseController
     @EnvironmentObject var subscriptionController: SubscriptionController
     
     var body: some View {
@@ -20,7 +21,13 @@ struct SignOutButton: View {
             // Sign out of account - auth
             authController.logOut()
             userController.logOut()
-            subscriptionController.logOutOfSubscriptionAccount()
+            subscriptionController.logOutRevenueCat()
+            
+            // clear any local vars in the app
+            
+            // watch history
+            myCourseController.watchHistories = []
+            
             
         }) {
             RoundedRectangle(cornerRadius: 8)

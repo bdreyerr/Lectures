@@ -16,7 +16,7 @@ struct HomeMainView: View {
     
     @State private var selectedTab = 0
     
-    let tabs = ["Trending", "Computer Science", "Business", "Science", "Humanities", "Engineering", "Healthcare"]
+    let tabs = ["For You", "Computer Science", "Business", "Science", "Humanities", "Engineering", "Healthcare"]
     
     var body: some View {
         NavigationView {

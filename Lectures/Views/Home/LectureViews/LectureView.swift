@@ -10,6 +10,7 @@ import YouTubePlayerKit
 
 struct LectureView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.presentationMode) var presentationMode
     
     @EnvironmentObject var rateLimiter: RateLimiter
     
@@ -26,7 +27,7 @@ struct LectureView: View {
     @EnvironmentObject var homeworkAnswersController: HomeworkAnswersController
     
     // YT player - local to each lecture view
-    @StateObject private var player: YouTubePlayer = ""
+    @StateObject public var player: YouTubePlayer = ""
     
     @State var isLectureLiked: Bool = false
     
@@ -44,7 +45,6 @@ struct LectureView: View {
                     ZStack(alignment: .bottomLeading) {
                         
                         // make sure the youtube url is attatched to this lecture
-                        
                         YouTubePlayerView(self.player) { state in
                                 // Overlay ViewBuilder closure to place an overlay View
                                 // for the current `YouTubePlayer.State`
@@ -59,6 +59,9 @@ struct LectureView: View {
                                 }
                             }
                             .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
+                            .onChange(of: player.source) {
+                                print("yt player source changed?")
+                            }
                         
                     }
                     .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
@@ -194,7 +197,7 @@ struct LectureView: View {
                             
                             
                             HStack {
-                                Text("Resources")
+                                Text("Notes")
                                     .font(.system(size: 14))
 //                                    .font(.system(size: 14, design: .serif))
                                 Image(systemName: "sparkles")
@@ -218,31 +221,31 @@ struct LectureView: View {
                             }
                             
                             
-                            // Homework Assignment
-                            if let homeworkId = lecture.homeworkResourceId {
-                                if let homework = homeworkController.cachedHomeworks[homeworkId] {
-                                    ResourceChip(resource: homework, shouldPopFromStack: $shouldPopLectureFromStackOnDissapear)
-                                        .padding(.bottom, 2)
-                                } else {
-                                    HStack {
-                                        SkeletonLoader(width: 300, height: 40)
-                                        Spacer()
-                                    }
-                                }
-                            }
-                            
-                            // Homework Assignment
-                            if let homeworkAnswerId = lecture.homeworkAnswersResourceId {
-                                if let homeworkAnswer = homeworkAnswersController.cachedHomeworkAnswers[homeworkAnswerId] {
-                                    ResourceChip(resource: homeworkAnswer, shouldPopFromStack: $shouldPopLectureFromStackOnDissapear)
-                                        .padding(.bottom, 2)
-                                } else {
-                                    HStack {
-                                        SkeletonLoader(width: 300, height: 40)
-                                        Spacer()
-                                    }
-                                }
-                            }
+//                            // Homework Assignment
+//                            if let homeworkId = lecture.homeworkResourceId {
+//                                if let homework = homeworkController.cachedHomeworks[homeworkId] {
+//                                    ResourceChip(resource: homework, shouldPopFromStack: $shouldPopLectureFromStackOnDissapear)
+//                                        .padding(.bottom, 2)
+//                                } else {
+//                                    HStack {
+//                                        SkeletonLoader(width: 300, height: 40)
+//                                        Spacer()
+//                                    }
+//                                }
+//                            }
+//                            
+//                            // Homework Assignment
+//                            if let homeworkAnswerId = lecture.homeworkAnswersResourceId {
+//                                if let homeworkAnswer = homeworkAnswersController.cachedHomeworkAnswers[homeworkAnswerId] {
+//                                    ResourceChip(resource: homeworkAnswer, shouldPopFromStack: $shouldPopLectureFromStackOnDissapear)
+//                                        .padding(.bottom, 2)
+//                                } else {
+//                                    HStack {
+//                                        SkeletonLoader(width: 300, height: 40)
+//                                        Spacer()
+//                                    }
+//                                }
+//                            }
                             
                             // Play on youtube button
                             if let url = lecture.youtubeVideoUrl {
@@ -267,13 +270,11 @@ struct LectureView: View {
                     UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
                 }
                 .onAppear {
-                    // there's a chance we came directly to lecture view, not visiting course view first, meaning we need to load the other lectures in this course.
+                    // we need to fetch a separate list of lectures in this same course. this is becaus the user may be watching lecture 35, and that may not match up with what we retrieved for dispalying on course view, which is stored in lecturesInCourse. instead, we write and read from lecturesInSameCourse
                     if let course = courseController.cachedCourses[courseId], let courseId = course.id, let lectureIds = course.lectureIds {
-                        print("we're gonna get the rest of the lectures in course")
-                        courseController.retrieveLecturesInCourse(courseId: courseId, lectureIds: lectureIds)
-                        // for some reason if the lectures were already cached but the thumbnails we're requested lets get those
-                        for courseLectureId in lectureIds {
-                            courseController.getLectureThumnbnail(lectureId: courseLectureId)
+                        
+                        if let lectureNum = lecture.lectureNumberInCourse {
+                            courseController.retrievLecturesInSameCourse(courseId: courseId, lectureIds: lectureIds, currentLectureNum: lectureNum)
                         }
                     }
                     
@@ -295,18 +296,18 @@ struct LectureView: View {
                     }
                     
                     // homework
-                    if let homeworkId = lecture.homeworkResourceId {
-                        homeworkController.retrieveHomework(homeworkId: homeworkId)
-                    } else {
-                        print("lecture didn't have an homework Id")
-                    }
-                    
-                    // homework answers
-                    if let homeworkAnswersId = lecture.homeworkAnswersResourceId {
-                        homeworkAnswersController.retrieveHomeworkAnswer(homeworkAnswerId: homeworkAnswersId)
-                    } else {
-                        print("course didn't have an exam Id")
-                    }
+//                    if let homeworkId = lecture.homeworkResourceId {
+//                        homeworkController.retrieveHomework(homeworkId: homeworkId)
+//                    } else {
+//                        print("lecture didn't have an homework Id")
+//                    }
+//                    
+//                    // homework answers
+//                    if let homeworkAnswersId = lecture.homeworkAnswersResourceId {
+//                        homeworkAnswersController.retrieveHomeworkAnswer(homeworkAnswerId: homeworkAnswersId)
+//                    } else {
+//                        print("course didn't have an exam Id")
+//                    }
                     
                     if self.shouldAddLectureToStack {
                         
@@ -350,7 +351,6 @@ struct LectureView: View {
             }
         }
         .onAppear {
-            
             // TODO: how can we speed this up?
             if let lecture = courseController.focusedLecture, let youtubeVideoUrl = lecture.youtubeVideoUrl {
                 // load the youtube video
@@ -374,6 +374,16 @@ struct LectureView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+        }) {
+            HStack {
+                Image(systemName: "chevron.left")
+                    .bold()
+                Text("Back")
+            }
+        })
     }
     
     func formatIntViewsToString(numViews: Int) -> String {

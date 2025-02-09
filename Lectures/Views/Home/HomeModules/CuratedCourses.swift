@@ -14,9 +14,13 @@ struct CuratedCourses: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Text("Curated Courses")
-                    .font(.system(size: 14, design: .serif))
-                    .bold()
+                Image(systemName: "mail.stack")
+                    .font(.system(size: 10))
+                    .opacity(0.8)
+                
+                Text("Recommended Courses")
+                    .font(.system(size: 10))
+                    .opacity(0.8)
                 
                 Spacer()
             }

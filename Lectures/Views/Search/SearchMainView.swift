@@ -31,42 +31,42 @@ struct SearchMainView: View {
                     TopBrandView()
                     
                     
-                    Group {
-                        if userController.user == nil || !isSignedIn {
-                            // Sign in to see full search results
-                            
-                            
-                            Text("Sign in for full search functionality")
-                                .font(.system(size: 13, design: .serif))
-                                .padding(.top, 20)
-                                .padding(.bottom, 5)
-                            
-                            
-                            SignInWithApple(displaySignInSheet: .constant(false))
-                            
-                            SignInWithGoogle(displaySignInSheet: .constant(false))
-                                .padding(.bottom, 20)
-                        } else {
-                            // switch with subscription
-                            if !subscriptionController.isPro {
-                                Button(action: {
-                                    isUpgradeAccountPopupShowing = true
-                                }) {
-                                    Text("Upgrade")
-                                        .font(.system(size: 13, design: .serif))
-                                        .foregroundStyle(Color.orange)
-                                        .opacity(0.8)
-                                }
-                                .padding(.top, 40)
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Text("for full search functionality")
-                                    .font(.system(size: 13, design: .serif))
-//                                    .padding(.bottom, 20)
-                                    .opacity(0.8)
-                            }
-                        }
-                    }
+//                    Group {
+//                        if userController.user == nil || !isSignedIn {
+//                            // Sign in to see full search results
+//                            
+//                            
+//                            Text("Sign in for full search functionality")
+//                                .font(.system(size: 13, design: .serif))
+//                                .padding(.top, 20)
+//                                .padding(.bottom, 5)
+//                            
+//                            
+//                            SignInWithApple(displaySignInSheet: .constant(false))
+//                            
+//                            SignInWithGoogle(displaySignInSheet: .constant(false))
+//                                .padding(.bottom, 20)
+//                        } else {
+//                            // switch with subscription
+//                            if !subscriptionController.isPro {
+//                                Button(action: {
+//                                    isUpgradeAccountPopupShowing = true
+//                                }) {
+//                                    Text("Upgrade")
+//                                        .font(.system(size: 13, design: .serif))
+//                                        .foregroundStyle(Color.orange)
+//                                        .opacity(0.8)
+//                                }
+//                                .padding(.top, 40)
+//                                .buttonStyle(PlainButtonStyle())
+//                                
+//                                Text("for full search functionality")
+//                                    .font(.system(size: 13, design: .serif))
+////                                    .padding(.bottom, 20)
+//                                    .opacity(0.8)
+//                            }
+//                        }
+//                    }
                     
                     ScrollView(showsIndicators: false) {
                         if let user = userController.user, let accountType = user.accountType {
@@ -76,8 +76,28 @@ struct SearchMainView: View {
                         }
                         
                         
-                        
-//                        SearchLoadingView()
+                        if searchController.displaySearchGraphic {
+                            VStack(spacing: 16) {
+                                Image(systemName: "magnifyingglass.circle.fill")
+                                    .font(.system(size: 30))
+                                    .foregroundColor(.gray.opacity(0.3))
+                                    .padding(.top, 40)
+                                
+                                HStack(spacing: 4) {
+                                    Text("Search for any")
+                                    Image(systemName: "mail.stack")
+                                    Text("course,")
+                                    Image(systemName: "newspaper")
+                                    Text("lecture or")
+                                    Image(systemName: "graduationcap")
+                                    Text("university")
+                                }
+                                .font(.system(size: 12, design: .serif))
+                                .foregroundColor(.gray)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 20)
+                            }
+                        }
                         
                         // loading
                         if searchController.isChannelsLoading || searchController.isCoursesLoading || searchController.isLecturesLoading {
@@ -116,7 +136,7 @@ struct SearchMainView: View {
                             // channels
                             if !searchController.searchResultChannels.isEmpty {
                                 HStack {
-                                    Image(systemName: "person")
+                                    Image(systemName: "graduationcap")
                                         .font(.system(size: 10))
                                         .opacity(0.8)
                                     

@@ -25,7 +25,6 @@ struct Course : Codable, Identifiable, Hashable {
     var categories: [String]?
     var numLikesInApp: Int?
     
-    
     // Resource Information
     var examResourceId: String?
     var examAnswersResourceId: String?
@@ -38,6 +37,8 @@ struct Course : Codable, Identifiable, Hashable {
     
     // link to thumbnail on the web (not in storage, we'll download it from this link)
     var thumbnailUrl: String?
+    
+    var numViews: Int?
     
     
     enum CodingKeys: String, CodingKey {
@@ -58,5 +59,6 @@ struct Course : Codable, Identifiable, Hashable {
         case lectureIds
         case searchTerms
         case thumbnailUrl
+        case numViews
     }
 }

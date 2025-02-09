@@ -39,6 +39,8 @@ struct Lecture : Codable, Identifiable, Hashable {
     
     var thumbnailUrl: String?
     
+    var numViews: Int?
+    
     enum CodingKeys: String, CodingKey {
         case id
         case courseId
@@ -58,5 +60,6 @@ struct Lecture : Codable, Identifiable, Hashable {
         case youtubeVideoUrl
         case searchTerms
         case thumbnailUrl
+        case numViews
     }
 }

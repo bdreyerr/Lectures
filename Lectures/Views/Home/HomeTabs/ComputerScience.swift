@@ -13,8 +13,8 @@ struct ComputerScience: View {
         CuratedCourses()
             .padding(.top, 10)
         
-        CollectionsTrending()
-            .padding(.top, 5)
+//        CollectionsTrending()
+//            .padding(.top, 5)
         
         CommunityFavorites()
             .padding(.top, 10)

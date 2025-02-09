@@ -169,7 +169,7 @@ struct OnboardingPaywallWithFreeTrial: View {
                     .padding(.horizontal, 30)
                     .sheet(isPresented: $showSignUpSheet) {
                         FirstOpenSignUpSheet(text: "Create an account to start your free trial", displaySheet: $showSignUpSheet)
-                            .presentationDetents([.fraction(0.4), .medium]) // User can drag between these heights
+                            .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
                     }
                     .padding(.top, 10)
                     
@@ -215,7 +215,7 @@ struct OnboardingPaywallWithFreeTrial: View {
                         .padding(.horizontal, 30)
                         .sheet(isPresented: $showSignInSheet) {
                             FirstOpenSignUpSheet(text: "Sign in to your existing account", displaySheet: .constant(false))
-                                .presentationDetents([.fraction(0.4), .medium]) // User can drag between these heights
+                                .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
                         }
                         .padding(.top, 10)
                     }

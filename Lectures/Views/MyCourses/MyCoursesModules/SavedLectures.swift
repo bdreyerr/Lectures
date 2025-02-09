@@ -17,9 +17,13 @@ struct SavedLectures: View {
     var body: some View {
         Group {
             HStack {
+                Image(systemName: "newspaper")
+                    .font(.system(size: 10))
+                    .opacity(0.8)
+                
                 Text("Saved Lectures")
-                    .font(.system(size: 13, design: .serif))
-                    .bold()
+                    .font(.system(size: 10))
+                    .opacity(0.8)
                 
                 Spacer()
             }

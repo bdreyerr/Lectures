@@ -28,84 +28,88 @@ struct WatchedCourseCard: View {
     }
     
     var body: some View {
-        if let courseId = course.id, let courseTitle = course.courseTitle, let channelId = course.channelId, let numLecturesInCourse = course.numLecturesInCourse, let watchTimeInHrs = course.watchTimeInHrs {
-            
-            ZStack(alignment: .bottomLeading) {
-                if let image = courseController.courseThumbnails[courseId] {
-                    Image(uiImage: image)
-                        .resizable()
-                        .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
-                        .aspectRatio(contentMode: .fill)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                } else {
-                    // default image when not loaded
-                    SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
-                }
+        Group {
+            if let courseId = course.id, let courseTitle = course.courseTitle, let channelId = course.channelId, let numLecturesInCourse = course.numLecturesInCourse, let watchTimeInHrs = course.watchTimeInHrs {
                 
-                // Add semi-transparent gradient overlay
-                LinearGradient(
-                    gradient: Gradient(colors: [.clear, .black.opacity(0.85)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                
-                
-                VStack(spacing: 0) {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Text(courseTitle)
-                                    .font(.system(size: 18, design: .serif))
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                    .multilineTextAlignment(.leading) // Ensure text aligns to the left
-                                    .lineLimit(2) // Limit to two lines if necessary
-                                    .truncationMode(.tail)
-                                Spacer()
-                            }
-                            
-                            HStack {
-                                // TODO: Add back university name
-                                if let channel = courseController.cachedChannels[channelId], let channelTitle = channel.title  {
-                                    Text(channelTitle)
-                                        .lineLimit(1) // Limit to a single line
-                                        .truncationMode(.tail) // Use ellipsis for truncation
+                ZStack(alignment: .bottomLeading) {
+                    if let image = courseController.courseThumbnails[courseId] {
+                        Image(uiImage: image)
+                            .resizable()
+                            .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                            .aspectRatio(contentMode: .fill)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    } else {
+                        // default image when not loaded
+                        SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                    }
+                    
+                    // Add semi-transparent gradient overlay
+                    LinearGradient(
+                        gradient: Gradient(colors: [.clear, .black.opacity(0.85)]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    
+                    
+                    VStack(spacing: 0) {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Text(courseTitle)
                                         .font(.system(size: 14, design: .serif))
-                                        .foregroundColor(.white.opacity(0.8))
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.white)
+                                        .multilineTextAlignment(.leading) // Ensure text aligns to the left
+                                        .lineLimit(4) // Limit to two lines if necessary
+                                        .truncationMode(.tail)
+                                    Spacer()
                                 }
                                 
-                                Text("\(numLecturesInCourse) Lectures")
-                                    .font(.system(size: 14, design: .serif))
-                                    .foregroundColor(.white.opacity(0.8))
-                                Text("\(watchTimeInHrs)hrs")
-                                    .font(.system(size: 14, design: .serif))
-                                    .foregroundColor(.white.opacity(0.8))
+                                HStack {
+                                    // TODO: Add back university name
+                                    if let channel = courseController.cachedChannels[channelId], let channelTitle = channel.title  {
+                                        Text(channelTitle)
+                                            .lineLimit(1) // Limit to a single line
+                                            .truncationMode(.tail) // Use ellipsis for truncation
+                                            .font(.system(size: 11, design: .serif))
+                                            .foregroundColor(.white.opacity(0.8))
+                                    }
+                                    
+                                    Text("\(numLecturesInCourse) Lectures")
+                                        .font(.system(size: 11, design: .serif))
+                                        .foregroundColor(.white.opacity(0.8))
+                                    Text("\(watchTimeInHrs)hrs")
+                                        .font(.system(size: 11, design: .serif))
+                                        .foregroundColor(.white.opacity(0.8))
+                                }
                             }
+                            Spacer()
                         }
-                        Spacer()
+                        .padding()
                     }
-                    .padding()
+                    .padding(.bottom, 1)
+                    
+                    // Add progress bar at the bottom
+                    GeometryReader { geometry in
+                        Rectangle()
+                            .fill(progressColor)
+                            .frame(width: geometry.size.width * watchProgress, height: 3)
+                            .position(x: (geometry.size.width * watchProgress) / 2, y: geometry.size.height - 1.5)
+                    }
+                    .cornerRadius(10)
+                    
                 }
-                .padding(.bottom, 1)
-                
-                // Add progress bar at the bottom
-                GeometryReader { geometry in
-                    Rectangle()
-                        .fill(progressColor)
-                        .frame(width: geometry.size.width * watchProgress, height: 3)
-                        .position(x: (geometry.size.width * watchProgress) / 2, y: geometry.size.height - 1.5)
-                }
-                .cornerRadius(10)
-                
+                .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                .shadow(radius: 2.5)
             }
-            .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
-            .shadow(radius: 2.5)
+        }
+        .onAppear {
+            // we should fetch the last watched lecture here, in case the user clicks on this watched course card so we can autoplay the lecture in question
+            if let lectureId = watchHistory.lectureId {
+                courseController.retrieveLecture(lectureId: lectureId)
+            }
         }
     }
 }
-
-//#Preview {
-//    WatchedCourseCard(course: Course(), watchHistory: WatchHistory())
-//}

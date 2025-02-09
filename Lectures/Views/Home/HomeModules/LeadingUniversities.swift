@@ -14,9 +14,14 @@ struct LeadingUniversities: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
+                
+                Image(systemName: "graduationcap")
+                    .font(.system(size: 10))
+                    .opacity(0.8)
+                
                 Text("Leading Universities")
-                    .font(.system(size: 14, design: .serif))
-                    .bold()
+                    .font(.system(size: 10))
+                    .opacity(0.8)
                 
                 Spacer()
             }

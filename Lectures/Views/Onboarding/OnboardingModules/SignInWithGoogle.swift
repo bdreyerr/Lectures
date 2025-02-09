@@ -24,14 +24,18 @@ struct SignInWithGoogle: View {
         // Sign in with Google Button
         Button(action: {
             Task {
-                // sign in with google
-                authController.signInWithGoogle(displaySignInSheet: $displaySignInSheet)
+                if let closePaywallOnSignIn = closePaywallOnSignIn, closePaywallOnSignIn == true {
+                    authController.signInWithGoogle(displaySignInSheet: $displaySignInSheet, closePaywallOnSignIn: true)
+                } else {
+                    authController.signInWithGoogle(displaySignInSheet: $displaySignInSheet, closePaywallOnSignIn: false)
+                }
+                
                 // restore purchases with revenue cat (will return the user's pro status)
                 await subscriptionController.restorePurchases()
                 
-                if let _ = closePaywallOnSignIn {
-                    hasUserSeenPaywall = true
-                }
+//                if let _ = closePaywallOnSignIn {
+//                    hasUserSeenPaywall = true
+//                }
             }
         }) {
             HStack {

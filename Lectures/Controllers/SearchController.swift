@@ -17,6 +17,7 @@ class SearchController : ObservableObject {
     @Published var searchResultChannels: [Channel] = []
     
     @Published var wasSearchPerformed = false
+    @Published var displaySearchGraphic = true
     
     // Pagination
     @Published var lastDocChannel: QueryDocumentSnapshot?
@@ -70,7 +71,8 @@ class SearchController : ObservableObject {
         noLecturesLeftToLoad = false
         noChannelsLeftToLoad = false
         
-        self.wasSearchPerformed = false
+        wasSearchPerformed = false
+        displaySearchGraphic = true
     }
     
     func performSearch(courseController: CourseController) {
@@ -81,6 +83,7 @@ class SearchController : ObservableObject {
                 searchResultChannels = []
                 return
             }
+            self.displaySearchGraphic = false
             self.wasSearchPerformed = false
             
             self.searchResultCourses = []

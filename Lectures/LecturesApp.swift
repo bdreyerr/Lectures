@@ -5,6 +5,7 @@
 //  Created by Ben Dreyer on 12/15/24.
 //
 
+import FirebaseAuth
 import FirebaseCore
 import GoogleSignIn
 import RevenueCat
@@ -17,8 +18,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         
         // TODO: change to info for prod build
-        Purchases.logLevel = .debug
-        Purchases.configure(withAPIKey: Secrets().revenueCatProjectKey)
+        Purchases.logLevel = .info
+
+        // If we have the auth'd user at app launch, configure RevenueCat using the auth'd user. 
+        // Otherwise, continue anonymously, and use revenue cat login function when signing a user in via auth.
+        if let user = Auth.auth().currentUser {
+            Purchases.configure(withAPIKey: Secrets().revenueCatProjectKey, appUserID: user.uid)
+            print("on app launch and we are setting up revenue cat with firebase auth id")
+        } else {
+            Purchases.configure(withAPIKey: Secrets().revenueCatProjectKey)
+            print("we don't have the auth user, using anonymous id for revenue cat. Call the login function later")
+        }
         return true
     }
     

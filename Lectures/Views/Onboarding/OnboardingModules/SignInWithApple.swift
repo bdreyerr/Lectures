@@ -34,14 +34,19 @@ struct SignInWithApple: View {
             onCompletion: { result in
                 
                 Task {
-                    authController.appleSignInButtonOnCompletion(result: result, displaySignInSheet: $displaySignInSheet)
+                    
+                    if let closePaywallOnSignIn = closePaywallOnSignIn, closePaywallOnSignIn == true {
+                        authController.appleSignInButtonOnCompletion(result: result, displaySignInSheet: $displaySignInSheet, closePaywallOnSignIn: true)
+                    } else {
+                        authController.appleSignInButtonOnCompletion(result: result, displaySignInSheet: $displaySignInSheet, closePaywallOnSignIn: false)
+                    }
                     
                     // restore purchases with revenue cat (will return the user's pro status)
                     await subscriptionController.restorePurchases()
                     
-                    if let _ = closePaywallOnSignIn {
-                        hasUserSeenPaywall = true
-                    }
+//                    if let _ = closePaywallOnSignIn {
+//                        hasUserSeenPaywall = true
+//                    }
                 }
             }
         )

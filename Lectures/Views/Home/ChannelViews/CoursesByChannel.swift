@@ -28,8 +28,7 @@ struct CoursesByChannel: View {
                 }
                 
                 Group {
-                    
-                    ForEach(courseIds, id: \.self) { courseId in
+                    ForEach(courseIds.prefix(courseController.channelCoursesPrefixPaginationNumber), id: \.self) { courseId in
                         NavigationLink(destination: CourseView()){
                             // CourseByChannelModule
                             CourseByChannelModule(courseId: courseId)
@@ -43,6 +42,31 @@ struct CoursesByChannel: View {
                         .buttonStyle(PlainButtonStyle())
                     }
                 }
+                
+                
+                if courseController.channelCoursesPrefixPaginationNumber < courseIds.count {
+                    Button(action: {
+                        // increment the prefix pagination var by 10, and fetch the new results
+                        courseController.channelCoursesPrefixPaginationNumber += 10
+                        
+                        let coursesToRetrieve = courseIds.prefix(courseController.channelCoursesPrefixPaginationNumber)
+                        
+                        for courseId in coursesToRetrieve {
+                            // Retrieve the course from firestore
+                            courseController.retrieveCourse(courseId: courseId)
+                            // Retrieve the thumbnail for the course from storage
+                            courseController.getCourseThumbnail(courseId: courseId)
+                        }
+                    }) {
+                        Text("Fetch More")
+                            .font(.system(size: 10))
+                            .opacity(0.8)
+                    }
+                    .padding(.top, 10)
+                    .padding(.bottom, 20)
+                }
+                
+                BottomBrandView()
             }
         }
         

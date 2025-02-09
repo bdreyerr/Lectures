@@ -16,7 +16,7 @@ struct FirstOpenSignUpSheet: View {
     @Binding var displaySheet: Bool
     var body: some View {
         ZStack {
-            LatticeBackground()
+//            LatticeBackground()
             VStack {
                 if isSignedIn {
                     Text("You're signed in :)")
@@ -34,7 +34,6 @@ struct FirstOpenSignUpSheet: View {
                         .onDisappear {
                             displaySheet = false
                         }
-                        
                 }
             }
         }

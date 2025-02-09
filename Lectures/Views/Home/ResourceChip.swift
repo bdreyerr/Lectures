@@ -20,7 +20,7 @@ struct ResourceChip: View {
         HStack {
             
 //            NavigationLink(destination: ResourceView(resource: resource)) {
-            NavigationLink(destination: ResourceNativeView(resourceTitle: resource.title ?? "", resourceContent: resource.content ?? "")) {
+            NavigationLink(destination: ResourceNativeView(resourceType: resource.resourceType ?? 0, resourceTitle: resource.title ?? "", resourceContent: resource.content ?? "")) {
                 // Main content container
                 HStack(spacing: 5) {
                     Image(systemName: "doc.fill")

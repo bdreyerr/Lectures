@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CourseView: View {
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("isSignedIn") private var isSignedIn = false
     
     @EnvironmentObject var rateLimiter: RateLimiter
     
@@ -75,20 +76,6 @@ struct CourseView: View {
                                         }
                                         return
                                     }
-                                    
-//                                    if let user = userController.user, let userId = user.id {
-//                                        if user.accountType == 1 {
-//                                            if let rateLimit = rateLimiter.processWrite() {
-//                                                print(rateLimit)
-//                                                return
-//                                            }
-//                                            userController.likeCourse(userId: userId, courseId: courseId)
-//                                            withAnimation(.spring()) {
-//                                                self.isCourseLiked.toggle()
-//                                            }
-//                                            return
-//                                        }
-//                                    }
                                     // show the upgrade account sheet
                                     self.isUpgradeAccountSheetShowing = true
                                 }) {
@@ -124,7 +111,6 @@ struct CourseView: View {
                                     ForEach(course.categories ?? [], id: \.self) { category in
                                         Text(category)
                                             .font(.system(size: 12))
-//                                            .font(.system(size: 12, design: .serif))
                                             .opacity(0.6)
                                     }
                                 }
@@ -138,10 +124,8 @@ struct CourseView: View {
                                     if lectures.count > 0 {
                                         PlayCourseButton(shouldPopCourseFromStack: $shouldPopCourseFromStackOnDissapear, lecture: lectures[0])
                                     } else {
-                                        Text("No first lecture")
+                                        SkeletonLoader(width: 50, height: 40)
                                     }
-                                } else {
-                                    Text("no lectures list")
                                 }
                                 
                                 Spacer()
@@ -217,25 +201,6 @@ struct CourseView: View {
                                     }
                                     
                                     self.isUpgradeAccountSheetShowing = true
-                                    
-                                    
-//                                    if let user = userController.user, let userId = user.id {
-//                                        if user.accountType == 1 {
-//                                            if let rateLimit = rateLimiter.processWrite() {
-//                                                print(rateLimit)
-//                                                return
-//                                            }
-//                                            
-//                                            userController.followChannel(userId: userId, channelId: channelId)
-//                                            withAnimation(.spring()) {
-//                                                isChannelFollowed.toggle()
-//                                            }
-//                                        } else {
-//                                            // show the upgrade account sheet
-//                                            self.isUpgradeAccountSheetShowing = true
-//                                        }
-//                                    }
-                                    
                                 }) {
                                     HStack(spacing: 8) {
                                         Image(systemName: isChannelFollowed ? "heart.fill" : "heart")
@@ -265,78 +230,43 @@ struct CourseView: View {
                                 .padding(.top, 10)
                             
                             
+                            // TODO: Add back resources if we are adding them to the app
                             // Resources
-                            HStack {
-                                Text("Resources")
-                                    .font(.system(size: 14))
-//                                    .font(.system(size: 14, design: .serif))
-//                                    .bold()
-                                Image(systemName: "sparkles")
-                                    .foregroundStyle(Color.blue)
-                                    .font(.system(size: 14, design: .serif))
-                                Spacer()
-                            }
-                            .padding(.top, 20)
-                            
-                            
-                            // Exam
 //                            HStack {
-//                                Text("Exam")
+//                                Text("Resources")
 //                                    .font(.system(size: 14))
-////                                    .font(.system(size: 14, design: .serif))
-//                                    .bold()
 //                                Image(systemName: "sparkles")
 //                                    .foregroundStyle(Color.blue)
 //                                    .font(.system(size: 14, design: .serif))
 //                                Spacer()
 //                            }
 //                            .padding(.top, 20)
-                            
-                            
-                            if let examId = course.examResourceId {
-                                if let exam = examController.cachedExams[examId] {
-                                    ResourceChip(resource: exam, shouldPopFromStack: $shouldPopCourseFromStackOnDissapear)
-                                        .padding(.bottom, 2)
-                                } else {
-                                    HStack {
-                                        SkeletonLoader(width: 300, height: 40)
-                                        Spacer()
-                                    }
-                                }
-                            }
-                            
-                            // todo put a loading thing here or something to indicate there's no resource on this
-                            
-                            
-                            
-                            // Exam Answers
-//                            HStack {
-//                                Text("Exam Answers")
-//                                    .font(.system(size: 14))
-////                                    .font(.system(size: 14, design: .serif))
-//                                    .bold()
-//                                Image(systemName: "sparkles")
-//                                    .foregroundStyle(Color.blue)
-//                                    .font(.system(size: 14, design: .serif))
-//                                Spacer()
+//                            
+//                            
+//                            // Exam                            
+//                            if let examId = course.examResourceId {
+//                                if let exam = examController.cachedExams[examId] {
+//                                    ResourceChip(resource: exam, shouldPopFromStack: $shouldPopCourseFromStackOnDissapear)
+//                                        .padding(.bottom, 2)
+//                                } else {
+//                                    HStack {
+//                                        SkeletonLoader(width: 300, height: 40)
+//                                        Spacer()
+//                                    }
+//                                }
 //                            }
-//                            .padding(.top, 2)
-                            
-                            if let examAnswerId = course.examAnswersResourceId {
-                                if let examAnswer = examAnswerController.cachedExamAnswers[examAnswerId] {
-                                    ResourceChip(resource: examAnswer, shouldPopFromStack: $shouldPopCourseFromStackOnDissapear)
-                                } else {
-                                    HStack {
-                                        SkeletonLoader(width: 300, height: 40)
-                                        Spacer()
-                                    }
-                                }
-                            }
-                            
-                            // todo put a loading thing here or something to indicate there's no resource on this
-//                            LecturesInCourse(course: course)
-//                                .padding(.top, 20)
-//                                .padding(.bottom, 50)
+//                            
+//                            // Exam Answers
+//                            if let examAnswerId = course.examAnswersResourceId {
+//                                if let examAnswer = examAnswerController.cachedExamAnswers[examAnswerId] {
+//                                    ResourceChip(resource: examAnswer, shouldPopFromStack: $shouldPopCourseFromStackOnDissapear)
+//                                } else {
+//                                    HStack {
+//                                        SkeletonLoader(width: 300, height: 40)
+//                                        Spacer()
+//                                    }
+//                                }
+//                            }
                             
                             // Lectures In Course
                             VStack {
@@ -356,17 +286,45 @@ struct CourseView: View {
                                 
                                 Group {
                                     if let lectures = courseController.lecturesInCourse[courseId] {
-                                        ForEach(lectures, id: \.id) { lecture in
-                                            NavigationLink(destination: LectureView()) {
-                                                LectureInCourseModule(lecture: lecture)
+                                        ScrollView(showsIndicators: false) {
+                                            ForEach(lectures, id: \.id) { lecture in
+                                                NavigationLink(destination: LectureView()) {
+                                                    LectureInCourseModule(lecture: lecture)
+                                                        
+                                                }
+                                                .buttonStyle(PlainButtonStyle())
+                                                .simultaneousGesture(TapGesture().onEnded {
+                                                    shouldPopCourseFromStackOnDissapear = false
+                                                    // focus the lecture
+                                                    courseController.focusLecture(lecture)
+                                                })
+//                                                .padding(2)
                                             }
-                                            .buttonStyle(PlainButtonStyle())
-                                            .simultaneousGesture(TapGesture().onEnded {
-                                                shouldPopCourseFromStackOnDissapear = false
-                                                // focus the lecture
-                                                courseController.focusLecture(lecture)
-                                            })
+                                            
+                                            
+                                            if let lectureIds = course.lectureIds {
+                                                if courseController.lecturesInCoursePrefixPaginationNumber < lectureIds.count {
+                                                    Button(action: {
+                                                        courseController.lecturesInCoursePrefixPaginationNumber += 8
+                                                        
+                                                        courseController.retrieveLecturesInCourse(courseId: courseId, lectureIds: lectureIds, isFetchingMore: true)
+                                                        
+                                                    }) {
+                                                        Text("Fetch More")
+                                                            .font(.system(size: 10))
+                                                            .opacity(0.8)
+                                                    }
+                                                    .padding(.top, 5)
+                                                    .padding(.bottom, 10)
+                                                }
+                                            }
+                                            
                                         }
+                                        .frame(maxHeight: 300)  // Added maxHeight
+//                                        .overlay(
+//                                            RoundedRectangle(cornerRadius: 8)
+//                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+//                                        )
                                     } else {
                                         HStack {
                                             SkeletonLoader(width: 300, height: 40)
@@ -384,54 +342,7 @@ struct CourseView: View {
                             
                             
                             // Related Courses
-                            HStack {
-                                Text("Related Courses")
-                                    .font(.system(size: 14))
-//                                    .font(.system(size: 14, design: .serif))
-//                                    .bold()
-                                    .padding(.bottom, 10)
-                                
-                                
-//                                Text(course.courseTitle ?? "")
-//                                    .font(.system(size: 14, design: .serif))
-//                                    .lineLimit(1)
-//                                    .truncationMode(.tail)
-                                
-//                                Spacer()
-                            }
-                            
-                            if userController.user == nil {
-                                Text("Sign in to view related courses")
-                                    .font(.system(size: 14))
-                                
-                                Button(action: {
-                                    isSignInSheetShowing = true
-                                }) {
-                                    Text("Sign In / Create Account")
-                                        .font(.system(size: 14))
-                                }
-                            }
-                            
-                            
-                            if !subscriptionController.isPro {
-                                Text("Upgrade to see course recommendations")
-                                    .font(.system(size: 12))
-                                
-                                Button(action: {
-                                    isUpgradeAccountSheetShowing = true
-                                }) {
-                                    Text("Upgrade")
-                                        .font(.system(size: 14))
-                                        .foregroundStyle(Color.orange)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            } else {
-                                Group {
-                                    ForEach(homeController.communityFavorites, id: \.id) { course in
-                                        RelatedCourse(course: course)
-                                    }
-                                }
-                            }
+                            RelatedCourses()
                             
                             BottomBrandView()
                         }
@@ -440,7 +351,7 @@ struct CourseView: View {
                 }
                 .sheet(isPresented: $isSignInSheetShowing) {
                     FirstOpenSignUpSheet(text: "Sign In", displaySheet: $isSignInSheetShowing)
-                        .presentationDetents([.fraction(0.4), .medium]) // User can drag between these heights
+                        .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
                 }
                 .sheet(isPresented: $isUpgradeAccountSheetShowing) {
                     UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
@@ -460,26 +371,12 @@ struct CourseView: View {
                         }
                     }
                     
-                    // get resource info
-            
-                    // get the exam
-                    if let examId = course.examResourceId {
-                        examController.retrieveExam(examId: examId)
-                    } else {
-                        print("course didn't have an exam Id")
-                    }
-                    
-                    // get the exam answers
-                    if let examAnswerId = course.examAnswersResourceId {
-                        examAnswerController.retrieveExamAnswer(examAnswerId: examAnswerId)
-                    } else {
-                        print("course didn't have an exam Id")
-                    }
-                    
                     // get the lectures in this course
                     if let lectureIds = course.lectureIds {
                         print("retrieving lectures in course gang")
-                        courseController.retrieveLecturesInCourse(courseId: courseId, lectureIds: lectureIds)
+                        courseController.retrieveLecturesInCourse(courseId: courseId, lectureIds: lectureIds, isFetchingMore: false)
+                    } else {
+                        print("lecture ids not ready on a new focused course?")
                     }
                     
                     if self.shouldAddCourseToStack {
@@ -548,6 +445,8 @@ struct CourseView: View {
             }
     }
 }
+
+
 
 #Preview {
     CourseView()

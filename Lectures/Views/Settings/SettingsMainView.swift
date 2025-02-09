@@ -14,20 +14,14 @@ struct SettingsMainView: View {
     @AppStorage("isSignedIn") private var isSignedIn = false
     
     @EnvironmentObject var authController: AuthController
+    
+    @State var signUpSheetShowing: Bool = false
     var body: some View {
         NavigationView {
             VStack {
                 TopBrandView()
                 
-                if !isSignedIn {
-                    SignInWithApple(displaySignInSheet: .constant(false))
-                        .padding(.top, 20)
-                    
-                    SignInWithGoogle(displaySignInSheet: .constant(false))
-                }
-                
                 ScrollView(showsIndicators: false) {
-                    
                     Text("General")
                         .font(.system(size: 15, design: .serif))
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,10 +29,10 @@ struct SettingsMainView: View {
                         .padding(.top, 10)
                         .padding(.bottom, 10)
                     
-                    SingleSettingsLink(iconName: "person", settingName: "Account Information", destination: AccountInformation())
-                    SingleSettingsLink(iconName: "wallet.pass", settingName: "Subscription Type", destination: SubscriptionType())
+                    SingleSettingsLink(iconName: "person", settingName: "Account Information", destination: AccountInformation(), disableIfSignedOut: true)
+                    SingleSettingsLink(iconName: "wallet.pass", settingName: "Subscription Type", destination: SubscriptionType(), disableIfSignedOut: true)
 //                    SingleSettingsLink(iconName: "dollarsign.square", settingName: "Purchase History", destination: PurchaseHistory())
-                    SingleSettingsLink(iconName: "moon", settingName: "Appearance", destination: Appearance())
+                    SingleSettingsLink(iconName: "moon", settingName: "Appearance", destination: Appearance(), disableIfSignedOut: true)
 //                    SingleSettingsLink(iconName: "bell", settingName: "Notifications", destination: Notifications())
                     
                     Text("Support")
@@ -49,12 +43,39 @@ struct SettingsMainView: View {
                         .padding(.bottom, 10)
                     
                     
-                    SingleSettingsLink(iconName: "exclamationmark.circle", settingName: "Report Issues", destination: ReportIssues())
-                    SingleSettingsLink(iconName: "questionmark.app", settingName: "FAQ", destination: FAQ())
-                    SingleSettingsLink(iconName: "info.circle", settingName: "Licesne Information", destination: LicenseInformation())
-                    SingleSettingsLink(iconName: "hand.raised.circle", settingName: "Privacy Policy", destination: PrivacyPolicy())
+                    SingleSettingsLink(iconName: "exclamationmark.circle", settingName: "Report Issues", destination: ReportIssues(), disableIfSignedOut: false)
+                    SingleSettingsLink(iconName: "questionmark.app", settingName: "FAQ", destination: FAQ(), disableIfSignedOut: false)
+                    SingleSettingsLink(iconName: "info.circle", settingName: "Licesne Information", destination: LicenseInformation(), disableIfSignedOut: false)
+                    SingleSettingsLink(iconName: "hand.raised.circle", settingName: "Privacy Policy", destination: PrivacyPolicy(), disableIfSignedOut: false)
                     
                     
+                    if !isSignedIn {
+                        Image(systemName: "person.crop.circle.fill")
+                            .font(.system(size: 30))
+                            .foregroundColor(.gray.opacity(0.3))
+                            .padding(.top, 40)
+                        
+                        Text("Logged in users can access settings")
+                            .font(.system(size: 13, design: .serif))
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+
+                        Button(action: {
+                            signUpSheetShowing = true
+                        }) {
+                            Text("Sign Up / Sign In")
+                                .font(.system(size: 14))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(Color.blue)
+                                .cornerRadius(20)
+                        }
+                        .sheet(isPresented: $signUpSheetShowing) {
+                            FirstOpenSignUpSheet(text: "", displaySheet: $signUpSheetShowing)
+                                .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
+                        }
+                    }
                     
                     if isSignedIn {
                         SignOutButton()
@@ -62,6 +83,11 @@ struct SettingsMainView: View {
                         DeleteAccountButton()
                     }
                 }
+                
+                
+                
+                
+                
             }
             .navigationBarHidden(true)
             .padding(.horizontal, 20)
@@ -78,6 +104,7 @@ struct SingleSettingsLink<Destination: View>: View {
     var iconName: String
     var settingName: String
     var destination: Destination
+    var disableIfSignedOut: Bool
     
     var body: some View {
         VStack {
@@ -96,7 +123,7 @@ struct SingleSettingsLink<Destination: View>: View {
                     Image(systemName: "chevron.right")
                 }
             }
-            .disabled(!isSignedIn)
+            .disabled(disableIfSignedOut && !isSignedIn)
             .buttonStyle(PlainButtonStyle())
             
             Divider()

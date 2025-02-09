@@ -158,7 +158,7 @@ struct UpgradeAccountPaywallWithoutFreeTrial: View {
                     .padding(.top, 10)
                     .sheet(isPresented: $showSignUpSheet) {
                         FirstOpenSignUpSheet(text: "Create an account to continue", displaySheet: $showSignUpSheet)
-                            .presentationDetents([.fraction(0.4), .medium]) // User can drag between these heights
+                            .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
                     }
                     
                     // Continue with free account - only show if there is no signed in user right now

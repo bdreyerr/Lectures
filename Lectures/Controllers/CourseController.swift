@@ -22,14 +22,31 @@ class CourseController : ObservableObject {
     @Published var cachedChannels: [String : Channel] = [:]
     // CourseId : [Lecture]
     @Published var lecturesInCourse: [String : [Lecture]] = [:]
+    // CourseId : [Lecture]
+    @Published var lecturesInSameCourse: [String : [Lecture]] = [:]
+    // CourseId: [Course]
+    @Published var cachedCourseRecommendations: [String : [Course]] = [:]
+    // Course Views [CourseId : Bool]
+    private var cachedCourseViews: [String : Bool] = [:]
+    // Lecture Views [LectureId : Bool]
+    private var cachedLectureViews: [String : Bool] = [:]
     
     // ---------- Focus ----------
     @Published var focusedCourse: Course?
     @Published var focusedLecture: Lecture?
     @Published var focusedChannel: Channel?
+    // Course Recommendations for currently focused course
+    @Published var courseRecommendations: [Course] = []
     // Focused stack (used to ensure proper lecture / course is displayed during navigation)
     @Published var focusedLectureStack: [Lecture] = []
     @Published var focusedCourseStack: [Course] = []
+    
+    // ---------- Pagination ----------
+    // For Focused Channel, we paginate the courses under this channel, this var tracks pagination (we order it in increments of 10)
+    @Published var channelCoursesPrefixPaginationNumber: Int = 10
+    // For Lectures In Course, we paginate how many lectures show up
+    @Published var lecturesInCoursePrefixPaginationNumber: Int = 8
+    
     
     // ---------- Thumbnails ----------
     // CourseId : UIImage
@@ -47,6 +64,9 @@ class CourseController : ObservableObject {
     // ChannelId : IsRequestProcessingOrFinished
     @Published var channelThumbnailRequestQueue: [String : Bool] = [:]
     
+    // Loading vars
+    @Published var isRelatedCourseLoading: Bool = false
+    
     // Firestore
     let db = Firestore.firestore()
     // Storage
@@ -56,9 +76,11 @@ class CourseController : ObservableObject {
     
     // ---------- FUNCTIONS ----------
     
+
+    
     // ---------- Retrieval ----------
     func retrieveCourse(courseId: String) {
-        print("fetching course from course controller")
+//        print("fetching course from course controller")
         
         // check the cache
         if let _ = cachedCourses[courseId] {
@@ -70,7 +92,17 @@ class CourseController : ObservableObject {
             let docRef = db.collection("courses").document(courseId)
             
             do {
-                let course = try await docRef.getDocument(as: Course.self)
+                var course = try await docRef.getDocument(as: Course.self)
+                
+                // sort the courses lecture Id list
+                if let lectures = course.lectureIds {
+                   course.lectureIds = lectures.sorted { lhs, rhs in
+                        // Get lecture numbers from the IDs (assuming format includes number at the end)
+                        let lhsNumber = Int(lhs.components(separatedBy: "_").last ?? "0") ?? 0
+                        let rhsNumber = Int(rhs.components(separatedBy: "_").last ?? "0") ?? 0
+                        return lhsNumber < rhsNumber
+                    }
+                }
                 self.cachedCourses[courseId] = course
                 
                 // don't fetch the thumbnail, we only need to see it if user wants to access a specific course or lecture
@@ -122,15 +154,69 @@ class CourseController : ObservableObject {
         }
     }
     
-    func retrieveLecturesInCourse(courseId: String, lectureIds: [String]) {
-        var lectures: [Lecture] = []
+    
+    // Paginate lectures in course by only calling groups of 8 lectures at a time. If the user has already watched this course, focus the last watched lecture at the middle of the group of 8, allowing for user to then recall this function with the previous 8 or next 8. If the user hasn't watched this course before, just load the first 8. This is controlled by which lectureIds are passed in as arguemnts.
+    func newRetrieveLecturesInCourse(courseId: String, lectureIdsToLoad: [String]) {
+        var newLectures: [Lecture] = []
         
         Task { @MainActor in
-            // reset the var
-            self.lecturesInCourse[courseId] = []
+            for lectureId in lectureIdsToLoad {
+                // check cache
+                if let lecture = cachedLectures[lectureId] {
+                    newLectures.append(lecture)
+                    continue
+                }
+                
+                // otherwise fetch it from firestore and store it in the cache
+                let docRef = db.collection("lectures").document(lectureId)
+                
+                do {
+                    let lecture = try await docRef.getDocument(as: Lecture.self)
+                    
+                    newLectures.append(lecture)
+                    
+                    // add the newly fetched lecture to the cache
+                    self.cachedLectures[lectureId] = lecture
+                    
+                    // fetch the lecture thumbnail from storage
+                    self.getLectureThumnbnail(lectureId: lectureId)
+                    
+                    // fetch the channel
+                    if let lectureChannelId = lecture.channelId {
+                        self.retrieveChannel(channelId: lectureChannelId)
+                    }
+                } catch {
+                    print("Error decoding lecture: \(error)")
+                }
+                
+                // check if this course already has lectures loaded, if it does, add these new ones
+                if let existingLectures = self.lecturesInCourse[courseId] {
+                    var totalLectures = (existingLectures + newLectures)
+                    // sort totalLectures
+                    self.lecturesInCourse[courseId] = totalLectures
+                } else {
+                    self.lecturesInCourse[courseId] = newLectures
+                }
+            }
+        }
+    }
+    
+    func retrieveLecturesInCourse(courseId: String, lectureIds: [String], isFetchingMore: Bool) {
+        var lectures: [Lecture] = []
+        
+        print(lecturesInCoursePrefixPaginationNumber)
+        
+        let lecturesToRetrieve = lectureIds.prefix(lecturesInCoursePrefixPaginationNumber)
+        
+        Task { @MainActor in
+            // reset the var if init request
+            
+            if !isFetchingMore {
+                self.lecturesInCourse[courseId] = []
+            }
             
             
-            for lectureId in lectureIds {
+            for lectureId in lecturesToRetrieve {
                 // check the cache before making a DB call
                 if let lecture = cachedLectures[lectureId] {
                     lectures.append(lecture)
@@ -166,6 +252,110 @@ class CourseController : ObservableObject {
         }
     }
     
+    func retrievLecturesInSameCourse(courseId: String, lectureIds: [String], currentLectureNum: Int) {
+        // Calculate how many lectures we can fetch before and after
+        let lecturesBefore = min(currentLectureNum - 1, 3) // -1 since we want current lecture in middle
+        let startIndex = currentLectureNum - 1 - lecturesBefore
+        
+        // If we couldn't get 3 lectures before, we'll add more after
+        let extraLecturesAfter = 3 - lecturesBefore
+        let lecturesAfter = min(3 + extraLecturesAfter, lectureIds.count - currentLectureNum)
+        
+        // Calculate the range of indices to fetch
+        let endIndex = min(currentLectureNum + lecturesAfter, lectureIds.count)
+        let lecturesToFetch = Array(lectureIds[startIndex..<endIndex])
+        
+        Task { @MainActor in
+            var lectures: [Lecture] = []
+            
+            for lectureId in lecturesToFetch {
+
+                // Check cache first
+                if let lecture = cachedLectures[lectureId] {
+                    lectures.append(lecture)
+                    continue
+                }
+                
+                // Otherwise fetch from DB
+                let docRef = db.collection("lectures").document(lectureId)
+                
+                do {
+                    let lecture = try await docRef.getDocument(as: Lecture.self)
+                    lectures.append(lecture)
+                    
+                    // Cache the lecture
+                    self.cachedLectures[lectureId] = lecture
+                    
+                    // Fetch thumbnail and channel
+                    self.getLectureThumnbnail(lectureId: lectureId)
+                } catch {
+                    print("Error decoding lecture: \(error)")
+                }
+            }
+            
+            self.lecturesInSameCourse[courseId] = lectures
+        }
+    }
+
+    
+    // ---------- Generation & Content Recommendation ----------
+    func generateRecommendedCourses(courseId: String, searchTerms: [String]) {
+        self.isRelatedCourseLoading = true
+        
+        // Validate input
+        guard !searchTerms.isEmpty else {
+            print("Search terms array is empty")
+            self.courseRecommendations = []
+            self.isRelatedCourseLoading = false
+            return
+        }
+        
+        // Check cache
+        if let courseRecs = self.cachedCourseRecommendations[courseId] {
+            self.courseRecommendations = courseRecs
+            self.isRelatedCourseLoading = false
+            return
+        }
+        
+        Task { @MainActor in
+            do {
+                let coursesRef = db.collection("courses")
+                
+                let query = coursesRef
+                    .whereField(FieldPath.documentID(), isNotEqualTo: courseId)
+                    .whereField("searchTerms", arrayContainsAny: searchTerms)
+                    .limit(to: 3)
+                
+                let querySnapshot = try await query.getDocuments()
+                
+//                print("Found \(querySnapshot.documents.count) matching documents")
+                
+                let recommendedCourses = querySnapshot.documents.compactMap { document in
+                    if let course = try? document.data(as: Course.self) {
+                        if let courseId = course.id {
+                            self.getCourseThumbnail(courseId: courseId)
+                        }
+                        return course
+                    }
+                    return nil
+                }
+                
+                await MainActor.run {
+                    self.courseRecommendations = recommendedCourses
+                    self.cachedCourseRecommendations[courseId] = recommendedCourses
+                    self.isRelatedCourseLoading = false
+                }
+            } catch {
+                print("Error fetching recommended courses: \(error.localizedDescription)")
+                await MainActor.run {
+                    self.courseRecommendations = []
+                    self.isRelatedCourseLoading = false
+                }
+            }
+        }
+    }
+    
+    
     // ---------- Focus Functions ----------
     func focusCourse(_ course: Course) {
         if let channelId = course.channelId {
@@ -175,6 +365,34 @@ class CourseController : ObservableObject {
             // TODO: add some logic to avoid duplicate calls to storage
             // When a course gets focused we want to make sure the channel's thumbnail is loaded and ready to display on Courseview
             self.getChannelThumbnail(channelId: channelId)
+            
+            // generate related courses
+            if let id = course.id, let searchTerms = course.searchTerms {
+                self.generateRecommendedCourses(courseId: id, searchTerms: searchTerms)
+            } else {
+                print("couldn't generate recommended courses")
+            }
+            
+            // set the number of lectures we paginate in this course
+            self.lecturesInCoursePrefixPaginationNumber = 8
+            
+            // Only increment view count if this is first time viewing
+            if let courseId = course.id {
+                if cachedCourseViews[courseId] == nil {
+                    // First time viewing this course
+                    cachedCourseViews[courseId] = true
+                    
+                    // Increment view count in Firestore
+                    let courseRef = db.collection("courses").document(courseId)
+                    courseRef.updateData([
+                        "numViews": FieldValue.increment(Int64(1))
+                    ]) { err in
+                        if let err = err {
+                            print("Error updating course views: \(err)")
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -186,6 +404,24 @@ class CourseController : ObservableObject {
             
             // When a lecture gets focused we want to make sure the channel's thumbnail is loaded and ready to display on LectureView
             self.getChannelThumbnail(channelId: channelId)
+            
+            // Only increment view count if this is first time viewing
+            if let lectureId = lecture.id {
+                if cachedLectureViews[lectureId] == nil {
+                    // First time viewing this course
+                    cachedLectureViews[lectureId] = true
+                    
+                    // Increment view count in Firestore
+                    let courseRef = db.collection("lectures").document(lectureId)
+                    courseRef.updateData([
+                        "numViews": FieldValue.increment(Int64(1))
+                    ]) { err in
+                        if let err = err {
+                            print("Error updating lecture views: \(err)")
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -193,6 +429,7 @@ class CourseController : ObservableObject {
         if let channelId = channel.id, let courseIds = channel.courseIds {
             self.focusedChannel = nil
             self.focusedChannel = channel
+            self.channelCoursesPrefixPaginationNumber = 10
             
             // get channel thumbnail
             self.getChannelThumbnail(channelId: channelId)
@@ -200,8 +437,14 @@ class CourseController : ObservableObject {
             // When we're focusing the channel, we know we want to look at the list of that channel's courses
             // we have a list of each courseId under this channel, we should retrieve each one and cache them if they are not already cached
             
-            for courseId in courseIds {
+            // We only want to retrieve the first 10 courses by this channel.
+            let coursesToRetrieve = Array(courseIds.prefix(channelCoursesPrefixPaginationNumber))
+            
+            for courseId in coursesToRetrieve {
+                // Retrieve the course from firestore
                 self.retrieveCourse(courseId: courseId)
+                // Retrieve the thumbnail for the course from storage
+                self.getCourseThumbnail(courseId: courseId)
             }
         }
     }
@@ -212,7 +455,7 @@ class CourseController : ObservableObject {
         if let request = self.courseThumbnailRequestQueue[courseId] {
             // make sure it's set to true, if we failed to retrieve thumbnail, we'll set the bool val back to false
             if request {
-                print("we already requested this course thumbnail")
+//                print("we already requested this course thumbnail")
                 return
             }
         }
@@ -264,7 +507,7 @@ class CourseController : ObservableObject {
         if let request = self.lectureThumbnailRequestQueue[lectureId] {
             // make sure it's set to true, if we failed to retrieve thumbnail, we'll set the bool val back to false
             if request {
-                print("we already requested this lecture thumbnail")
+//                print("we already requested this lecture thumbnail")
                 return
             }
         }
@@ -310,7 +553,7 @@ class CourseController : ObservableObject {
         if let request = self.channelThumbnailRequestQueue[channelId] {
             // make sure it's set to true, if we failed to retrieve thumbnail, we'll set the bool val back to false
             if request {
-                print("we already requested this channel thumbnail")
+//                print("we already requested this channel thumbnail")
                 return
             }
         } else {
@@ -348,6 +591,24 @@ class CourseController : ObservableObject {
                         self.channelThumbnails[channelId] = image
                     }
                 }
+            }
+        }
+    }
+
+    // ---------- Misc Functions ----------
+    func reportIssueWithResource(resourceType: Int, resourceId: String, issue: String) {
+        Task { @MainActor in
+            do {
+                let issueData: [String: Any] = [
+                    "resourceType": resourceType,
+                    "resourceId": resourceId,
+                    "issue": issue,
+                    "timestamp": FieldValue.serverTimestamp()
+                ]
+                
+                try await db.collection("resourceIssues").addDocument(data: issueData)
+            } catch {
+                print("Error reporting resource issue: \(error.localizedDescription)")
             }
         }
     }

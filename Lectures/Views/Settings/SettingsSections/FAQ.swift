@@ -28,6 +28,21 @@ struct FAQ: View {
                 )
                 
                 FAQItem(
+                    question: "How does Pro Account work?",
+                    answer: "If you initially signed up with a Pro account or you chose to upgrade later, you will recieve additional features in the app to personalize your learning journey. You can access additional features such as: Course History, Extensive Search, Following Channels, Saving Lectures, Related Course Recommendations and more."
+                )
+                
+                FAQItem(
+                    question: "I bought a Pro account but want to log in to Lectura using another account",
+                    answer: "Your subscription status will track across accounts as long as you are logging in on the same device. In order for your subcription to track across multiple devices, you will need to login in to Lectura using the same method which you used for the account where the Pro subscription was purchased."
+                )
+                
+                FAQItem(
+                    question: "I bought pro account but the app is telling me I have a free account",
+                    answer: "Sometimes the app can lose track of your subscription status, but don't worry if you navigate to Settings > Subscription Type and click Restore Purchases, your subscription status should return."
+                )
+                
+                FAQItem(
                     question: "What additional resources are available?",
                     answer: "Each lecture comes with supplementary learning materials such as lecture notes, practice problems, reading lists, and links to relevant educational resources. These materials are also freely available and carefully curated to enhance your learning experience."
                 )

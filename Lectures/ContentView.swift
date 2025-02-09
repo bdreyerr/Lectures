@@ -35,6 +35,9 @@ struct ContentView: View {
     
     // Rate Limiter
     @StateObject var rateLimiter = RateLimiter()
+
+    // Created on December 15, 2024 - Main view controller managing tab bar navigation,
+    // user authentication, course management, and various resource controllers
     
     // subscriptions
     @StateObject private var subscriptionController = SubscriptionController.shared
@@ -90,6 +93,9 @@ struct ContentView: View {
             if isSignedIn == true {
                 if let user = Auth.auth().currentUser {
                     userController.retrieveUserFromFirestore(userId: user.uid)
+
+                    // Sign in the user into RevenueCat
+                    subscriptionController.loginRevenueCat(userId: user.uid)
                 } else {
                     print("no auth user yet lol nice try")
                 }
