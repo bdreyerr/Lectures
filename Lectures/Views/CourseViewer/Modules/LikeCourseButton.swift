@@ -42,6 +42,9 @@ struct LikeCourseButton: View {
                 .font(.system(size: 18, design: .serif))
                 .foregroundStyle(isCourseLiked ? Color.red : colorScheme == .light ? Color.black : Color.white)
         }
+        .sheet(isPresented: $isUpgradeAccountSheetShowing) {
+            UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
+        }
         .onAppear {
             // Determine if the user has already liked this course or not, if they have, set the button to liked
             if let user = userController.user, let likedCourseIds = user.likedCourseIds {

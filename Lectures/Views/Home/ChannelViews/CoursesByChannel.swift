@@ -11,8 +11,9 @@ struct CoursesByChannel: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
+    var channel: Channel
     var body: some View {
-        if let channel = courseController.focusedChannel, let courseIds = channel.courseIds {
+        if let courseIds = channel.courseIds {
             VStack {
                 HStack {
                     Text("Courses by")
@@ -29,17 +30,16 @@ struct CoursesByChannel: View {
                 
                 Group {
                     ForEach(courseIds.prefix(courseController.channelCoursesPrefixPaginationNumber), id: \.self) { courseId in
-                        NavigationLink(destination: CourseView()){
-                            // CourseByChannelModule
-                            CourseByChannelModule(courseId: courseId)
-                        }
-                        .simultaneousGesture(TapGesture().onEnded { _ in
-                            // get the course from the cache based on courseId
-                            if let course = courseController.cachedCourses[courseId] {
-                                courseController.focusCourse(course)
+                        
+                        if let course = courseController.cachedCourses[courseId] {
+                            NavigationLink(destination: NewCourse(course: course, isLecturePlaying: false)) {
+                                CourseByChannelModule(courseId: courseId)
                             }
-                        })
-                        .buttonStyle(PlainButtonStyle())
+                            .buttonStyle(PlainButtonStyle())
+                            .simultaneousGesture(TapGesture().onEnded {
+                                courseController.focusCourse(course)
+                            })
+                        }
                     }
                 }
                 
@@ -73,6 +73,6 @@ struct CoursesByChannel: View {
     }
 }
 
-#Preview {
-    CoursesByChannel()
-}
+//#Preview {
+//    CoursesByChannel()
+//}

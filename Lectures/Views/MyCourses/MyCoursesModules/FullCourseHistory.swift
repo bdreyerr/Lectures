@@ -30,15 +30,17 @@ struct FullCourseHistory: View {
                 ForEach(localWatchHistories, id: \.id) { watchHistory in
                     if let watchHistoryCourseId = watchHistory.courseId {
                         if let course = courseController.cachedCourses[watchHistoryCourseId] {
-                            NavigationLink(destination: CourseView()) {
-                                HStack {
-                                    WatchedCourseCard(course: course, watchHistory: watchHistory)
-                                    Spacer()
+                            if let lectureId = watchHistory.lectureId, let lectureNumberInCourse = watchHistory.lectureNumberInCourse {
+                                NavigationLink(destination: NewCourse(course: course, isLecturePlaying: true, lastWatchedLectureId: lectureId, lastWatchedLectureNumber: lectureNumberInCourse)) {
+                                    HStack {
+                                        WatchedCourseCard(course: course, watchHistory: watchHistory)
+                                        Spacer()
+                                    }
                                 }
+                                .simultaneousGesture(TapGesture().onEnded { _ in
+                                    courseController.focusCourse(course)
+                                })
                             }
-                            .simultaneousGesture(TapGesture().onEnded { _ in
-                                courseController.focusCourse(course)
-                            })
                         } else {
                             SkeletonLoader(width: 400 * 0.6, height: 150)
                         }
@@ -63,6 +65,7 @@ struct FullCourseHistory: View {
             }
         }
         .padding(.horizontal, 20)
+        .padding(.bottom, 100)
         .onAppear {
             DispatchQueue.main.async {
                 self.localWatchHistories = myCourseController.watchHistories

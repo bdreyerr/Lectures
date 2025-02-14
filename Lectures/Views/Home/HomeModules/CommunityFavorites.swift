@@ -33,7 +33,7 @@ struct CommunityFavorites: View {
                         if homeController.isCommunityFavoritesLoading {
                             SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
                         } else {
-                            NavigationLink(destination: CourseView()) {
+                            NavigationLink(destination: NewCourse(course: course, isLecturePlaying: false)) {
                                 CourseCardView(course: course)
                             }
                             .buttonStyle(PlainButtonStyle())

@@ -10,6 +10,7 @@ import SwiftUI
 struct FollowedChannels: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var userController: UserController
+    @EnvironmentObject var myCourseController: MyCourseController
     
     @State private var followedChannelIds: [String] = []
     
@@ -33,7 +34,7 @@ struct FollowedChannels: View {
                 HStack {
                     ForEach(followedChannelIds, id: \.self) { channelId in
                         if let channel = courseController.cachedChannels[channelId] {
-                            NavigationLink(destination: ChannelView()) {
+                            NavigationLink(destination: ChannelView(channel: channel)) {
                                 ChannelCard(channel: channel)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -44,6 +45,16 @@ struct FollowedChannels: View {
                     }
                 }
             }
+            HStack {
+                NavigationLink(destination: FullFollowedChannels()) {
+                    Text("View All")
+                        .font(.system(size: 10))
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                Spacer()
+            }
+            .padding(.top, 1)
         }
         .onAppear {
             if let user = userController.user {

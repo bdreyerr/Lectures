@@ -1,21 +1,20 @@
 //
-//  SavedLectures.swift
+//  FullSavedLectures.swift
 //  Lectures
 //
-//  Created by Ben Dreyer on 1/18/25.
+//  Created by Ben Dreyer on 2/13/25.
 //
 
 import SwiftUI
 
-struct SavedLectures: View {
+struct FullSavedLectures: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var userController: UserController
     @EnvironmentObject var myCourseController: MyCourseController
     
-    @State private var likedLectureIds: [String] = []
-    
+    var likedLectureIds: [String]
     var body: some View {
-        Group {
+        VStack {
             HStack {
                 Image(systemName: "newspaper")
                     .font(.system(size: 10))
@@ -29,9 +28,9 @@ struct SavedLectures: View {
             }
             .padding(.top, 10)
             
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(likedLectureIds, id: \.self) { lectureId in
+            ScrollView(showsIndicators: false) {
+                ForEach(likedLectureIds, id: \.self) { lectureId in
+                    HStack {
                         if let lecture = courseController.cachedLectures[lectureId], let lectureId = lecture.id, let courseId = lecture.courseId, let lectureNumberInCourse = lecture.lectureNumberInCourse {
                             
                             if let course = courseController.cachedCourses[courseId] {
@@ -43,32 +42,29 @@ struct SavedLectures: View {
                                 })
                             }
                         }
+                        Spacer()
                     }
                 }
             }
-            HStack {
-                NavigationLink(destination: FullSavedLectures(likedLectureIds: likedLectureIds)) {
-                    Text("View All")
-                        .font(.system(size: 10))
+            
+            if myCourseController.currentLectureOffset < likedLectureIds.count {
+                Button(action: {
+                    myCourseController.loadMoreLikedLectures(lectureIds: likedLectureIds, courseController: courseController)
+                }) {
+                    Text("Fetch more")
+                        .font(.system(size: 12))
                 }
+                .padding(.top, 6)
+                
                 .buttonStyle(PlainButtonStyle())
-//                
-                Spacer()
             }
-            .padding(.top, 1)
+            
         }
-        .onAppear {
-            // We need to fetch the relevant course in case the user wants to tap this lecture and watch it
-            if let user = userController.user {
-                // Update the state variable when `user` changes
-                DispatchQueue.main.async {
-                    likedLectureIds = (user.likedLectureIds ?? []).reversed()
-                }
-            }
-        }
+        .padding(.bottom, 100)
+        .padding(.horizontal, 20)
     }
 }
 
-#Preview {
-    SavedLectures()
-}
+//#Preview {
+//    FullSavedLectures()
+//}

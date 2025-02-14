@@ -10,6 +10,9 @@ import YouTubePlayerKit
 
 struct NewCourseTabSwitcher: View {
     @State private var selectedTab = "Lectures"
+    @State private var hasTabLecturesAppeared = false
+    // Add state for loaded lectures
+    @State private var currentLoadedLectures: [String] = []
     
     var course: Course
     
@@ -56,8 +59,12 @@ struct NewCourseTabSwitcher: View {
             // Content based on selected tab
             switch selectedTab {
             case "Lectures":
-                // TODO: pass in the actual last watched lecture number
-                TabLectures(course: course, playingLecture: $playingLecture, isLecturePlaying: $isLecturePlaying, lastWatchedLectureNumber: lastWatchedLectureNumber, player: player)
+                TabLectures(course: course,
+                            playingLecture: $playingLecture, 
+                            isLecturePlaying: $isLecturePlaying,
+                            lastWatchedLectureNumber: lastWatchedLectureNumber,
+                            player: player,
+                            currentLoadedLectures: $currentLoadedLectures, hasAppeared: $hasTabLecturesAppeared)  // Pass the state
             case "Resources":
                 TabResources(course: course, playingLecture: playingLecture)
             case "About":

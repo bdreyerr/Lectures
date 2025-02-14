@@ -5,6 +5,7 @@ class NotesController : ObservableObject {
     
     // ExamId : Exam
     @Published var cachedNotes: [String : Resource] = [:]
+    @Published var isLoading: Bool = false
     
     
     
@@ -20,6 +21,8 @@ class NotesController : ObservableObject {
             return
         }
         
+        isLoading = true
+        
         // Use Main actor because cachedNotes which is the updated published property determinies behavior in the UI, so it's logic should be on the main thread.
         Task { @MainActor in
             let docRef = db.collection("notes").document(noteId)
@@ -32,6 +35,8 @@ class NotesController : ObservableObject {
             } catch {
                 print("Error decoding note: \(error)")
             }
+            
+            isLoading = false
         }
     }
 }

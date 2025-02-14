@@ -5,6 +5,7 @@
 //  Created by Ben Dreyer on 2/6/25.
 //
 
+import FirebaseFirestore
 import SwiftUI
 
 struct TabAbout: View {
@@ -34,7 +35,7 @@ struct TabAbout: View {
                         CurrentLectureSection(lecture: lecture)
                     }
                     
-                    RecommendedCoursesSection()
+                    RecommendedCoursesSection(course: course)
                 }
                 .padding(.vertical)
             }
@@ -141,6 +142,7 @@ private struct RecommendedCoursesSection: View {
     @EnvironmentObject var subscriptionController: SubscriptionController
     @EnvironmentObject var courseController: CourseController
     
+    var course: Course
     
     @State private var isSignInSheetShowing: Bool = false
     @State private var isUpgradeAccountSheetShowing: Bool = false
@@ -224,7 +226,9 @@ private struct RecommendedCoursesSection: View {
         }
         .onAppear {
             // get a local version of courseRecommendations, so we don't get dragged back to the view when going to another nav link
-            self.localCourseRecommendations = courseController.courseRecommendations
+            if self.localCourseRecommendations.isEmpty {
+                self.localCourseRecommendations = courseController.courseRecommendations
+            }
         }
         .sheet(isPresented: $isSignInSheetShowing) {
             FirstOpenSignUpSheet(text: "Sign In", displaySheet: $isSignInSheetShowing)

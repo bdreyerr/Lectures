@@ -90,11 +90,6 @@ struct HomeMainView: View {
                     homeController.retrieveCuratedCourses(courseController: courseController)
                     homeController.retrieveCommunityFavorites(courseController: courseController)
                 }
-                
-                
-                
-                courseController.focusedLectureStack = []
-                courseController.focusedCourseStack = []
             }
         }
         // Needed for iPad compliance

@@ -17,14 +17,14 @@ struct CourseByChannelModule: View {
             // Other Lectures in the course
             HStack {
                 // Image
-                
                 if let image = courseController.courseThumbnails[courseId] {
                     Image(uiImage: image)
                         .resizable()
-                        .frame(width: 40, height: 40)
-                        .aspectRatio(contentMode: .fill)
+                        .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
+                        .frame(width: 120, height: 67.5)
+                        .clipped() // Clip the image to the frame
                 } else {
-                    SkeletonLoader(width: 40, height: 40)
+                    SkeletonLoader(width: 120, height: 67.5)
                 }
                 
                 // Lecture Name

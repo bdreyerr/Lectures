@@ -19,11 +19,13 @@ struct ChannelView: View {
     
     @EnvironmentObject var subscriptionController: SubscriptionController
     
+    var channel: Channel
+    
     @State private var isChannelFollowed = false
     @State private var isUpgradeAccountSheetShowing: Bool = false
     var body: some View {
         Group {
-            if let channel = courseController.focusedChannel, let id = channel.id, let title = channel.title, let numCourses = channel.numCourses, let numLectures = channel.numLectures, let channelDescription = channel.channelDescription {
+            if let id = channel.id, let title = channel.title, let numCourses = channel.numCourses, let numLectures = channel.numLectures, let channelDescription = channel.channelDescription {
                 VStack {
                     // Course Cover Image?
                     ScrollView(showsIndicators: false) {
@@ -106,7 +108,7 @@ struct ChannelView: View {
                             
                             ExpandableText(text: channelDescription, maxLength: 150)
                             
-                            CoursesByChannel()
+                            CoursesByChannel(channel: channel)
                                 .padding(.top, 5)
                         }
                         .padding(.horizontal, 20)
@@ -127,19 +129,19 @@ struct ChannelView: View {
                 ErrorLoadingView()
             }
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: Button(action: {
-            self.presentationMode.wrappedValue.dismiss()
-        }) {
-            HStack {
-                Image(systemName: "chevron.left")
-                    .bold()
-                Text("Back")
-            }
-        })
+//        .navigationBarBackButtonHidden(true)
+//        .navigationBarItems(leading: Button(action: {
+//            self.presentationMode.wrappedValue.dismiss()
+//        }) {
+//            HStack {
+//                Image(systemName: "chevron.left")
+//                    .bold()
+//                Text("Back")
+//            }
+//        })
     }
 }
 
-#Preview {
-    ChannelView()
-}
+//#Preview {
+//    ChannelView()
+//}

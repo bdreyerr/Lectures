@@ -27,7 +27,7 @@ struct FullChannelSearchResults: View {
                 .padding(.top, 10)
                 
                 ForEach(searchController.searchResultChannels, id: \.id) { channel in
-                    NavigationLink(destination: ChannelView()) {
+                    NavigationLink(destination: ChannelView(channel: channel)) {
                         ChannelCard(channel: channel)
                     }
                     .buttonStyle(PlainButtonStyle())
@@ -46,6 +46,7 @@ struct FullChannelSearchResults: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                     .padding(.top, 5)
+                    .padding(.bottom, 80)
                 }
                 
                 Spacer()

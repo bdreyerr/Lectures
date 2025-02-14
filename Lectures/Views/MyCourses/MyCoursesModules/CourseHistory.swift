@@ -36,12 +36,17 @@ struct CourseHistory: View {
                     ForEach(localWatchHistories, id: \.id) { watchHistory in
                         if let watchHistoryCourseId = watchHistory.courseId {
                             if let course = courseController.cachedCourses[watchHistoryCourseId] {
-                                NavigationLink(destination: CourseView()) {
-                                    WatchedCourseCard(course: course, watchHistory: watchHistory)
+                                
+                                
+                                if let lectureId = watchHistory.lectureId, let lectureNumberInCourse = watchHistory.lectureNumberInCourse {
+                                    NavigationLink(destination: NewCourse(course: course, isLecturePlaying: true, lastWatchedLectureId: lectureId, lastWatchedLectureNumber: lectureNumberInCourse)) {
+                                        WatchedCourseCard(course: course, watchHistory: watchHistory)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .simultaneousGesture(TapGesture().onEnded {
+                                        courseController.focusCourse(course)
+                                    })
                                 }
-                                .simultaneousGesture(TapGesture().onEnded { _ in
-                                    courseController.focusCourse(course)
-                                })
                             } else {
                                 SkeletonLoader(width: 400 * 0.6, height: 150)
                             }

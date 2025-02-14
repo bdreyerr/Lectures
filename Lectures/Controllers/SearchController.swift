@@ -134,7 +134,7 @@ class SearchController : ObservableObject {
                         courseQuery = courseQuery.order(by: "numLikesInApp", descending: true)
                     }
                     
-                    let courseSnapshot = try await courseQuery.limit(to: 1).getDocuments()
+                    let courseSnapshot = try await courseQuery.limit(to: 6).getDocuments()
                     
                     if courseSnapshot.documents.isEmpty { noCoursesLeftToLoad = true }
                     
@@ -185,7 +185,7 @@ class SearchController : ObservableObject {
                     
                     
                     
-                    let lectureSnapshot = try await lectureQuery.limit(to: 1).getDocuments()
+                    let lectureSnapshot = try await lectureQuery.limit(to: 6).getDocuments()
                     
                     if lectureSnapshot.documents.isEmpty { noLecturesLeftToLoad = true }
                     
@@ -222,7 +222,7 @@ class SearchController : ObservableObject {
                 do {
                     let channelQuery = db.collection("channels").whereField("searchTerms", arrayContainsAny: trimmedSearchTerms)
                     
-                    let channelSnapshot = try await channelQuery.limit(to: 1).getDocuments()
+                    let channelSnapshot = try await channelQuery.limit(to: 6).getDocuments()
                     
                     if channelSnapshot.documents.isEmpty { noChannelsLeftToLoad = true }
                     
@@ -278,7 +278,7 @@ class SearchController : ObservableObject {
                 do {
                     let channelQuery = db.collection("channels").whereField("searchTerms", arrayContainsAny: trimmedSearchTerms)
                     
-                    let channelSnapshot = try await channelQuery.limit(to: 1).start(afterDocument: lastDocChannel).getDocuments()
+                    let channelSnapshot = try await channelQuery.limit(to: 6).start(afterDocument: lastDocChannel).getDocuments()
                     
                     if channelSnapshot.documents.isEmpty {
                         noChannelsLeftToLoad = true
@@ -356,7 +356,7 @@ class SearchController : ObservableObject {
                         courseQuery = courseQuery.order(by: "numLikesInApp", descending: true)
                     }
                     
-                    let courseSnapshot = try await courseQuery.limit(to: 1).start(afterDocument: lastDocCourse).getDocuments()
+                    let courseSnapshot = try await courseQuery.limit(to: 6).start(afterDocument: lastDocCourse).getDocuments()
                     
                     if courseSnapshot.documents.isEmpty { noCoursesLeftToLoad = true }
                     
@@ -425,7 +425,7 @@ class SearchController : ObservableObject {
                     }
                     
                     
-                    let lectureSnapshot = try await lectureQuery.limit(to: 1).start(afterDocument: lastDocLecture).getDocuments()
+                    let lectureSnapshot = try await lectureQuery.limit(to: 6).start(afterDocument: lastDocLecture).getDocuments()
                     
                     if lectureSnapshot.documents.isEmpty { noLecturesLeftToLoad = true }
                     

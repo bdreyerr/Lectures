@@ -39,7 +39,7 @@ struct LeadingUniversities: View {
                                 if homeController.isUniversityLoading {
                                     SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
                                 } else {
-                                    NavigationLink(destination: ChannelView()) {
+                                    NavigationLink(destination: ChannelView(channel: channel)) {
                                         ChannelCard(channel: channel)
                                     }
                                     .buttonStyle(PlainButtonStyle())

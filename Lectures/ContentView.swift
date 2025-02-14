@@ -16,7 +16,8 @@ struct ContentView: View {
     
     @AppStorage("isDarkMode") private var isDarkMode = false
     @AppStorage("isSignedIn") private var isSignedIn = false
-    @AppStorage("hasUserSeenPaywall") private var hasUserSeenPaywall = false
+    // TODO: Decide if we want to keep the paywall hidden at app launch
+    @AppStorage("hasUserSeenPaywall") private var hasUserSeenPaywall = true
     
     @StateObject var courseController = CourseController()
     

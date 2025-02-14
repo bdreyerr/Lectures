@@ -43,6 +43,7 @@ struct FullLecturSearchResults: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                     .padding(.top, 5)
+                    .padding(.bottom, 80)
                 }
                 
                 Spacer()

@@ -9,7 +9,7 @@ import FirebaseFirestore
 import Foundation
 
 
-struct WatchHistory : Codable {
+struct WatchHistory : Codable, Equatable {
     @DocumentID var id: String?
     var userId: String?
     var courseId: String?

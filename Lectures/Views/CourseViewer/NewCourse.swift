@@ -33,9 +33,12 @@ struct NewCourse: View {
     var lastWatchedLectureId: String?
     var lastWatchedLectureNumber: Int?
     
-
+    
     // YT Player
     @StateObject public var player: YouTubePlayer = ""
+    
+    // Add this state variable at the top with other @State properties
+    @State private var hasAppeared = false
     
     var body: some View {
         if let courseId = course.id, let courseTitle = course.courseTitle, let channelId = course.channelId {
@@ -46,22 +49,22 @@ struct NewCourse: View {
                         
                         // make sure the youtube url is attatched to this lecture
                         YouTubePlayerView(self.player) { state in
-                                // Overlay ViewBuilder closure to place an overlay View
-                                // for the current `YouTubePlayer.State`
-                                switch state {
-                                case .idle:
-                                    ProgressView()
-//                                    SkeletonLoader(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
-                                case .ready:
-                                    EmptyView()
-                                case .error(let error):
-                                    Text(verbatim: "YouTube player couldn't be loaded: \(error)")
-                                }
+                            // Overlay ViewBuilder closure to place an overlay View
+                            // for the current `YouTubePlayer.State`
+                            switch state {
+                            case .idle:
+                                ProgressView()
+                                //                                    SkeletonLoader(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
+                            case .ready:
+                                EmptyView()
+                            case .error(let error):
+                                Text(verbatim: "YouTube player couldn't be loaded: \(error)")
                             }
-                            .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
+                        }
+                        .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.55)
                         
                     }
-                    .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
+                    .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.55)
                     .shadow(radius: 2.5)
                 } else {
                     if let image = courseController.courseThumbnails[courseId] {
@@ -72,7 +75,9 @@ struct NewCourse: View {
                             ZStack {
                                 Image(uiImage: image)
                                     .resizable()
-                                    .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
+                                    .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
+                                    .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.55)
+                                    .clipped() // Clip the image to the frame
                                 
                                 Image(systemName: "play.circle.fill")
                                     .font(.system(size: 60))
@@ -85,11 +90,6 @@ struct NewCourse: View {
                 }
                 
                 VStack {
-                    
-                    NavigationLink(destination: NewCourse(course: course, isLecturePlaying: false)) {
-                        Text("Link to the same course")
-                    }
-                    
                     // Course Title & Like Button
                     HStack {
                         // Course title and University
@@ -113,14 +113,18 @@ struct NewCourse: View {
                                          isLecturePlaying: $isLecturePlaying,
                                          lastWatchedLectureNumber: lastWatchedLectureNumber,
                                          player: player)
-                        .padding(.top, 5)
-                        
+                    .padding(.top, 5)
+                    
                     
                     Spacer()
                 }
                 .padding(.horizontal, 20)
             }
             .onAppear {
+                // Only execute this block on first appearance
+                guard !hasAppeared else { return }
+                hasAppeared = true
+                
                 // if last watched lecture was passed in, then autoplay
                 if let _ = lastWatchedLectureNumber, let lastWatchedLectureId = lastWatchedLectureId {
                     print("The on appear getting called with a last watched lecture")
@@ -128,15 +132,12 @@ struct NewCourse: View {
                 } else {
                     print("no last watched")
                 }
+                
             }
             .onChange(of: player.source) {
                 // when the video source changes, we know the user has watched a new video, and we should update course history accordingly.
                 print("video player source is changing and we're trying to update watch history")
-            
-                if let rateLimit = rateLimiter.processWrite() {
-                    print(rateLimit)
-                    return
-                }
+                
                 
                 if let user = userController.user, let userId = user.id {
                     if subscriptionController.isPro {

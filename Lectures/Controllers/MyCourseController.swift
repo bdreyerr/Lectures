@@ -31,6 +31,11 @@ class MyCourseController : ObservableObject {
     // Storage
     let storage = Storage.storage()
     
+    // Add these properties to the class
+    @Published var currentChannelOffset: Int = 8
+    @Published var currentCourseOffset: Int = 8
+    @Published var currentLectureOffset: Int = 8
+    
     func updateWatchHistory(userId: String, course: Course, lecture: Lecture) {
         Task { @MainActor in
             if let courseId = course.id, let numLecturesInCourse = course.numLecturesInCourse, let courseChannelId = course.channelId, let numLecturesInCourse = course.numLecturesInCourse, let lectureId = lecture.id, let currentLectureNumberInCourse  = lecture.lectureNumberInCourse {
@@ -196,27 +201,36 @@ class MyCourseController : ObservableObject {
         }
     }
     
+    // Load first 8 channels, rest need to be paginated.
     func retrieveFollowedChannels(channelIds: [String], courseController: CourseController) {
-        Task { @MainActor in            
-            for channelId in channelIds {
+        Task { @MainActor in
+            currentChannelOffset = 8  // Reset the offset
+            let initialChannels = channelIds.prefix(currentChannelOffset)
+            for channelId in initialChannels {
                 courseController.retrieveChannel(channelId: channelId)
                 courseController.getChannelThumbnail(channelId: channelId)
             }
         }
     }
     
+    // Load first 8 courses, rest need to be paginated.
     func retrieveLikedCourses(courseIds: [String], courseController: CourseController) {
         Task { @MainActor in
-            for courseId in courseIds {
+            currentCourseOffset = 8  // Reset the offset
+            let initialCourses = courseIds.prefix(currentCourseOffset)
+            for courseId in initialCourses {
                 courseController.retrieveCourse(courseId: courseId)
                 courseController.getCourseThumbnail(courseId: courseId)
             }
         }
     }
     
+    // Load first 8 lectures, rest need to be paginated.
     func retrieveLikedLectures(lectureIds: [String], courseController: CourseController) {
         Task { @MainActor in
-            for lectureId in lectureIds {
+            currentLectureOffset = 2  // Reset the offset
+            let initialLectures = lectureIds.prefix(currentLectureOffset)
+            for lectureId in initialLectures {
                 courseController.retrieveLecture(lectureId: lectureId)
                 courseController.getLectureThumnbnail(lectureId: lectureId)
             }
@@ -264,6 +278,40 @@ class MyCourseController : ObservableObject {
                     print("Error getting documents: \(error)")
                 }
             }
+        }
+    }
+    
+    // Add these new functions
+    func loadMoreFollowedChannels(channelIds: [String], courseController: CourseController) {
+        Task { @MainActor in
+            let nextChannels = channelIds[currentChannelOffset..<min(currentChannelOffset + 8, channelIds.count)]
+            for channelId in nextChannels {
+                courseController.retrieveChannel(channelId: channelId)
+                courseController.getChannelThumbnail(channelId: channelId)
+            }
+            currentChannelOffset += 8
+        }
+    }
+
+    func loadMoreLikedCourses(courseIds: [String], courseController: CourseController) {
+        Task { @MainActor in
+            let nextCourses = courseIds[currentCourseOffset..<min(currentCourseOffset + 8, courseIds.count)]
+            for courseId in nextCourses {
+                courseController.retrieveCourse(courseId: courseId)
+                courseController.getCourseThumbnail(courseId: courseId)
+            }
+            currentCourseOffset += 8
+        }
+    }
+
+    func loadMoreLikedLectures(lectureIds: [String], courseController: CourseController) {
+        Task { @MainActor in
+            let nextLectures = lectureIds[currentLectureOffset..<min(currentLectureOffset + 2, lectureIds.count)]
+            for lectureId in nextLectures {
+                courseController.retrieveLecture(lectureId: lectureId)
+                courseController.getLectureThumnbnail(lectureId: lectureId)
+            }
+            currentLectureOffset += 2
         }
     }
 }

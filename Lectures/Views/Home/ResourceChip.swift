@@ -15,7 +15,7 @@ struct ResourceChip: View {
 """
 
     
-    @Binding var shouldPopFromStack: Bool
+//    @Binding var shouldPopFromStack: Bool
     var body: some View {
         HStack {
             
@@ -49,9 +49,6 @@ struct ResourceChip: View {
 //                )
             }
             .buttonStyle(PlainButtonStyle())
-            .simultaneousGesture(TapGesture().onEnded { _ in
-                shouldPopFromStack = false
-            })
             
             Spacer()
         }

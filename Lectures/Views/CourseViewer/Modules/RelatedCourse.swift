@@ -1,80 +1,83 @@
 //
-//  CourseSearchResult.swift
+//  RelatedCourse.swift
 //  Lectures
 //
-//  Created by Ben Dreyer on 1/19/25.
+//  Created by Ben Dreyer on 1/7/25.
 //
 
 import SwiftUI
 
-struct CourseSearchResult: View {
+struct RelatedCourse: View {
     @EnvironmentObject var courseController: CourseController
+    @EnvironmentObject var homeController: HomeController
+    
+    @EnvironmentObject var examController: ExamController
+    @EnvironmentObject var examAnswerController: ExamAnswerController
     
     var course: Course
-    
     var body: some View {
-        if let courseId = course.id, let courseTitle = course.courseTitle, let numLecturesInCourse = course.numLecturesInCourse, let watchTimeInHrs = course.watchTimeInHrs, let aggregateViews = course.aggregateViews, let categories = course.categories {
-            
-            
+        if let courseId = course.id, let channelId = course.channelId, let numLecturesInCourse = course.numLecturesInCourse, let watchTimeInHrs = course.watchTimeInHrs, let aggregateViews = course.aggregateViews  {
             NavigationLink(destination: NewCourse(course: course, isLecturePlaying: false)) {
                 HStack {
+                    // Image
                     if let image = courseController.courseThumbnails[courseId] {
                         Image(uiImage: image)
                             .resizable()
-                            .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
-                            .frame(width: 120, height: 67.5)
-                            .clipped() // Clip the image to the frame
-                            .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply rounded corners
+                            .frame(width: 60, height: 60)
+                            .aspectRatio(contentMode: .fill)
                     } else {
-                        // default image when not loaded
-                        SkeletonLoader(width: 120, height: 67.5)
+                        SkeletonLoader(width: 60, height: 60)
                     }
                     
                     VStack {
+                        // course name
                         HStack {
-                            Text(courseTitle)
+                            Text(course.courseTitle ?? "")
                                 .font(.system(size: 16, design: .serif))
-                                .bold()
                                 .lineLimit(1)
                                 .truncationMode(.tail)
-                            
+                            Spacer()
+                        }
+                        
+                        HStack {
+                            // channel name
+                            if let channel = courseController.cachedChannels[channelId] {
+                                Text(channel.title ?? "")
+                                    .font(.system(size: 12, design: .serif))
+                                    .lineLimit(1)
+                                    .truncationMode(.tail)
+                            }
                             
                             Spacer()
                         }
                         
-                        
+                        // Course Info
                         HStack {
                             Text("\(numLecturesInCourse) Lectures")
                                 .font(.system(size: 12))
-                                .opacity(0.6)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                             
-                            Text("\(watchTimeInHrs)hrs")
+                            Text("\(watchTimeInHrs)hr Watch Time")
                                 .font(.system(size: 12))
-                                .opacity(0.6)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                             
                             Text("\(formatIntViewsToString(numViews: aggregateViews)) Views")
                                 .font(.system(size: 12))
-                                .opacity(0.6)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                             Spacer()
                         }
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        
-                        HStack {
-                            Text(categories[0])
-                                .font(.system(size: 12))
-                                .opacity(0.6)
-                            
-                            Spacer()
-                        }
-                        .lineLimit(1)
-                        .truncationMode(.tail)
                     }
+                    
+                    
+                    
                 }
+                .cornerRadius(5)
             }
-            .frame(maxWidth: 280)
             .buttonStyle(PlainButtonStyle())
-            .simultaneousGesture(TapGesture().onEnded { _ in
+            .simultaneousGesture(TapGesture().onEnded {
                 courseController.focusCourse(course)
             })
         }
@@ -94,9 +97,9 @@ struct CourseSearchResult: View {
                 return "0"
             }
     }
-    
 }
 
-//#Preview {
-//    CourseSearchResult()
-//}
+#Preview {
+    RelatedCourse(course: Course())
+        .environmentObject(HomeController())
+}

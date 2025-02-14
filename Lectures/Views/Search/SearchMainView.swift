@@ -30,44 +30,6 @@ struct SearchMainView: View {
                 VStack {
                     TopBrandView()
                     
-                    
-//                    Group {
-//                        if userController.user == nil || !isSignedIn {
-//                            // Sign in to see full search results
-//                            
-//                            
-//                            Text("Sign in for full search functionality")
-//                                .font(.system(size: 13, design: .serif))
-//                                .padding(.top, 20)
-//                                .padding(.bottom, 5)
-//                            
-//                            
-//                            SignInWithApple(displaySignInSheet: .constant(false))
-//                            
-//                            SignInWithGoogle(displaySignInSheet: .constant(false))
-//                                .padding(.bottom, 20)
-//                        } else {
-//                            // switch with subscription
-//                            if !subscriptionController.isPro {
-//                                Button(action: {
-//                                    isUpgradeAccountPopupShowing = true
-//                                }) {
-//                                    Text("Upgrade")
-//                                        .font(.system(size: 13, design: .serif))
-//                                        .foregroundStyle(Color.orange)
-//                                        .opacity(0.8)
-//                                }
-//                                .padding(.top, 40)
-//                                .buttonStyle(PlainButtonStyle())
-//                                
-//                                Text("for full search functionality")
-//                                    .font(.system(size: 13, design: .serif))
-////                                    .padding(.bottom, 20)
-//                                    .opacity(0.8)
-//                            }
-//                        }
-//                    }
-                    
                     ScrollView(showsIndicators: false) {
                         if let user = userController.user, let accountType = user.accountType {
                             SearchBarWithFilters(accountType: accountType)
@@ -157,7 +119,7 @@ struct SearchMainView: View {
                                             let group = groupedChannels[groupIndex]
                                             VStack(spacing: 16) {
                                                 ForEach(group, id: \.id) { channel in
-                                                    NavigationLink(destination: ChannelView()) {
+                                                    NavigationLink(destination: ChannelView(channel: channel)) {
                                                         ChannelCard(channel: channel)
                                                     }
                                                     .buttonStyle(PlainButtonStyle())
@@ -282,13 +244,10 @@ struct SearchMainView: View {
                                             let group = groupedLectures[groupIndex]
                                             VStack {
                                                 ForEach(group, id: \.id) { lecture in
-                                                    NavigationLink(destination: LectureView()) {
-                                                        LectureSearchResult(lecture: lecture)
-                                                    }
-                                                    .buttonStyle(PlainButtonStyle())
-                                                    .simultaneousGesture(TapGesture().onEnded {
-                                                        courseController.focusLecture(lecture)
-                                                    })
+                                                    
+                                                    LectureSearchResult(lecture: lecture)
+                                                    
+                                                    
                                                 }
 //                                                Spacer() // if there's only  1 lecture, push it to the top
                                             }

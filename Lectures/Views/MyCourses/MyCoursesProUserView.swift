@@ -32,10 +32,6 @@ struct MyCoursesProUserView: View {
             }
         }
         .onAppear {
-            // clear the focus stack (we're back at the beginning of nav stack)
-            courseController.focusedLectureStack = []
-            courseController.focusedCourseStack = []
-            
             if let user = Auth.auth().currentUser {
                 // get recent watch histories (will not update if already fetched)
                 myCourseController.retrieveRecentWatchHistories(userId: user.uid, courseController: courseController)

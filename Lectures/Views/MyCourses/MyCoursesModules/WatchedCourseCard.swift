@@ -35,12 +35,13 @@ struct WatchedCourseCard: View {
                     if let image = courseController.courseThumbnails[courseId] {
                         Image(uiImage: image)
                             .resizable()
-                            .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
-                            .aspectRatio(contentMode: .fill)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
+                            .frame(width: UIScreen.main.bounds.width * 0.6, height: 130) // Set the desired frame size
+                            .clipped() // Clip the image to the frame
+                            .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply rounded corners
                     } else {
-                        // default image when not loaded
-                        SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                        // Default image when not loaded
+                        SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 130)
                     }
                     
                     // Add semi-transparent gradient overlay
@@ -49,8 +50,9 @@ struct WatchedCourseCard: View {
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .frame(width: UIScreen.main.bounds.width * 0.6, height: 130) // Match the frame size of the image
+                    .clipped() // Clip the image to the frame
+                    .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply rounded corners to match the image
                     
                     
                     VStack(spacing: 0) {
@@ -101,7 +103,7 @@ struct WatchedCourseCard: View {
                     .cornerRadius(10)
                     
                 }
-                .frame(width: UIScreen.main.bounds.width * 0.6, height: 150)
+                .frame(width: UIScreen.main.bounds.width * 0.6, height: 130)
                 .shadow(radius: 2.5)
             }
         }

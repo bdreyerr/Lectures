@@ -22,7 +22,6 @@ struct TabResources: View {
                 HStack {
                     Text("Lecture Notes")
                         .font(.system(size: 14))
-                    //                                    .font(.system(size: 14, design: .serif))
                     Image(systemName: "sparkles")
                         .foregroundStyle(Color.blue)
                         .font(.system(size: 14, design: .serif))
@@ -30,16 +29,25 @@ struct TabResources: View {
                 }
                 .padding(.top, 20)
                 
+                
+                
                 // Notes
                 if let noteId = lecture.notesResourceId {
                     if let note = notesController.cachedNotes[noteId] {
-                        ResourceChip(resource: note, shouldPopFromStack: .constant(false))
+                        ResourceChip(resource: note)
                             .padding(.bottom, 2)
-                    } else {
-                        HStack {
-                            SkeletonLoader(width: 300, height: 40)
-                            Spacer()
+                    } else if notesController.isLoading == false {
+                        VStack(spacing: 12) {
+                            Image(systemName: "text.page.badge.magnifyingglass")
+                                .font(.system(size: 24))
+                                .foregroundColor(.gray.opacity(0.3))
+                            
+                            Text("No notes available for this lecture")
+                                .font(.system(size: 12, design: .serif))
+                                .foregroundColor(.gray)
+                                .multilineTextAlignment(.center)
                         }
+                        .padding(.vertical, 12)
                     }
                 }
             } else {
@@ -60,10 +68,12 @@ struct TabResources: View {
             }
         }
         .onAppear {
-            print("change in resource?")
             // Fetch the resource on open
             if let playingLecture = playingLecture {
                 if let noteId = playingLecture.notesResourceId {
+                    // if we already have the note, do nothing
+                    if let note = notesController.cachedNotes[noteId] { return }
+                    
                     notesController.retrieveNote(noteId: noteId)
                 } else {
                     print("lecture didn't have an notes Id")

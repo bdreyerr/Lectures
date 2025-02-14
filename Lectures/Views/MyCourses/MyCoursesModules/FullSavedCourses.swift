@@ -1,21 +1,20 @@
 //
-//  SavedCourses.swift
+//  FullSavedCourses.swift
 //  Lectures
 //
-//  Created by Ben Dreyer on 1/18/25.
+//  Created by Ben Dreyer on 2/11/25.
 //
 
 import SwiftUI
 
-struct SavedCourses: View {
+struct FullSavedCourses: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var userController: UserController
     @EnvironmentObject var myCourseController: MyCourseController
     
-    @State private var likedCourseIds: [String] = []
-    
+    var likedCourseIds: [String]
     var body: some View {
-        Group {
+        VStack {
             HStack {
                 Image(systemName: "mail.stack")
                     .font(.system(size: 10))
@@ -29,10 +28,10 @@ struct SavedCourses: View {
             }
             .padding(.top, 10)
             
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(likedCourseIds, id: \.self) { courseId in
-                        if let course = courseController.cachedCourses[courseId] {                            
+            ScrollView(showsIndicators: false) {
+                ForEach(likedCourseIds, id: \.self) { courseId in
+                    HStack {
+                        if let course = courseController.cachedCourses[courseId] {
                             if let watchHistory = myCourseController.cachedWatchHistories[courseId], let lectureNumberInCourse = watchHistory.lectureNumberInCourse, let lectureId = watchHistory.lectureId {
                                 NavigationLink(destination: NewCourse(course: course, isLecturePlaying: true, lastWatchedLectureId: lectureId, lastWatchedLectureNumber: lectureNumberInCourse)) {
                                     WatchedCourseCard(course: course, watchHistory: watchHistory)
@@ -51,31 +50,29 @@ struct SavedCourses: View {
                                 })
                             }
                         }
+                        Spacer()
                     }
                 }
             }
-            HStack {
-                NavigationLink(destination: FullSavedCourses(likedCourseIds: likedCourseIds)) {
-                    Text("View All")
-                        .font(.system(size: 10))
+            
+            if myCourseController.currentCourseOffset < likedCourseIds.count {
+                Button(action: {
+                    myCourseController.loadMoreLikedCourses(courseIds: likedCourseIds, courseController: courseController)
+                }) {
+                    Text("Fetch more")
+                        .font(.system(size: 12))
                 }
-                .buttonStyle(PlainButtonStyle())
+                .padding(.top, 6)
                 
-                Spacer()
+                .buttonStyle(PlainButtonStyle())
             }
-            .padding(.top, 1)
+            
         }
-        .onAppear {
-            if let user = userController.user {
-                // Update the state variable when `user` changes
-                DispatchQueue.main.async {
-                    likedCourseIds = (user.likedCourseIds ?? []).reversed()
-                }
-            }
-        }
+        .padding(.bottom, 100)
+        .padding(.horizontal, 20)
     }
 }
 
-#Preview {
-    SavedCourses()
-}
+//#Preview {
+//    FullSavedCourses()
+//}

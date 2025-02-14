@@ -22,47 +22,50 @@ struct ChannelInfo: View {
     var body: some View {
         HStack {
             // channel image - nav link to channel view
-            NavigationLink(destination: ChannelView()) {
-                if let channelImage = courseController.channelThumbnails[channelId] {
-                    Image(uiImage: channelImage)
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                    
-                    if let channel = courseController.cachedChannels[channelId], let channelTitle = channel.title, let numCourses = channel.numCourses, let numLectures = channel.numLectures {
-                        VStack {
-                            Text(channelTitle)
-                                .font(.system(size: 14, design: .serif))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            HStack {
-                                Text("\(numCourses) Courses")
-                                    .font(.system(size: 12))
-                                    .opacity(0.6)
+            
+            if let channel = courseController.cachedChannels[channelId] {
+                NavigationLink(destination: ChannelView(channel: channel)) {
+                    if let channelImage = courseController.channelThumbnails[channelId] {
+                        Image(uiImage: channelImage)
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                        
+                        if let channelTitle = channel.title, let numCourses = channel.numCourses, let numLectures = channel.numLectures {
+                            VStack {
+                                Text(channelTitle)
+                                    .font(.system(size: 14, design: .serif))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                Text("\(numLectures) Lectures")
-                                    .font(.system(size: 12))
-                                    .opacity(0.6)
-                                
-                                Spacer()
+                                HStack {
+                                    Text("\(numCourses) Courses")
+                                        .font(.system(size: 12))
+                                        .opacity(0.6)
+                                    
+                                    Text("\(numLectures) Lectures")
+                                        .font(.system(size: 12))
+                                        .opacity(0.6)
+                                    
+                                    Spacer()
+                                }
                             }
                         }
-                    }
-                } else {
-                    HStack {
-                        SkeletonLoader(width: 300, height: 40)
-                        Spacer()
+                    } else {
+                        HStack {
+                            SkeletonLoader(width: 300, height: 40)
+                            Spacer()
+                        }
                     }
                 }
+                .simultaneousGesture(TapGesture().onEnded {
+                    //                        self.shouldPopCourseFromStackOnDissapear = false
+                    
+                    // try to get the channel using course.channelId
+                    if let channel = courseController.cachedChannels[channelId] {
+                        courseController.focusChannel(channel)
+                    }
+                })
+                .buttonStyle(PlainButtonStyle())
             }
-            .simultaneousGesture(TapGesture().onEnded {
-                //                        self.shouldPopCourseFromStackOnDissapear = false
-                
-                // try to get the channel using course.channelId
-                if let channel = courseController.cachedChannels[channelId] {
-                    courseController.focusChannel(channel)
-                }
-            })
-            .buttonStyle(PlainButtonStyle())
             
             // Channel Follow Button
             Button(action: {
@@ -110,6 +113,9 @@ struct ChannelInfo: View {
                         self.isChannelFollowed = true
                     }
                 }
+            }
+            .sheet(isPresented: $isUpgradeAccountSheetShowing) {
+                UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
             }
             
         }

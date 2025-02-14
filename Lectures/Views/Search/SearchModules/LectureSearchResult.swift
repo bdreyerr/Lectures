@@ -11,69 +11,84 @@ struct LectureSearchResult: View {
     @EnvironmentObject var courseController: CourseController
     
     var lecture: Lecture
+    @State var course: Course?
     
     var body: some View {
-        if let id = lecture.id, let lectureTitle = lecture.lectureTitle, let lectureNumberInCourse = lecture.lectureNumberInCourse, let viewsOnYouTube = lecture.viewsOnYouTube {
-            NavigationLink(destination: LectureView()) {
-                HStack {
-                    ZStack {
-                        if let image = courseController.lectureThumbnails[id] {
-                            Image(uiImage: image)
-                                .resizable()
-                                .frame(width: 120, height: 67.5)
-                                .aspectRatio(contentMode: .fill)
-                                .cornerRadius(5)
-                        } else {
-                            // default image when not loaded
-                            SkeletonLoader(width: 120, height: 67.5)
-                        }
-                        
-                        Image(systemName: "play.circle.fill") // SF Symbol for play button
-                            .resizable()
-                            .frame(width: 25, height: 25)
-                            .foregroundColor(.white)
-                            .shadow(radius: 5)
-                    }
-                    
-                    VStack {
+        Group {
+            if let id = lecture.id, let courseId = lecture.courseId, let lectureTitle = lecture.lectureTitle, let lectureNumberInCourse = lecture.lectureNumberInCourse, let viewsOnYouTube = lecture.viewsOnYouTube {
+                if let course = courseController.cachedCourses[courseId] {
+                    NavigationLink(destination: NewCourse(course: course, isLecturePlaying: true, playingLecture: lecture, lastWatchedLectureId: id, lastWatchedLectureNumber: lectureNumberInCourse)) {
                         HStack {
-                            Text(lectureTitle)
-                                .font(.system(size: 16, design: .serif))
-                                .bold()
-                                .lineLimit(1)
-                                .truncationMode(.tail)
+                            ZStack {
+                                if let image = courseController.lectureThumbnails[id] {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
+                                        .frame(width: 120, height: 67.5)
+                                        .clipped() // Clip the image to the frame
+                                        .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply rounded corners
+                                } else {
+                                    // default image when not loaded
+                                    SkeletonLoader(width: 120, height: 67.5)
+                                }
+                                
+                                Image(systemName: "play.circle.fill") // SF Symbol for play button
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundColor(.white)
+                                    .shadow(radius: 5)
+                            }
                             
-                            Spacer()
-                        }
-                        
-                        HStack {
-                            // TODO: add a field course name on the lecture object
-                            Text("Lecture # \(lectureNumberInCourse) in The Emotion Machine")
-                                .font(.system(size: 12))
-                                .opacity(0.6)
-                                .lineLimit(1)
-                                .truncationMode(.tail)
-                            
-                            Spacer()
-                        }
-                        
-                        
-                        HStack {
-                            Text("\(formatIntViewsToString(numViews: viewsOnYouTube)) Views")
-                                .font(.system(size: 12))
-                                .opacity(0.6)
-                                .lineLimit(1)
-                                .truncationMode(.tail)
-                            Spacer()
+                            VStack {
+                                HStack {
+                                    Text(lectureTitle)
+                                        .font(.system(size: 16, design: .serif))
+                                        .bold()
+                                        .lineLimit(1)
+                                        .truncationMode(.tail)
+                                    
+                                    Spacer()
+                                }
+                                
+                                HStack {
+                                    // TODO: add a field course name on the lecture object
+                                    Text("Lecture # \(lectureNumberInCourse) in The Emotion Machine")
+                                        .font(.system(size: 12))
+                                        .opacity(0.6)
+                                        .lineLimit(1)
+                                        .truncationMode(.tail)
+                                    
+                                    Spacer()
+                                }
+                                
+                                
+                                HStack {
+                                    Text("\(formatIntViewsToString(numViews: viewsOnYouTube)) Views")
+                                        .font(.system(size: 12))
+                                        .opacity(0.6)
+                                        .lineLimit(1)
+                                        .truncationMode(.tail)
+                                    Spacer()
+                                }
+                            }
                         }
                     }
+                    .frame(maxWidth: 280)
+                    .buttonStyle(PlainButtonStyle())
+                    .simultaneousGesture(TapGesture().onEnded { _ in
+                        //                    courseController.focusLecture(lecture)
+                        courseController.focusCourse(course)
+                    })
+                } else {
+                    SkeletonLoader(width: 120, height: 67.5)
                 }
             }
-            .frame(maxWidth: 280)
-            .buttonStyle(PlainButtonStyle())
-            .simultaneousGesture(TapGesture().onEnded { _ in
-                courseController.focusLecture(lecture)
-            })
+        }
+        .onAppear {
+            // We need to fetch the relevant course in case the user wants to tap this lecture and watch it
+            if let courseId = lecture.courseId {
+                courseController.retrieveCourse(courseId: courseId)
+            }
         }
     }
     

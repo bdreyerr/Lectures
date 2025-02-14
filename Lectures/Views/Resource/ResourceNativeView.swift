@@ -205,16 +205,16 @@ Visit our [internal wiki](https://wiki.example.com) for more details.\n
         .sheet(isPresented: $showingShare) {
             ShareSheetHelper(items: [generatePDF()])
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: Button(action: {
-            self.presentationMode.wrappedValue.dismiss()
-        }) {
-            HStack {
-                Image(systemName: "chevron.left")
-                    .bold()
-                Text("Back")
-            }
-        })
+//        .navigationBarBackButtonHidden(true)
+//        .navigationBarItems(leading: Button(action: {
+//            self.presentationMode.wrappedValue.dismiss()
+//        }) {
+//            HStack {
+//                Image(systemName: "chevron.left")
+//                    .bold()
+//                Text("Back")
+//            }
+//        })
     }
 }
 
