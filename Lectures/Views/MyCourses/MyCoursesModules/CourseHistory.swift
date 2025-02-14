@@ -66,9 +66,7 @@ struct CourseHistory: View {
             }
         }
         .onAppear {
-            DispatchQueue.main.async {
-                self.localWatchHistories = myCourseController.watchHistories
-            }
+            self.localWatchHistories = myCourseController.watchHistories
         }
     }
 }

@@ -36,6 +36,7 @@ class MyCourseController : ObservableObject {
     @Published var currentCourseOffset: Int = 8
     @Published var currentLectureOffset: Int = 8
     
+    
     func updateWatchHistory(userId: String, course: Course, lecture: Lecture) {
         Task { @MainActor in
             if let courseId = course.id, let numLecturesInCourse = course.numLecturesInCourse, let courseChannelId = course.channelId, let numLecturesInCourse = course.numLecturesInCourse, let lectureId = lecture.id, let currentLectureNumberInCourse  = lecture.lectureNumberInCourse {
@@ -43,6 +44,7 @@ class MyCourseController : ObservableObject {
                 // check the cache, if a watchHistory is already in there, and the new lecture being watched isn't greater than the already highest watched lecture, we don't need to do anything
                 if let watchHistory = cachedWatchHistories[courseId], let watchHistoryLectureNumberInCourse  = watchHistory.lectureNumberInCourse {
                     if watchHistoryLectureNumberInCourse >= currentLectureNumberInCourse {
+                        print("returning early from cache - new lecture not greater - watch history")
                         return
                     }
                 }
@@ -51,7 +53,6 @@ class MyCourseController : ObservableObject {
                 // check if a watch history exists for this course already - if it does, update that same document. otherwise create a new one and store it in firestore
                 do {
                     // determine if course is completed or not - if this is the last lecture
-                    // TODO: determine form the watch time in the last lecture
                     var isCourseCompleted = false
                     if currentLectureNumberInCourse == numLecturesInCourse {
                         isCourseCompleted = true
@@ -64,6 +65,7 @@ class MyCourseController : ObservableObject {
                     
                     // There's not an existing watch history so make a new one
                     if querySnapshot.documents.isEmpty {
+                        print(" this is a new watch history, we're adding it")
                         // write this new object to firestore
                         do {
                             try db.collection("watchHistories").addDocument(from: watchHistory)
@@ -84,7 +86,6 @@ class MyCourseController : ObservableObject {
                         
                         // ONLY IF THE NEW LECTURE NUMBER IS HIGHER THAN THE PREVIOUS. THIS MEANS YOUR WATCH HISTORY PROGRESS CAN ONLY MOVE FORWARDS, NOT BACKWARDS. (e.g. if you previously had watched lecture 3, then you went back and watched lecture 1, the watch history will remain on lecture 3)
                         if let previousWatchHistory = try? document.data(as: WatchHistory.self) {
-                            //                        print("the previous watch history lecture number: \(previousWatchHistory.lectureNumberInCourse)")
                             if let previousLectureNumberInCourse = previousWatchHistory.lectureNumberInCourse {
                                 if let newLectureNumberInCourse = watchHistory.lectureNumberInCourse {
                                     if previousLectureNumberInCourse >= newLectureNumberInCourse {
@@ -103,13 +104,14 @@ class MyCourseController : ObservableObject {
                         }
                         
                         
-                        // refresh the user's watch history (so they dn't have to re-open app to see changes
-                        self.refreshCourseHistory(userId: userId) // might break passing the nil course controller, but we don't need it on a refresh
+                        self.refreshCourseHistory(userId: userId)
                         return
                     }
                 } catch {
                     print("error getting watch history: \(error)")
                 }
+            } else {
+                print("some values are nil?")
             }
         }
     }

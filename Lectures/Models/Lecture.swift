@@ -33,6 +33,9 @@ struct Lecture : Codable, Identifiable, Hashable {
     var homeworkResourceId: String?
     var homeworkAnswersResourceId: String?
     
+    
+    var lectureDuration: String?
+    
     var youtubeVideoUrl: String?
     
     var searchTerms: [String]?
@@ -57,6 +60,7 @@ struct Lecture : Codable, Identifiable, Hashable {
         case notesResourceId
         case homeworkResourceId
         case homeworkAnswersResourceId
+        case lectureDuration
         case youtubeVideoUrl
         case searchTerms
         case thumbnailUrl

@@ -45,20 +45,15 @@ struct FullSavedLectures: View {
                         Spacer()
                     }
                 }
-            }
-            
-            if myCourseController.currentLectureOffset < likedLectureIds.count {
-                Button(action: {
-                    myCourseController.loadMoreLikedLectures(lectureIds: likedLectureIds, courseController: courseController)
-                }) {
-                    Text("Fetch more")
-                        .font(.system(size: 12))
+                if myCourseController.currentLectureOffset < likedLectureIds.count {
+                    
+                    FetchButton(isMore: true) {
+                        myCourseController.loadMoreLikedLectures(lectureIds: likedLectureIds, courseController: courseController)
+                    }
+                    .padding(.top, 6)
                 }
-                .padding(.top, 6)
                 
-                .buttonStyle(PlainButtonStyle())
             }
-            
         }
         .padding(.bottom, 100)
         .padding(.horizontal, 20)

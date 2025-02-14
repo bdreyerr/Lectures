@@ -49,17 +49,13 @@ struct FullCourseHistory: View {
                 
                 
                 if !myCourseController.noWatchHistoriesLeftToLoad {
-                    Button(action: {
+                    
+                    FetchButton(isMore: true) {
                         // get more watch Histories
                         if let user = userController.user, let id = user.id {
                             myCourseController.getMoreWatchHistories(userId: id, courseController: courseController)
                         }
-                    }) {
-                        Text("Fetch More")
-                            .font(.system(size: 10))
-                            .opacity(0.8)
                     }
-                    .buttonStyle(PlainButtonStyle())
                     .padding(.top, 5)
                 }
             }

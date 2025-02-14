@@ -45,7 +45,8 @@ struct CoursesByChannel: View {
                 
                 
                 if courseController.channelCoursesPrefixPaginationNumber < courseIds.count {
-                    Button(action: {
+                    
+                    FetchButton(isMore: true) {
                         // increment the prefix pagination var by 10, and fetch the new results
                         courseController.channelCoursesPrefixPaginationNumber += 10
                         
@@ -57,10 +58,6 @@ struct CoursesByChannel: View {
                             // Retrieve the thumbnail for the course from storage
                             courseController.getCourseThumbnail(courseId: courseId)
                         }
-                    }) {
-                        Text("Fetch More")
-                            .font(.system(size: 10))
-                            .opacity(0.8)
                     }
                     .padding(.top, 10)
                     .padding(.bottom, 20)

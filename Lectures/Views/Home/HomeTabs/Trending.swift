@@ -48,19 +48,26 @@ private struct TrendingContent: View {
     @Binding var isViewActive: Bool
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if subscriptionController.isPro {
-                ContinueWatchingSection(localWatchHistories: $localWatchHistories, isViewActive: $isViewActive)
+        Group {
+            VStack(alignment: .leading, spacing: 0) {
+                if subscriptionController.isPro {
+                    ContinueWatchingSection(localWatchHistories: $localWatchHistories, isViewActive: $isViewActive)
+                }
+                
+                CuratedCourses()
+                    .padding(.top, 10)
+                
+                LeadingUniversities()
+                    .padding(.top, 10)
+                
+                CommunityFavorites()
+                    .padding(.top, 10)
             }
-            
-            CuratedCourses()
-                .padding(.top, 10)
-            
-            LeadingUniversities()
-                .padding(.top, 10)
-            
-            CommunityFavorites()
-                .padding(.top, 10)
+        }
+        .onAppear {
+            if let user = Auth.auth().currentUser {
+                myCourseController.retrieveRecentWatchHistories(userId: user.uid, courseController: courseController)
+            }
         }
     }
 }
@@ -98,18 +105,8 @@ private struct ContinueWatchingSection: View {
             }
         }
         .onAppear {
+            print("on appear of trending")
             if let user = Auth.auth().currentUser {
-                if localWatchHistories.isEmpty {
-                    if !myCourseController.watchHistories.isEmpty {
-                        self.localWatchHistories = myCourseController.watchHistories
-                    } else {
-                        myCourseController.retrieveRecentWatchHistories(userId: user.uid, courseController: courseController)
-                    }
-                }
-            }
-        }
-        .onChange(of: myCourseController.watchHistories) {
-            if isViewActive {
                 self.localWatchHistories = myCourseController.watchHistories
             }
         }

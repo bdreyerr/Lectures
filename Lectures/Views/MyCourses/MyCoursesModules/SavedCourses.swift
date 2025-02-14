@@ -13,7 +13,7 @@ struct SavedCourses: View {
     @EnvironmentObject var myCourseController: MyCourseController
     
     @State private var likedCourseIds: [String] = []
-    
+    @State var localWatchHistories: [WatchHistory] = []
     var body: some View {
         Group {
             HStack {
@@ -32,15 +32,20 @@ struct SavedCourses: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(likedCourseIds, id: \.self) { courseId in
-                        if let course = courseController.cachedCourses[courseId] {                            
-                            if let watchHistory = myCourseController.cachedWatchHistories[courseId], let lectureNumberInCourse = watchHistory.lectureNumberInCourse, let lectureId = watchHistory.lectureId {
-                                NavigationLink(destination: NewCourse(course: course, isLecturePlaying: true, lastWatchedLectureId: lectureId, lastWatchedLectureNumber: lectureNumberInCourse)) {
-                                    WatchedCourseCard(course: course, watchHistory: watchHistory)
+                        if let course = courseController.cachedCourses[courseId] {
+                            
+                            
+                            // check if course is watched, if it is display watched course  card
+                            if self.localWatchHistories.contains(where: { $0.courseId == courseId }) {
+                                if let watchHistory = myCourseController.cachedWatchHistories[courseId], let lectureNumberInCourse = watchHistory.lectureNumberInCourse, let lectureId = watchHistory.lectureId {
+                                    NavigationLink(destination: NewCourse(course: course, isLecturePlaying: true, lastWatchedLectureId: lectureId, lastWatchedLectureNumber: lectureNumberInCourse)) {
+                                        WatchedCourseCard(course: course, watchHistory: watchHistory)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .simultaneousGesture(TapGesture().onEnded {
+                                        courseController.focusCourse(course)
+                                    })
                                 }
-                                .buttonStyle(PlainButtonStyle())
-                                .simultaneousGesture(TapGesture().onEnded {
-                                    courseController.focusCourse(course)
-                                })
                             } else {
                                 NavigationLink(destination: NewCourse(course: course, isLecturePlaying: false)) {
                                     CourseCardView(course: course)
@@ -50,6 +55,24 @@ struct SavedCourses: View {
                                     courseController.focusCourse(course)
                                 })
                             }
+                            
+//                            if let watchHistory = myCourseController.cachedWatchHistories[courseId], let lectureNumberInCourse = watchHistory.lectureNumberInCourse, let lectureId = watchHistory.lectureId {
+//                                NavigationLink(destination: NewCourse(course: course, isLecturePlaying: true, lastWatchedLectureId: lectureId, lastWatchedLectureNumber: lectureNumberInCourse)) {
+//                                    WatchedCourseCard(course: course, watchHistory: watchHistory)
+//                                }
+//                                .buttonStyle(PlainButtonStyle())
+//                                .simultaneousGesture(TapGesture().onEnded {
+//                                    courseController.focusCourse(course)
+//                                })
+//                            } else {
+//                                NavigationLink(destination: NewCourse(course: course, isLecturePlaying: false)) {
+//                                    CourseCardView(course: course)
+//                                }
+//                                .buttonStyle(PlainButtonStyle())
+//                                .simultaneousGesture(TapGesture().onEnded {
+//                                    courseController.focusCourse(course)
+//                                })
+//                            }
                         }
                     }
                 }
@@ -72,6 +95,8 @@ struct SavedCourses: View {
                     likedCourseIds = (user.likedCourseIds ?? []).reversed()
                 }
             }
+            
+            self.localWatchHistories = myCourseController.watchHistories
         }
     }
 }

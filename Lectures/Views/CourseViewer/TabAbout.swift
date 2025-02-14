@@ -200,27 +200,32 @@ private struct RecommendedCoursesSection: View {
                             .cornerRadius(20)
                     }
                 } else {
-                    // Skeleton Loader
-                    if courseController.isRelatedCourseLoading {
-                        VStack {
-                            HStack {
-                                SkeletonLoader(width: 350, height: 60)
-                                Spacer()
-                            }
-                            HStack {
-                                SkeletonLoader(width: 350, height: 60)
-                                Spacer()
-                            }
-                            HStack {
-                                SkeletonLoader(width: 350, height: 60)
-                                Spacer()
-                            }
-                        }
-                    } else {
-                        ForEach(self.localCourseRecommendations, id: \.id) { course in
-                            RelatedCourse(course: course)
-                        }
+                    
+                    ForEach(self.localCourseRecommendations, id: \.id) { course in
+                        RelatedCourse(course: course)
                     }
+                    
+                    // Skeleton Loader
+//                    if courseController.isRelatedCourseLoading {
+//                        VStack {
+//                            HStack {
+//                                SkeletonLoader(width: 350, height: 60)
+//                                Spacer()
+//                            }
+//                            HStack {
+//                                SkeletonLoader(width: 350, height: 60)
+//                                Spacer()
+//                            }
+//                            HStack {
+//                                SkeletonLoader(width: 350, height: 60)
+//                                Spacer()
+//                            }
+//                        }
+//                    } else {
+//                        ForEach(self.localCourseRecommendations, id: \.id) { course in
+//                            RelatedCourse(course: course)
+//                        }
+//                    }
                 }
             }
         }

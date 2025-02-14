@@ -40,179 +40,203 @@ struct TabLectures: View {
         }
     }
     
-    func retrieveLectures(isPrevious: Bool) {
-        print(" we are retrieving lectures again, value of hasAppeared: \(hasAppeared) ")
-        guard let courseId = course.id, let lectureIds = course.lectureIds else { return }
-        
-        // Create ordered mapping of all available lectures
-        let availableLectures: [LectureOrderInfo] = lectureIds.compactMap { lectureId in
-            if let lecture = courseController.cachedLectures[lectureId] {
-                return LectureOrderInfo(id: lectureId, number: lecture.lectureNumberInCourse ?? 0)
-            }
-            // If not in cache yet, create with assumed order based on ID
-            return LectureOrderInfo(id: lectureId, number: Int(lectureId) ?? 0)
-        }.sorted(by: { $0.number < $1.number })
-        
-        // First load
-        if currentLoadedLectures.isEmpty {
-            let startIndex: Int
-            if let lastWatched = lastWatchedLectureNumber {
-                // Find the closest index to lastWatched - 4
-                startIndex = max(0, min(
-                    availableLectures.firstIndex(where: { $0.number >= lastWatched }) ?? 0,
-                    availableLectures.count - 8
-                ))
-            } else {
-                startIndex = 0
-            }
+    
+    func retrieveLectures() {
+        // first we wanna know if we are loading lectures around a playing lecture, if this is the case, we need to load 8 lectures, with the playing lecture in the middle.
+        if isLecturePlaying {
             
-            let endIndex = min(startIndex + 8, availableLectures.count)
-            let lectureIdsToLoad = availableLectures[startIndex..<endIndex].map { $0.id }
-            
-            courseController.retrieveLecturesInCourse(courseId: courseId, lectureIdsToLoad: Array(lectureIdsToLoad))
-            self.currentLoadedLectures = Array(lectureIdsToLoad)
+            // get the number of the current playing lecture
+            if let playingLecture = playingLecture, let lectureNumberInCourse = playingLecture.lectureNumberInCourse {
+                // we want to load 3 before, the current lecture, and 4 after, if there are less than 3 before, we add how many are missing to after, and same if after are missing, we add to before
+                
+                // lectureIds [String], playingLecture: Lecure
+                
+                // find the index of the playing lecture in lectureIds
+                if let lectureIds = course.lectureIds {
+                    let sortedLectureIds = lectureIds.sorted()
+                    let playingLectureIndex: Int = sortedLectureIds.firstIndex(where: { $0 == playingLecture.id }) ?? 0
+                    
+                    // Calculate how many lectures we can load before and after
+                    let maxBefore = 3
+                    let maxAfter = 4
+                    
+                    // Calculate available lectures before and after
+                    let availableBefore = playingLectureIndex
+                    let availableAfter = sortedLectureIds.count - playingLectureIndex - 1
+                    
+                    // Initially set the number of lectures to load
+                    var numBefore = min(availableBefore, maxBefore)
+                    var numAfter = min(availableAfter, maxAfter)
+                    
+                    // If we couldn't get enough lectures before, add more after
+                    let remainingBefore = maxBefore - numBefore
+                    if remainingBefore > 0 {
+                        numAfter = min(numAfter + remainingBefore, availableAfter)
+                    }
+                    
+                    // If we couldn't get enough lectures after, add more before
+                    let remainingAfter = maxAfter - numAfter
+                    if remainingAfter > 0 {
+                        numBefore = min(numBefore + remainingAfter, availableBefore)
+                    }
+                    
+                    // Calculate the final range
+                    let startIndex = playingLectureIndex - numBefore
+                    let endIndex = playingLectureIndex + numAfter + 1 // +1 because the range is exclusive
+                    
+                    // Get the lecture IDs to load
+                    let lecturesToLoad = Array(sortedLectureIds[startIndex..<endIndex])
+                    courseController.retrieveLecturesInCourse(courseId: course.id!, lectureIdsToLoad: lecturesToLoad)
+                    self.currentLoadedLectures = lecturesToLoad
+                }
+            }
         } else {
-            // Find current range of loaded lectures
-            let currentLoadedNumbers = currentLoadedLectures.compactMap { lectureId in
-                courseController.cachedLectures[lectureId]?.lectureNumberInCourse
-            }
-            
-            guard let minLoaded = currentLoadedNumbers.min(),
-                  let maxLoaded = currentLoadedNumbers.max() else { return }
-            
-            if isPrevious {
-                // Load previous 8 lectures
-                let previousLectures = availableLectures.filter {
-                    $0.number < minLoaded
-                }.suffix(8)
+            // otherwise, we are just loading a course, and want to retrieve the first 8 lectures in the course
+            if let courseId = course.id, let lectureIds = course.lectureIds {
+                let sortedLectureIds = lectureIds.sorted()
                 
-                if !previousLectures.isEmpty {
-                    let lectureIdsToLoad = previousLectures.map { $0.id }
-                    courseController.retrieveLecturesInCourse(courseId: courseId, lectureIdsToLoad: Array(lectureIdsToLoad))
-                    self.currentLoadedLectures.insert(contentsOf: lectureIdsToLoad, at: 0)
-                }
-            } else {
-                // Load next 8 lectures
-                let nextLectures = availableLectures.filter {
-                    $0.number > maxLoaded
-                }.prefix(8)
-                
-                if !nextLectures.isEmpty {
-                    let lectureIdsToLoad = nextLectures.map { $0.id }
-                    courseController.retrieveLecturesInCourse(courseId: courseId, lectureIdsToLoad: Array(lectureIdsToLoad))
-                    self.currentLoadedLectures.append(contentsOf: lectureIdsToLoad)
-                }
+                let lecturesToLoad = Array(sortedLectureIds.prefix(8))
+                courseController.retrieveLecturesInCourse(courseId: courseId, lectureIdsToLoad: lecturesToLoad)
+                self.currentLoadedLectures = lecturesToLoad
             }
-        }
-        
-        // Always ensure lectures are sorted by lecture number
-        self.currentLoadedLectures.sort {
-            (courseController.cachedLectures[$0]?.lectureNumberInCourse ?? 0) <
-                (courseController.cachedLectures[$1]?.lectureNumberInCourse ?? 0)
         }
     }
     
+    func retrievePreviousLectures() {
+        guard let lectureIds = course.lectureIds else { return }
+        
+        let sortedLectureIds = lectureIds.sorted()
+        
+        // Find the earliest loaded lecture's index
+        guard let earliestLoadedId = currentLoadedLectures.min(),
+              let earliestLoadedIndex = sortedLectureIds.firstIndex(of: earliestLoadedId) else {
+            return
+        }
+        
+        // Calculate how many lectures we can load before
+        let numToLoad = 8
+        let startIndex = max(0, earliestLoadedIndex - numToLoad)
+        let endIndex = earliestLoadedIndex
+        
+        // Get the lecture IDs to load
+        let lecturesToLoad = Array(sortedLectureIds[startIndex..<endIndex])
+        
+        // Only proceed if we have lectures to load
+        guard !lecturesToLoad.isEmpty else { return }
+        
+        courseController.retrieveLecturesInCourse(courseId: course.id!, lectureIdsToLoad: lecturesToLoad)
+        
+        // Update currentLoadedLectures to include both the new and existing lectures
+        // Insert new lectures at the beginning since they come before current ones
+        self.currentLoadedLectures.insert(contentsOf: lecturesToLoad, at: 0)
+    }
+    
+    func retrieveFollowingLectures() {
+        guard let lectureIds = course.lectureIds else { return }
+        
+        let sortedLectureIds = lectureIds.sorted()
+        
+        // Find the latest loaded lecture's index
+        guard let latestLoadedId = currentLoadedLectures.max(),
+              let latestLoadedIndex = sortedLectureIds.firstIndex(of: latestLoadedId) else {
+            return
+        }
+        
+        // Calculate how many lectures we can load after
+        let numToLoad = 8
+        let startIndex = latestLoadedIndex + 1
+        let endIndex = min(sortedLectureIds.count, startIndex + numToLoad)
+        
+        // Get the lecture IDs to load
+        let lecturesToLoad = Array(sortedLectureIds[startIndex..<endIndex])
+        
+        // Only proceed if we have lectures to load
+        guard !lecturesToLoad.isEmpty else { return }
+        
+        courseController.retrieveLecturesInCourse(courseId: course.id!, lectureIdsToLoad: lecturesToLoad)
+        
+        // Update currentLoadedLectures to include both existing and new lectures
+        // Append new lectures at the end since they come after current ones
+        self.currentLoadedLectures.append(contentsOf: lecturesToLoad)
+    }
+    
     var body: some View {
-        VStack {
-            ScrollView() {
-                
-                if currentLoadedLectures.isEmpty {
-                    ForEach(0..<5, id: \.self) { _ in
-                        HStack {
-                            SkeletonLoader(width: 350, height: 30)
-                                .padding(.bottom, 2)
-                            Spacer()
-                        }
-                    }
-                } else {
-                    if let lectureIds = course.lectureIds {
-                        // Get the lecture number of our first loaded lecture
-                        if let firstLoadedNumber = currentLoadedLectures.first.flatMap({
-                            courseController.cachedLectures[$0]?.lectureNumberInCourse
-                        }) {
-                            // Check if there are any lectures with lower numbers
-                            let hasEarlierLectures = lectureIds.contains { lectureId in
-                                if let lecture = courseController.cachedLectures[lectureId],
-                                   let number = lecture.lectureNumberInCourse {
-                                    return number < firstLoadedNumber
-                                }
-                                return false
-                            }
-                            
-                            if hasEarlierLectures {
-                                Button(action: {
-                                    retrieveLectures(isPrevious: true)
-                                }) {
-                                    Text("Fetch Previous")
-                                        .font(.system(size: 12))
-                                }
-                                .padding(.bottom, 10)
-                            }
-                        }
-                    }
+        if let lectureIds = course.lectureIds {
+            VStack {
+                ScrollView() {
                     
-                    ForEach(currentLoadedLectures.sorted(by: {
-                        (courseController.cachedLectures[$0]?.lectureNumberInCourse ?? 0) <
-                            (courseController.cachedLectures[$1]?.lectureNumberInCourse ?? 0)
-                    }), id: \.self) { lectureId in
-                        if let lecture = courseController.cachedLectures[lectureId] {
-                            if let playingLecture = playingLecture, let playingLectureId = playingLecture.id  {
-                                Button(action: {
-                                    playLecture(lecture: lecture)
-                                }) {
-                                    LectureInCourse(lecture: lecture, playingLectureId: playingLectureId)
-                                        .padding(.bottom, 10)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            } else {
-                                Button(action: {
-                                    playLecture(lecture: lecture)
-                                }) {
-                                    LectureInCourse(lecture: lecture)
-                                        .padding(.bottom, 10)
-                                }
-                                .buttonStyle(PlainButtonStyle())
+                    if courseController.isLecturesInCourseLoading {
+                        ForEach(0..<5, id: \.self) { _ in
+                            HStack {
+                                SkeletonLoader(width: 350, height: 30)
+                                    .padding(.bottom, 2)
+                                Spacer()
                             }
                         }
-                    }
-                    
-                    if let lectureIds = course.lectureIds {
-                        // Get the lecture number of our last loaded lecture
-                        if let lastLoadedNumber = currentLoadedLectures.last.flatMap({
-                            courseController.cachedLectures[$0]?.lectureNumberInCourse
-                        }) {
-                            // Check if there are any lectures with higher numbers
-                            let hasMoreLectures = lectureIds.contains { lectureId in
-                                if let lecture = courseController.cachedLectures[lectureId],
-                                   let number = lecture.lectureNumberInCourse {
-                                    return number > lastLoadedNumber
-                                }
-                                return false
-                            }
+                    } else {
+                        
+                        
+                        if let earliestLoadedId = currentLoadedLectures.min(),
+                           let lectureIds = course.lectureIds,
+                           let earliestLoadedIndex = lectureIds.sorted().firstIndex(of: earliestLoadedId),
+                           earliestLoadedIndex > 0 {  // Check if there are lectures before the earliest loaded one
                             
-                            if hasMoreLectures {
-                                Button(action: {
-                                    retrieveLectures(isPrevious: false)
-                                }) {
-                                    Text("Fetch more")
-                                        .font(.system(size: 12))
-                                }
-                                .padding(.top, 6)
-                                .padding(.bottom, 10)
+                            
+                            
+                            FetchButton(isMore: false) {
+                                retrievePreviousLectures()
                             }
+                            .padding(.bottom, 10)
+                            
+                        }
+                        
+                        ForEach(lectureIds.sorted(), id: \.self) { lectureId in
+                            if let lecture = courseController.cachedLectures[lectureId] {
+                                if let playingLecture = playingLecture, let playingLectureId = playingLecture.id  {
+                                    Button(action: {
+                                        playLecture(lecture: lecture)
+                                    }) {
+                                        LectureInCourse(lecture: lecture, playingLectureId: playingLectureId)
+                                            .padding(.bottom, 10)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                } else {
+                                    Button(action: {
+                                        playLecture(lecture: lecture)
+                                    }) {
+                                        LectureInCourse(lecture: lecture)
+                                            .padding(.bottom, 10)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                        }
+                        
+                        if let latestLoadedId = currentLoadedLectures.max(),
+                           let lectureIds = course.lectureIds,
+                           let latestLoadedIndex = lectureIds.sorted().firstIndex(of: latestLoadedId),
+                           latestLoadedIndex < lectureIds.count - 1 {  // Check if there are lectures after the latest loaded one
+                            
+                            
+                            FetchButton(isMore: true) {
+                                retrieveFollowingLectures()
+                            }
+                            .padding(.top, 6)
+                            .padding(.bottom, 10)
                         }
                     }
                 }
             }
-        }
-        .padding(.top, 10)
-        .onAppear {
-            print("count of current loaded lectures: ", self.currentLoadedLectures.count)
-            print(" we are retrieving lectures again, value of hasAppeared: \(hasAppeared) ")
-            guard !hasAppeared else { return }
-            hasAppeared = true
-            
-            retrieveLectures(isPrevious: false)
+            .padding(.top, 10)
+            .onAppear {
+                print("is lecture playing?", isLecturePlaying)
+                
+                print(" we are retrieving lectures again, value of hasAppeared: \(hasAppeared) ")
+                guard !hasAppeared else { return }
+                hasAppeared = true
+                
+                retrieveLectures()
+            }
         }
     }
 }
@@ -278,10 +302,12 @@ struct LectureInCourse: View {
                     }
                     
                     HStack {
-                        // Duration?
-                        Text("54:92 mins")
-                            .font(.system(size: 12))
-                            .opacity(0.6)
+                        if let lectureDuration = lecture.lectureDuration  {
+                            // Duration
+                            Text("\(lectureDuration)")
+                                .font(.system(size: 12))
+                                .opacity(0.6)
+                        }
                         
                         Text("\(formatIntViewsToString(numViews: viewsOnYouTube)) Views")
                             .font(.system(size: 12))

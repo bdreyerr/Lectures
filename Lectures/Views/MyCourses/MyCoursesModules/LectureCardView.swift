@@ -71,6 +71,13 @@ struct LectureCardView: View {
                                     }
                                     
                                     // TODO: add duration
+                                    if let lectureDuration = lecture.lectureDuration {
+                                        Text("\(lectureDuration)")
+                                            .lineLimit(1) // Limit to a single line
+                                            .truncationMode(.tail) // Use ellipsis for truncation
+                                            .font(.system(size: 11, design: .serif))
+                                            .foregroundColor(.white.opacity(0.8))
+                                    }
                                 }
                             }
                             Spacer()

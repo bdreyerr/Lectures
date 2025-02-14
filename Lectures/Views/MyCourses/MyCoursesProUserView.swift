@@ -33,6 +33,8 @@ struct MyCoursesProUserView: View {
         }
         .onAppear {
             if let user = Auth.auth().currentUser {
+                print("on appear on MyCoursesProUserView")
+                
                 // get recent watch histories (will not update if already fetched)
                 myCourseController.retrieveRecentWatchHistories(userId: user.uid, courseController: courseController)
                 

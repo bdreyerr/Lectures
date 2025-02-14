@@ -34,16 +34,13 @@ struct FullLecturSearchResults: View {
                 }
                 
                 if !searchController.noLecturesLeftToLoad {
-                    Button(action: {
+                    
+                    FetchButton(isMore: true) {
                         searchController.getMoreLectures(courseController: courseController)
-                    }) {
-                        Text("Fetch More")
-                            .font(.system(size: 10))
-                            .opacity(0.8)
                     }
-                    .buttonStyle(PlainButtonStyle())
                     .padding(.top, 5)
                     .padding(.bottom, 80)
+                    
                 }
                 
                 Spacer()

@@ -142,6 +142,9 @@ struct NewCourse: View {
                 if let user = userController.user, let userId = user.id {
                     if subscriptionController.isPro {
                         if let playingLecture = playingLecture {
+                            if course.id == nil {
+                                print("course id is nil for some readosn?")
+                            }
                             myCourseController.updateWatchHistory(userId: userId, course: course, lecture: playingLecture)
                         }
                     }

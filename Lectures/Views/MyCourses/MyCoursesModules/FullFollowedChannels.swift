@@ -44,14 +44,11 @@ struct FullFollowedChannels: View {
             }
             
             if myCourseController.currentChannelOffset < followedChannelIds.count {
-                Button(action: {
+                
+                FetchButton(isMore: true) {
                     myCourseController.loadMoreFollowedChannels(channelIds: followedChannelIds, courseController: courseController)
-                }) {
-                    Text("Fetch more")
-                        .font(.system(size: 12))
                 }
                 .padding(.top, 6)
-                .buttonStyle(PlainButtonStyle())
             }
         }
         .onAppear {

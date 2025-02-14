@@ -56,15 +56,11 @@ struct FullSavedCourses: View {
             }
             
             if myCourseController.currentCourseOffset < likedCourseIds.count {
-                Button(action: {
+                
+                FetchButton(isMore: true) {
                     myCourseController.loadMoreLikedCourses(courseIds: likedCourseIds, courseController: courseController)
-                }) {
-                    Text("Fetch more")
-                        .font(.system(size: 12))
                 }
                 .padding(.top, 6)
-                
-                .buttonStyle(PlainButtonStyle())
             }
             
         }

@@ -60,6 +60,7 @@ class CourseController : ObservableObject {
     
     // Loading vars
     @Published var isRelatedCourseLoading: Bool = false
+    @Published var isLecturesInCourseLoading: Bool = false
     
     // Firestore
     let db = Firestore.firestore()
@@ -153,6 +154,7 @@ class CourseController : ObservableObject {
     func retrieveLecturesInCourse(courseId: String, lectureIdsToLoad: [String]) {
         var newLectures: [Lecture] = []
         
+        isLecturesInCourseLoading = true
         Task { @MainActor in
             for lectureId in lectureIdsToLoad {
                 // check cache
@@ -192,6 +194,7 @@ class CourseController : ObservableObject {
                     self.lecturesInCourse[courseId] = newLectures
                 }
             }
+            isLecturesInCourseLoading = false
         }
     }
     
