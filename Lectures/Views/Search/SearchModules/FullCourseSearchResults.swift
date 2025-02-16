@@ -28,7 +28,7 @@ struct FullCourseSearchResults: View {
                 
                 ForEach(searchController.searchResultCourses, id: \.id) { course in
                     HStack {
-                        CourseSearchResult(course: course)
+                        CourseSearchResult(course: course, displayOnFullResultsPage: true)
                         Spacer()
                     }
                 }

@@ -331,11 +331,11 @@ struct ProFeaturesSheet: View {
                     .padding(.top, 20)
                 
                 VStack(alignment: .leading, spacing: 10) {
-                    FeatureRow(icon: "checkmark.circle.fill", text: "Free access to all courses and lectures")
-                    FeatureRow(icon: "checkmark.circle.fill", text: "Ad-free experience.")
+                    FeatureRow(icon: "checkmark.circle.fill", text: "Free Access to All Courses and Lectures")
+                    FeatureRow(icon: "checkmark.circle.fill", text: "Ad-free Experience.")
                     FeatureRow(icon: "checkmark.circle.fill", text: "Personalized Learning (Course Progress, Saved Lectures, Follow Universities)")
-                    FeatureRow(icon: "checkmark.circle.fill", text: "Free access to all course and lecture resources (notes, homework, exams)")
-                    FeatureRow(icon: "checkmark.circle.fill", text: "Share resources outside the app")
+                    FeatureRow(icon: "checkmark.circle.fill", text: "Free Access to AI Generated Lecture Resources")
+                    FeatureRow(icon: "checkmark.circle.fill", text: "Download & Export Notes for Offline Learning")
                 }
                 .padding(.top)
                 

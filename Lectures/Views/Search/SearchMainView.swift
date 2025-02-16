@@ -184,7 +184,7 @@ struct SearchMainView: View {
                                             let group = groupedCourses[groupIndex]
                                             VStack {
                                                 ForEach(group, id: \.id) { course in
-                                                    CourseSearchResult(course: course)
+                                                    CourseSearchResult(course: course, displayOnFullResultsPage: false)
                                                 }
 //                                                Spacer() // if there's only  1 course, push it to the top
                                             }
@@ -245,7 +245,7 @@ struct SearchMainView: View {
                                             VStack {
                                                 ForEach(group, id: \.id) { lecture in
                                                     
-                                                    LectureSearchResult(lecture: lecture)
+                                                    LectureSearchResult(lecture: lecture, displayOnFullResultsPage: false)
                                                     
                                                     
                                                 }

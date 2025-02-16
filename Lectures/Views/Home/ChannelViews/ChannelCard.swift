@@ -10,6 +10,7 @@ import SwiftUI
 struct ChannelCard: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     var channel: Channel
     
@@ -19,35 +20,51 @@ struct ChannelCard: View {
                 if let image = courseController.channelThumbnails[id] {
                     Image(uiImage: image)
                         .resizable()
-                        .frame(width: 40, height: 40)
+                        .frame(width: imageSize, height: imageSize)
                         .aspectRatio(contentMode: .fill)
                 } else {
                     // default image when not loaded
-                    SkeletonLoader(width: 50, height: 50)
+                    SkeletonLoader(width: imageSize, height: imageSize)
                 }
                 
                 VStack {
                     Text(title)
-                        .font(.system(size: 14, design: .serif))
+                        .font(.system(size: titleFontSize, design: .serif))
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     HStack {
                         Text("\(numCourses) Courses")
-                            .font(.system(size: 12))
-                        //                                                        .font(.system(size: 12, design: .serif))
+                            .font(.system(size: subtitleFontSize))
                             .opacity(0.6)
                         
                         Text("\(numLectures) Lectures")
-                            .font(.system(size: 12))
-                        //                                                        .font(.system(size: 12, design: .serif))
+                            .font(.system(size: subtitleFontSize))
                             .opacity(0.6)
                         
                         Spacer()
                     }
                 }
+                .frame(maxWidth: cardWidth)
             }
             .cornerRadius(5)
         }
+    }
+    
+    // Computed properties for responsive sizing
+    private var imageSize: CGFloat {
+        horizontalSizeClass == .regular ? 60 : 40
+    }
+    
+    private var cardWidth: CGFloat {
+        horizontalSizeClass == .regular ? 240 : 180
+    }
+    
+    private var titleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 16 : 14
+    }
+    
+    private var subtitleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 14 : 12
     }
 }
 

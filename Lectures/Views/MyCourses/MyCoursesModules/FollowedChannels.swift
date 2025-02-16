@@ -30,21 +30,53 @@ struct FollowedChannels: View {
             }
             .padding(.top, 10)
             
+            
+            
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(followedChannelIds, id: \.self) { channelId in
-                        if let channel = courseController.cachedChannels[channelId] {
-                            NavigationLink(destination: ChannelView(channel: channel)) {
-                                ChannelCard(channel: channel)
+                HStack(alignment: .top, spacing: 16) {
+                    let groupedUniversities = stride(from: 0, to: followedChannelIds.count, by: 2).map { index in
+                        Array(followedChannelIds[index..<min(index + 2, followedChannelIds.count)])
+                    }
+                    
+                    ForEach(groupedUniversities.indices, id: \.self) { groupIndex in
+                        let group = groupedUniversities[groupIndex]
+                        VStack(spacing: 16) {
+                            ForEach(group, id: \.self) { channelId in
+                                if let channel = courseController.cachedChannels[channelId] {
+                                    NavigationLink(destination: ChannelView(channel: channel)) {
+                                        ChannelCard(channel: channel)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .simultaneousGesture(TapGesture().onEnded {
+                                        courseController.focusChannel(channel)
+                                    })
+                                }
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .simultaneousGesture(TapGesture().onEnded {
-                                courseController.focusChannel(channel)
-                            })
                         }
+                        .padding(.trailing, 10)
                     }
                 }
             }
+            
+            
+            
+//            ScrollView(.horizontal, showsIndicators: false) {
+//                HStack {
+//                    ForEach(followedChannelIds, id: \.self) { channelId in
+//                        if let channel = courseController.cachedChannels[channelId] {
+//                            NavigationLink(destination: ChannelView(channel: channel)) {
+//                                ChannelCard(channel: channel)
+//                            }
+//                            .buttonStyle(PlainButtonStyle())
+//                            .simultaneousGesture(TapGesture().onEnded {
+//                                courseController.focusChannel(channel)
+//                            })
+//                        }
+//                    }
+//                }
+//            }
+            
+            
             HStack {
                 NavigationLink(destination: FullFollowedChannels()) {
                     Text("View All")

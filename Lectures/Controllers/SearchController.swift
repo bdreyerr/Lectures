@@ -192,10 +192,11 @@ class SearchController : ObservableObject {
                     self.searchResultLectures = lectureSnapshot.documents.compactMap { document -> Lecture? in
                         let lecture = try? document.data(as: Lecture.self)
                         
-                        if let lecture = lecture, let lectureId = lecture.id, let channelId = lecture.channelId {
+                        if let lecture = lecture, let lectureId = lecture.id, let channelId = lecture.channelId, let courseId = lecture.courseId {
                             courseController.cachedLectures[lectureId] = lecture
                             
-                            courseController.getLectureThumnbnail(lectureId: lectureId)
+//                            courseController.getLectureThumnbnail(lectureId: lectureId)
+                            courseController.getCourseThumbnail(courseId: courseId)
                             
                             courseController.retrieveChannel(channelId: channelId)
                         } else {
@@ -433,10 +434,11 @@ class SearchController : ObservableObject {
                     self.searchResultLectures.append(contentsOf: lectureSnapshot.documents.compactMap { document -> Lecture? in
                         let lecture = try? document.data(as: Lecture.self)
                         
-                        if let lecture = lecture, let lectureId = lecture.id, let channelId = lecture.channelId {
+                        if let lecture = lecture, let lectureId = lecture.id, let channelId = lecture.channelId, let courseId = lecture.courseId {
                             courseController.cachedLectures[lectureId] = lecture
                             
-                            courseController.getLectureThumnbnail(lectureId: lectureId)
+//                            courseController.getLectureThumnbnail(lectureId: lectureId)
+                            courseController.getCourseThumbnail(courseId: courseId)
                             
                             courseController.retrieveChannel(channelId: channelId)
                         } else {

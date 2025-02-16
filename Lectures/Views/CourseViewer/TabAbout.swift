@@ -17,7 +17,8 @@ struct TabAbout: View {
            let numLecturesInCourse = course.numLecturesInCourse,
            let watchTimeInHrs = course.watchTimeInHrs,
            let aggregateViews = course.aggregateViews,
-           let courseDescription = course.courseDescription {
+           let courseDescription = course.courseDescription,
+           let professorName = course.professorName {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
@@ -27,7 +28,8 @@ struct TabAbout: View {
                         numLectures: numLecturesInCourse,
                         watchTime: watchTimeInHrs,
                         views: aggregateViews,
-                        description: courseDescription
+                        description: courseDescription,
+                        professorName: professorName
                     )
                     
                     // Current Lecture Section (if available)
@@ -50,6 +52,7 @@ private struct CourseInfoSection: View {
     let watchTime: Int
     let views: Int
     let description: String
+    let professorName: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -61,6 +64,20 @@ private struct CourseInfoSection: View {
             // Title
             Text(courseTitle)
                 .font(.system(size: 18, design: .serif))
+            
+            if professorName != "" {
+                HStack(spacing: 4) {
+                    Text("Taught by:")
+                        .font(.system(size: 12))
+                        .fontWeight(.medium)
+                        .italic()
+                    
+                    Text(professorName)
+                        .font(.system(size: 12))
+                        .fontWeight(.medium)
+                }
+            }
+                
             
             // Stats Row
             HStack(spacing: 16) {
@@ -109,13 +126,13 @@ private struct CurrentLectureSection: View {
                 if professorName != "" {
                     HStack(spacing: 4) {
                         Text("Taught by:")
-                            .font(.system(size: 16, design: .serif))
-                            .foregroundColor(.secondary)
+                            .font(.system(size: 12))
+                            .fontWeight(.medium)
                             .italic()
                         
                         Text(professorName)
-                            .font(.system(size: 16, design: .serif))
-                            .foregroundColor(.secondary)
+                            .font(.system(size: 12))
+                            .fontWeight(.medium)
                     }
                 }
                 
@@ -155,50 +172,56 @@ private struct RecommendedCoursesSection: View {
                 .fontWeight(.bold)
             
             if !isSignedIn {
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 30))
-                    .foregroundColor(.gray.opacity(0.3))
-                
-                Text("Logged in users have access to course recommendations")
-                    .font(.system(size: 13, design: .serif))
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 10)
-                
-                Button(action: {
-                    isSignInSheetShowing = true
-                }) {
-                    Text("Sign Up / Sign In")
-                        .font(.system(size: 14))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
-                        .background(Color.blue)
-                        .cornerRadius(20)
-                }
-            } else {
-                if !subscriptionController.isPro {
-                    Image(systemName: "crown.fill")
+                VStack(alignment: .center) {
+                    Image(systemName: "person.crop.circle.fill")
                         .font(.system(size: 30))
                         .foregroundColor(.gray.opacity(0.3))
-                        .padding(.top, 40)
                     
-                    Text("Pro users have access to course recommendations")
+                    Text("Logged in users have access to course recommendations")
                         .font(.system(size: 13, design: .serif))
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
-
+                        .padding(.bottom, 10)
+                    
                     Button(action: {
-                        isUpgradeAccountSheetShowing = true
+                        isSignInSheetShowing = true
                     }) {
-                        Text("Upgrade")
+                        Text("Sign Up / Sign In")
                             .font(.system(size: 14))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
-                            .background(Color.orange.opacity(0.8))
+                            .background(Color.blue)
                             .cornerRadius(20)
                     }
+                }
+                .frame(maxWidth: .infinity)
+            } else {
+                if !subscriptionController.isPro {
+                    VStack(alignment: .center) {
+                        Image(systemName: "crown.fill")
+                            .font(.system(size: 30))
+                            .foregroundColor(.gray.opacity(0.3))
+                            .padding(.top, 40)
+                        
+                        Text("Pro users have access to course recommendations")
+                            .font(.system(size: 13, design: .serif))
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+
+                        Button(action: {
+                            isUpgradeAccountSheetShowing = true
+                        }) {
+                            Text("Upgrade")
+                                .font(.system(size: 14))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(Color.orange.opacity(0.8))
+                                .cornerRadius(20)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
                 } else {
                     
                     ForEach(self.localCourseRecommendations, id: \.id) { course in

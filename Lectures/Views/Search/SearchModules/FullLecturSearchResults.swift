@@ -11,6 +11,7 @@ struct FullLecturSearchResults: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var searchController: SearchController
     
+    
     var body: some View {
         VStack {
             ScrollView(showsIndicators: false) {
@@ -28,7 +29,7 @@ struct FullLecturSearchResults: View {
                 
                 ForEach(searchController.searchResultLectures, id: \.id) { lecture in
                     HStack {
-                        LectureSearchResult(lecture: lecture)
+                        LectureSearchResult(lecture: lecture, displayOnFullResultsPage: true)
                         Spacer()
                     }
                 }

@@ -10,63 +10,83 @@ import SwiftUI
 struct CourseByChannelModule: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     var courseId: String
+    
     var body: some View {
-        if let course = courseController.cachedCourses[courseId], let courseTitle = course.courseTitle, let numLecturesInCourse = course.numLecturesInCourse, let watchTimeInHrs = course.watchTimeInHrs, let aggregateViews = course.aggregateViews {
-            // Other Lectures in the course
+        if let course = courseController.cachedCourses[courseId], 
+           let courseTitle = course.courseTitle, 
+           let numLecturesInCourse = course.numLecturesInCourse, 
+           let watchTimeInHrs = course.watchTimeInHrs, 
+           let aggregateViews = course.aggregateViews {
+            
             HStack {
                 // Image
                 if let image = courseController.courseThumbnails[courseId] {
                     Image(uiImage: image)
                         .resizable()
-                        .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
-                        .frame(width: 120, height: 67.5)
-                        .clipped() // Clip the image to the frame
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: thumbnailWidth, height: thumbnailHeight)
+                        .clipped()
                 } else {
-                    SkeletonLoader(width: 120, height: 67.5)
+                    SkeletonLoader(width: thumbnailWidth, height: thumbnailHeight)
                 }
                 
                 // Lecture Name
                 Rectangle()
                     .foregroundColor(Color.clear)
-                    .frame(height: 40)
+                    .frame(height: textContainerHeight)
                     .overlay {
-                        VStack {
-                            HStack {
-                                Text(courseTitle)
-                                    .font(.system(size: 14, design: .serif))
-                                    .lineLimit(1)
-                                    .truncationMode(.tail)
-                                
-                                Spacer()
-                            }
+                        VStack(alignment: .leading) {
+                            Text(courseTitle)
+                                .font(.system(size: titleFontSize, design: .serif))
+                                .lineLimit(3)
+                                .truncationMode(.tail)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             
                             HStack {
-                                // num Lectures
                                 Text("\(numLecturesInCourse) Lectures")
-                                    .font(.system(size: 12))
+                                    .font(.system(size: subtitleFontSize))
                                     .opacity(0.8)
                                 
-                                
-                                // Watch time
                                 Text("\(watchTimeInHrs)Hrs")
-                                    .font(.system(size: 12))
+                                    .font(.system(size: subtitleFontSize))
                                     .opacity(0.8)
                                 
-                                // Views
                                 Text("\(formatIntViewsToString(numViews: aggregateViews)) Views")
-                                    .font(.system(size: 12))
+                                    .font(.system(size: subtitleFontSize))
                                     .opacity(0.8)
                                 
                                 Spacer()
                             }
-                            
                         }
                     }
             }
             .cornerRadius(5)
         }
+    }
+    
+    // Computed properties for responsive sizing
+    private var thumbnailWidth: CGFloat {
+        horizontalSizeClass == .regular ? 160 : 120
+    }
+    
+    private var thumbnailHeight: CGFloat {
+        thumbnailWidth * 0.5625 // Maintains 16:9 aspect ratio
+    }
+    
+    private var textContainerHeight: CGFloat {
+        horizontalSizeClass == .regular ? 50 : 40
+    }
+    
+    private var titleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 16 : 13
+    }
+    
+    private var subtitleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 13 : 11
     }
     
     func formatIntViewsToString(numViews: Int) -> String {

@@ -16,7 +16,7 @@ struct HomeMainView: View {
     
     @State private var selectedTab = 0
     
-    let tabs = ["For You", "Computer Science", "Business", "Science", "Humanities", "Engineering", "Healthcare"]
+    let tabs = ["For You", "Computer Science", "Business", "Engineering", "Humanities", "Math", "Health"]
     
     var body: some View {
         NavigationView {
@@ -57,17 +57,17 @@ struct HomeMainView: View {
                     case 0:
                         Trending()
                     case 1:
-                        ComputerScience()
+                        TabMainView(tabName: tabs[selectedTab])
                     case 2:
-                        Trending()
+                        TabMainView(tabName: tabs[selectedTab])
                     case 3:
-                        ComputerScience()
+                        TabMainView(tabName: tabs[selectedTab])
                     case 4:
-                        Trending()
+                        TabMainView(tabName: tabs[selectedTab])
                     case 5:
-                        ComputerScience()
+                        TabMainView(tabName: tabs[selectedTab])
                     case 6:
-                        Trending()
+                        TabMainView(tabName: tabs[selectedTab])
                     default:
                         Text("Couldn't load tab")
                     }

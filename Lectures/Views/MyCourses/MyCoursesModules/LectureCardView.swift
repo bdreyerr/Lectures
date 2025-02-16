@@ -9,22 +9,26 @@ import SwiftUI
 
 struct LectureCardView: View {
     @EnvironmentObject var courseController: CourseController
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     var lecture: Lecture
+    
     var body: some View {
         Group {
-            if let id = lecture.id, let lectureTitle = lecture.lectureTitle, let channelId = lecture.channelId {
+            if let id = lecture.id, 
+               let lectureTitle = lecture.lectureTitle, 
+               let channelId = lecture.channelId, 
+               let courseId = lecture.courseId {
                 ZStack(alignment: .bottomLeading) {
-                    if let image = courseController.lectureThumbnails[id] {
+                    if let image = courseController.courseThumbnails[courseId] {
                         Image(uiImage: image)
                             .resizable()
-                            .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
-                            .frame(width: UIScreen.main.bounds.width * 0.6, height: 130) // Set the desired frame size
-                            .clipped() // Clip the image to the frame
-                            .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply rounded corners
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: cardWidth, height: cardHeight)
+                            .clipped()
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     } else {
-                        // default image when not loaded
-                        SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 130)
+                        SkeletonLoader(width: cardWidth, height: cardHeight)
                     }
                     
                     // Add semi-transparent gradient overlay
@@ -33,74 +37,105 @@ struct LectureCardView: View {
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity) // Make gradient fill entire space
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     // Play button overlay in center
-                    Image(systemName: "play.circle.fill") // SF Symbol for play button
+                    Image(systemName: "play.circle.fill")
                         .resizable()
-                        .frame(width: 50, height: 50)
+                        .frame(width: playButtonSize, height: playButtonSize)
                         .foregroundColor(.white)
                         .shadow(radius: 5)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity) // Make frame fill available space
-                        .allowsHitTesting(false) // Prevent play button from blocking other interactions
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .allowsHitTesting(false)
                     
                     VStack(spacing: 0) {
                         HStack {
                             VStack(alignment: .leading) {
                                 HStack {
                                     Text(lectureTitle)
-                                        .font(.system(size: 14, design: .serif))
+                                        .font(.system(size: titleFontSize, design: .serif))
                                         .fontWeight(.bold)
                                         .foregroundColor(.white)
-                                        .multilineTextAlignment(.leading) // Ensure text aligns to the left
-                                        .lineLimit(2) // Limit to two lines if necessary
+                                        .multilineTextAlignment(.leading)
+                                        .lineLimit(2)
                                         .truncationMode(.tail)
                                     Spacer()
+                                }
+                                
+                                // Lecture Number in course
+                                HStack {
+                                    if let lectureNumberInCourse = lecture.lectureNumberInCourse,
+                                       let courseTitle = lecture.courseTitle {
+                                        Text("Lecture #\(lectureNumberInCourse) in \(courseTitle)")
+                                            .lineLimit(1)
+                                            .truncationMode(.tail)
+                                            .font(.system(size: subtitleFontSize, design: .serif))
+                                            .foregroundColor(.white.opacity(0.8))
+                                    }
                                 }
                                 
                                 HStack {
                                     if let channel = courseController.cachedChannels[channelId] {
                                         if let title = channel.title {
                                             Text(title)
-                                                .lineLimit(1) // Limit to a single line
-                                                .truncationMode(.tail) // Use ellipsis for truncation
-                                                .font(.system(size: 11, design: .serif))
+                                                .lineLimit(1)
+                                                .truncationMode(.tail)
+                                                .font(.system(size: subtitleFontSize, design: .serif))
                                                 .foregroundColor(.white.opacity(0.8))
                                         }
                                     }
                                     
-                                    // TODO: add duration
                                     if let lectureDuration = lecture.lectureDuration {
                                         Text("\(lectureDuration)")
-                                            .lineLimit(1) // Limit to a single line
-                                            .truncationMode(.tail) // Use ellipsis for truncation
-                                            .font(.system(size: 11, design: .serif))
+                                            .lineLimit(1)
+                                            .truncationMode(.tail)
+                                            .font(.system(size: subtitleFontSize, design: .serif))
                                             .foregroundColor(.white.opacity(0.8))
                                     }
                                 }
                             }
                             Spacer()
                         }
-                        .padding()
+                        .padding(contentPadding)
                     }
                     .padding(.bottom, 1)
-                    
                 }
-                .frame(width: UIScreen.main.bounds.width * 0.6, height: 130)
+                .frame(width: cardWidth, height: cardHeight)
             }
         }
         .onAppear {
             // We need to fetch the relevant course in case the user wants to tap this lecture and watch it
             if let courseId = lecture.courseId {
                 courseController.retrieveCourse(courseId: courseId)
-            }
-            
-            // also get lecture thumbnail if not already there
-            if let id = lecture.id {
-                courseController.getLectureThumnbnail(lectureId: id)
+                courseController.getCourseThumbnail(courseId: courseId)
             }
         }
+    }
+    
+    // Computed properties for responsive sizing
+    private var cardWidth: CGFloat {
+        horizontalSizeClass == .regular ? 320 : 240
+    }
+    
+    private var cardHeight: CGFloat {
+        horizontalSizeClass == .regular ? 180 : 130
+    }
+    
+    private var titleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 18 : 14
+    }
+    
+    private var subtitleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 14 : 11
+    }
+    
+    private var contentPadding: CGFloat {
+        horizontalSizeClass == .regular ? 20 : 16
+    }
+    
+    private var playButtonSize: CGFloat {
+        horizontalSizeClass == .regular ? 65 : 50
     }
 }
 

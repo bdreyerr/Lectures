@@ -123,6 +123,7 @@ class CourseController : ObservableObject {
                 
                 // don't fetch the thumbnail, we only need to see it if user wants to access a specific course or lecture
             } catch {
+                print("channel decoding error: \(channelId)")
                 print("Error decoding channel: \(error)")
             }
         }
@@ -234,6 +235,11 @@ class CourseController : ObservableObject {
                     if let course = try? document.data(as: Course.self) {
                         if let courseId = course.id {
                             self.getCourseThumbnail(courseId: courseId)
+                        }
+                        
+                        // fetch channel so it can show up in the related course card
+                        if let channelId = course.channelId {
+                            self.retrieveChannel(channelId: channelId)
                         }
                         return course
                     }

@@ -51,8 +51,17 @@ struct LecturesApp: App {
     // App Storage: isSignedIn tracks auth status throughout app
     @AppStorage("isSignedIn") private var isSignedIn = false
     
+//    @AppStorage("numActionsInLastMinute") private var numActionsInLastMinute = 0
+//    @AppStorage("firstActionDate") private var firstActionDate = Date()
+    
     // App Storage: isSignedIn tracks auth status throughout app
     @AppStorage("hasUserSeenPaywall") private var hasUserSeenPaywall = false
+
+    // App Storage: Rate limiting variables
+    @AppStorage("numActionsInLastMinute") private var numActionsInLastMinute: Int = 0
+    @AppStorage("firstActionDate") private var firstActionDateTimeInterval: Double?
+    @AppStorage("numberBreach") private var numberBreach: Int = 0
+    @AppStorage("lastBreachTimeInterval") private var lastBreachTimeInterval: Double?
     
     var body: some Scene {
         WindowGroup {

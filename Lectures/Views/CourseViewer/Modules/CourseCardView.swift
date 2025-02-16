@@ -10,6 +10,7 @@ import SwiftUI
 struct CourseCardView: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     
     var course: Course
@@ -19,13 +20,12 @@ struct CourseCardView: View {
                 if let image = courseController.courseThumbnails[courseId] {
                     Image(uiImage: image)
                         .resizable()
-                        .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
-                        .frame(width: UIScreen.main.bounds.width * 0.6, height: 130) // Set the desired frame size
-                        .clipped() // Clip the image to the frame
-                        .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply rounded corners
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: cardWidth, height: cardHeight)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 } else {
-                    // default image when not loaded
-                    SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 130)
+                    SkeletonLoader(width: cardWidth, height: cardHeight)
                 }
                 
                 // Add semi-transparent gradient overlay
@@ -42,7 +42,7 @@ struct CourseCardView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             Text(courseTitle)
-                                .font(.system(size: 14, design: .serif))
+                                .font(.system(size: titleFontSize, design: .serif))
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
                             
@@ -52,15 +52,15 @@ struct CourseCardView: View {
                                     Text(channelTitle)
                                         .lineLimit(1) // Limit to a single line
                                         .truncationMode(.tail) // Use ellipsis for truncation
-                                        .font(.system(size: 11, design: .serif))
+                                        .font(.system(size: subtitleFontSize, design: .serif))
                                         .foregroundColor(.white.opacity(0.8))
                                 }
                                 
                                 Text("\(numLecturesInCourse) Lectures")
-                                    .font(.system(size: 11, design: .serif))
+                                    .font(.system(size: subtitleFontSize, design: .serif))
                                     .foregroundColor(.white.opacity(0.8))
                                 Text("\(watchTimeInHrs)hrs")
-                                    .font(.system(size: 11, design: .serif))
+                                    .font(.system(size: subtitleFontSize, design: .serif))
                                     .foregroundColor(.white.opacity(0.8))
                             }
                         }
@@ -71,8 +71,25 @@ struct CourseCardView: View {
                 .padding(.bottom, 1)
                 
             }
-            .frame(width: UIScreen.main.bounds.width * 0.6, height: 130)
+            .frame(width: cardWidth, height: cardHeight)
         }
+    }
+    
+    // Computed properties for responsive sizing
+    private var cardWidth: CGFloat {
+        horizontalSizeClass == .regular ? 320 : 240 // Wider on iPad
+    }
+    
+    private var cardHeight: CGFloat {
+        horizontalSizeClass == .regular ? 180 : 130 // Taller on iPad
+    }
+    
+    private var titleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 18 : 14
+    }
+    
+    private var subtitleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 14 : 11
     }
 }
 

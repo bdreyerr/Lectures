@@ -10,14 +10,16 @@ import SwiftUI
 struct WatchedCourseCard: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var myCourseController: MyCourseController
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     var course: Course
     var watchHistory: WatchHistory
     
     private var watchProgress: CGFloat {
-        if let watchHistoryLectureNumberInCourse = watchHistory.lectureNumberInCourse, let courseNumLecturesInCourse = course.numLecturesInCourse {
+        if let watchHistoryLectureNumberInCourse = watchHistory.lectureNumberInCourse, 
+           let courseNumLecturesInCourse = course.numLecturesInCourse {
             let progress = CGFloat(watchHistoryLectureNumberInCourse) / CGFloat(courseNumLecturesInCourse)
-            return min(max(progress, 0), 1) // Ensure progress is between 0 and 1
+            return min(max(progress, 0), 1)
         } else {
             return 0
         }
@@ -29,89 +31,111 @@ struct WatchedCourseCard: View {
     
     var body: some View {
         Group {
-            if let courseId = course.id, let courseTitle = course.courseTitle, let channelId = course.channelId, let numLecturesInCourse = course.numLecturesInCourse, let watchTimeInHrs = course.watchTimeInHrs {
+            if let courseId = course.id, 
+               let courseTitle = course.courseTitle, 
+               let channelId = course.channelId, 
+               let numLecturesInCourse = course.numLecturesInCourse, 
+               let watchTimeInHrs = course.watchTimeInHrs {
                 
                 ZStack(alignment: .bottomLeading) {
                     if let image = courseController.courseThumbnails[courseId] {
                         Image(uiImage: image)
                             .resizable()
-                            .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
-                            .frame(width: UIScreen.main.bounds.width * 0.6, height: 130) // Set the desired frame size
-                            .clipped() // Clip the image to the frame
-                            .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply rounded corners
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: cardWidth, height: cardHeight)
+                            .clipped()
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     } else {
-                        // Default image when not loaded
-                        SkeletonLoader(width: UIScreen.main.bounds.width * 0.6, height: 130)
+                        SkeletonLoader(width: cardWidth, height: cardHeight)
                     }
                     
-                    // Add semi-transparent gradient overlay
                     LinearGradient(
                         gradient: Gradient(colors: [.clear, .black.opacity(0.85)]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(width: UIScreen.main.bounds.width * 0.6, height: 130) // Match the frame size of the image
-                    .clipped() // Clip the image to the frame
-                    .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply rounded corners to match the image
-                    
+                    .frame(width: cardWidth, height: cardHeight)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     VStack(spacing: 0) {
                         HStack {
                             VStack(alignment: .leading) {
                                 HStack {
                                     Text(courseTitle)
-                                        .font(.system(size: 14, design: .serif))
+                                        .font(.system(size: titleFontSize, design: .serif))
                                         .fontWeight(.bold)
                                         .foregroundColor(.white)
-                                        .multilineTextAlignment(.leading) // Ensure text aligns to the left
-                                        .lineLimit(4) // Limit to two lines if necessary
+                                        .multilineTextAlignment(.leading)
+                                        .lineLimit(4)
                                         .truncationMode(.tail)
                                     Spacer()
                                 }
                                 
                                 HStack {
-                                    // TODO: Add back university name
-                                    if let channel = courseController.cachedChannels[channelId], let channelTitle = channel.title  {
+                                    if let channel = courseController.cachedChannels[channelId], 
+                                       let channelTitle = channel.title {
                                         Text(channelTitle)
-                                            .lineLimit(1) // Limit to a single line
-                                            .truncationMode(.tail) // Use ellipsis for truncation
-                                            .font(.system(size: 11, design: .serif))
+                                            .lineLimit(1)
+                                            .truncationMode(.tail)
+                                            .font(.system(size: subtitleFontSize, design: .serif))
                                             .foregroundColor(.white.opacity(0.8))
                                     }
                                     
                                     Text("\(numLecturesInCourse) Lectures")
-                                        .font(.system(size: 11, design: .serif))
+                                        .font(.system(size: subtitleFontSize, design: .serif))
                                         .foregroundColor(.white.opacity(0.8))
                                     Text("\(watchTimeInHrs)hrs")
-                                        .font(.system(size: 11, design: .serif))
+                                        .font(.system(size: subtitleFontSize, design: .serif))
                                         .foregroundColor(.white.opacity(0.8))
                                 }
                             }
                             Spacer()
                         }
-                        .padding()
+                        .padding(contentPadding)
                     }
                     .padding(.bottom, 1)
                     
-                    // Add progress bar at the bottom
                     GeometryReader { geometry in
                         Rectangle()
                             .fill(progressColor)
-                            .frame(width: geometry.size.width * watchProgress, height: 3)
-                            .position(x: (geometry.size.width * watchProgress) / 2, y: geometry.size.height - 1.5)
+                            .frame(width: geometry.size.width * watchProgress, height: progressBarHeight)
+                            .position(x: (geometry.size.width * watchProgress) / 2, y: geometry.size.height - progressBarHeight/2)
                     }
                     .cornerRadius(10)
-                    
                 }
-                .frame(width: UIScreen.main.bounds.width * 0.6, height: 130)
+                .frame(width: cardWidth, height: cardHeight)
                 .shadow(radius: 2.5)
             }
         }
         .onAppear {
-            // we should fetch the last watched lecture here, in case the user clicks on this watched course card so we can autoplay the lecture in question
             if let lectureId = watchHistory.lectureId {
                 courseController.retrieveLecture(lectureId: lectureId)
             }
         }
+    }
+    
+    // Computed properties for responsive sizing
+    private var cardWidth: CGFloat {
+        horizontalSizeClass == .regular ? 320 : 240
+    }
+    
+    private var cardHeight: CGFloat {
+        horizontalSizeClass == .regular ? 180 : 130
+    }
+    
+    private var titleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 18 : 14
+    }
+    
+    private var subtitleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 14 : 11
+    }
+    
+    private var contentPadding: CGFloat {
+        horizontalSizeClass == .regular ? 20 : 16
+    }
+    
+    private var progressBarHeight: CGFloat {
+        horizontalSizeClass == .regular ? 4 : 3
     }
 }

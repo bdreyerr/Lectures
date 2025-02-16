@@ -31,14 +31,18 @@ struct FullFollowedChannels: View {
             
             ScrollView() {
                 ForEach(followedChannelIds, id: \.self) { channelId in
-                    if let channel = courseController.cachedChannels[channelId] {
-                        NavigationLink(destination: ChannelView(channel: channel)) {
-                            ChannelCard(channel: channel)
+                    HStack {
+                        if let channel = courseController.cachedChannels[channelId] {
+                            NavigationLink(destination: ChannelView(channel: channel)) {
+                                ChannelCard(channel: channel)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .simultaneousGesture(TapGesture().onEnded {
+                                courseController.focusChannel(channel)
+                            })
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .simultaneousGesture(TapGesture().onEnded {
-                            courseController.focusChannel(channel)
-                        })
+                        
+                        Spacer()
                     }
                 }
             }

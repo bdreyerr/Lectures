@@ -1,13 +1,13 @@
 //
-//  ComputerScience.swift
+//  TabMainView.swift
 //  Lectures
 //
-//  Created by Ben Dreyer on 1/12/25.
+//  Created by Ben Dreyer on 2/15/25.
 //
 
 import SwiftUI
 
-struct ComputerScience: View {
+struct TabMainView: View {
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var homeController: HomeController
     
@@ -38,5 +38,5 @@ struct ComputerScience: View {
 }
 
 //#Preview {
-//    ComputerScience()
+//    TabMainView()
 //}

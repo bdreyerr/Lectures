@@ -18,7 +18,7 @@ struct CuratedCourses: View {
                     .font(.system(size: 10))
                     .opacity(0.8)
                 
-                Text("Recommended Courses")
+                Text("Courses For You")
                     .font(.system(size: 10))
                     .opacity(0.8)
                 

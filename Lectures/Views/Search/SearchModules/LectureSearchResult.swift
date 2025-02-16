@@ -13,14 +13,16 @@ struct LectureSearchResult: View {
     var lecture: Lecture
     @State var course: Course?
     
+    var displayOnFullResultsPage: Bool
+    
     var body: some View {
         Group {
-            if let id = lecture.id, let courseId = lecture.courseId, let lectureTitle = lecture.lectureTitle, let lectureNumberInCourse = lecture.lectureNumberInCourse, let viewsOnYouTube = lecture.viewsOnYouTube {
+            if let id = lecture.id, let courseId = lecture.courseId, let lectureTitle = lecture.lectureTitle, let lectureNumberInCourse = lecture.lectureNumberInCourse, let viewsOnYouTube = lecture.viewsOnYouTube, let courseTitle = lecture.courseTitle {
                 if let course = courseController.cachedCourses[courseId] {
                     NavigationLink(destination: NewCourse(course: course, isLecturePlaying: true, playingLecture: lecture, lastWatchedLectureId: id, lastWatchedLectureNumber: lectureNumberInCourse)) {
                         HStack {
                             ZStack {
-                                if let image = courseController.lectureThumbnails[id] {
+                                if let image = courseController.courseThumbnails[courseId] {
                                     Image(uiImage: image)
                                         .resizable()
                                         .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
@@ -42,9 +44,9 @@ struct LectureSearchResult: View {
                             VStack {
                                 HStack {
                                     Text(lectureTitle)
-                                        .font(.system(size: 16, design: .serif))
+                                        .font(.system(size: 14, design: .serif))
                                         .bold()
-                                        .lineLimit(1)
+                                        .lineLimit(2)
                                         .truncationMode(.tail)
                                     
                                     Spacer()
@@ -52,7 +54,7 @@ struct LectureSearchResult: View {
                                 
                                 HStack {
                                     // TODO: add a field course name on the lecture object
-                                    Text("Lecture # \(lectureNumberInCourse) in The Emotion Machine")
+                                    Text("# \(lectureNumberInCourse) in \(courseTitle)")
                                         .font(.system(size: 12))
                                         .opacity(0.6)
                                         .lineLimit(1)
@@ -73,7 +75,7 @@ struct LectureSearchResult: View {
                             }
                         }
                     }
-                    .frame(maxWidth: 280)
+                    .frame(maxWidth: displayOnFullResultsPage ? 500:  280)
                     .buttonStyle(PlainButtonStyle())
                     .simultaneousGesture(TapGesture().onEnded { _ in
                         //                    courseController.focusLecture(lecture)

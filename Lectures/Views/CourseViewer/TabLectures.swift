@@ -24,12 +24,6 @@ struct TabLectures: View {
     // [LectureId]
     @Binding var currentLoadedLectures: [String]
     
-    // Add this helper struct to store lecture ID and its number
-    private struct LectureOrderInfo {
-        let id: String
-        let number: Int
-    }
-    
     @Binding var hasAppeared: Bool
     
     func playLecture(lecture: Lecture) {
@@ -190,7 +184,7 @@ struct TabLectures: View {
                             
                         }
                         
-                        ForEach(lectureIds.sorted(), id: \.self) { lectureId in
+                        ForEach(lectureIds, id: \.self) { lectureId in
                             if let lecture = courseController.cachedLectures[lectureId] {
                                 if let playingLecture = playingLecture, let playingLectureId = playingLecture.id  {
                                     Button(action: {

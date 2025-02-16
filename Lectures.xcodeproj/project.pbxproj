@@ -85,6 +85,10 @@
 		1A684EA72D5C62E200FBDE32 /* FullFollowedChannels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A684EA62D5C62E200FBDE32 /* FullFollowedChannels.swift */; };
 		1A684EA92D5C6AE000FBDE32 /* FullSavedCourses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A684EA82D5C6AE000FBDE32 /* FullSavedCourses.swift */; };
 		1A684EAB2D5DB8A200FBDE32 /* CroppedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A684EAA2D5DB8A200FBDE32 /* CroppedImageView.swift */; };
+		1A6BD7F92D612BE500FA85C4 /* CoursesForYouList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6BD7F82D612BE500FA85C4 /* CoursesForYouList.swift */; };
+		1A6BD7FB2D612BED00FA85C4 /* ChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6BD7FA2D612BED00FA85C4 /* ChannelList.swift */; };
+		1A6BD7FD2D612BFB00FA85C4 /* FamousCoursesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6BD7FC2D612BFB00FA85C4 /* FamousCoursesList.swift */; };
+		1A6BD8012D6138D300FA85C4 /* TabMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6BD8002D6138D300FA85C4 /* TabMainView.swift */; };
 		1A7C33A02D3898D40009647E /* WatchedCourseCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C339F2D3898D40009647E /* WatchedCourseCard.swift */; };
 		1A7C33A22D38C3EA0009647E /* CourseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C33A12D38C3EA0009647E /* CourseController.swift */; };
 		1A7E9A792D149E4C00CBEF99 /* CourseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A782D149E4C00CBEF99 /* CourseView.swift */; };
@@ -209,6 +213,10 @@
 		1A684EA62D5C62E200FBDE32 /* FullFollowedChannels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullFollowedChannels.swift; sourceTree = "<group>"; };
 		1A684EA82D5C6AE000FBDE32 /* FullSavedCourses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullSavedCourses.swift; sourceTree = "<group>"; };
 		1A684EAA2D5DB8A200FBDE32 /* CroppedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CroppedImageView.swift; sourceTree = "<group>"; };
+		1A6BD7F82D612BE500FA85C4 /* CoursesForYouList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesForYouList.swift; sourceTree = "<group>"; };
+		1A6BD7FA2D612BED00FA85C4 /* ChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList.swift; sourceTree = "<group>"; };
+		1A6BD7FC2D612BFB00FA85C4 /* FamousCoursesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamousCoursesList.swift; sourceTree = "<group>"; };
+		1A6BD8002D6138D300FA85C4 /* TabMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabMainView.swift; sourceTree = "<group>"; };
 		1A7C339F2D3898D40009647E /* WatchedCourseCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchedCourseCard.swift; sourceTree = "<group>"; };
 		1A7C33A12D38C3EA0009647E /* CourseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseController.swift; sourceTree = "<group>"; };
 		1A7E9A782D149E4C00CBEF99 /* CourseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseView.swift; sourceTree = "<group>"; };
@@ -301,8 +309,10 @@
 		1A21B9922D345AD100A492D0 /* HomeTabs */ = {
 			isa = PBXGroup;
 			children = (
+				1A6BD7F72D612BD600FA85C4 /* HomeTabModules */,
 				1A21B9952D345EAA00A492D0 /* Trending.swift */,
 				1A21B9972D345FA200A492D0 /* ComputerScience.swift */,
+				1A6BD8002D6138D300FA85C4 /* TabMainView.swift */,
 			);
 			path = HomeTabs;
 			sourceTree = "<group>";
@@ -407,6 +417,16 @@
 				1A57F9472D5FFDBD0086763C /* FetchButton.swift */,
 			);
 			path = Modules;
+			sourceTree = "<group>";
+		};
+		1A6BD7F72D612BD600FA85C4 /* HomeTabModules */ = {
+			isa = PBXGroup;
+			children = (
+				1A6BD7F82D612BE500FA85C4 /* CoursesForYouList.swift */,
+				1A6BD7FA2D612BED00FA85C4 /* ChannelList.swift */,
+				1A6BD7FC2D612BFB00FA85C4 /* FamousCoursesList.swift */,
+			);
+			path = HomeTabModules;
 			sourceTree = "<group>";
 		};
 		1A7E9A772D149DF400CBEF99 /* LectureViews */ = {
@@ -765,6 +785,7 @@
 				1AAE23A82D3DA6D100E5DB9A /* CourseSearchResult.swift in Sources */,
 				1A7E9AB42D237A3600CBEF99 /* User.swift in Sources */,
 				1A7E9ABB2D24923600CBEF99 /* SignInWithGoogle.swift in Sources */,
+				1A6BD8012D6138D300FA85C4 /* TabMainView.swift in Sources */,
 				1A577AE02D28873100BE27BF /* ResourceChip.swift in Sources */,
 				1A42A7542D3C88AB00C1CFB8 /* CourseHistory.swift in Sources */,
 				1A56856C2D2A287D00CD3427 /* TopBrandView.swift in Sources */,
@@ -785,6 +806,7 @@
 				1A684EA72D5C62E200FBDE32 /* FullFollowedChannels.swift in Sources */,
 				1A4F6F122D42F10400A11D11 /* RateLimitPopUp.swift in Sources */,
 				1A0EC3ED2D2523340098AD26 /* DeleteAccountButton.swift in Sources */,
+				1A6BD7FB2D612BED00FA85C4 /* ChannelList.swift in Sources */,
 				1AAE23A22D3CBEFF00E5DB9A /* SavedLectures.swift in Sources */,
 				1A684EA02D5578C500FBDE32 /* TabResources.swift in Sources */,
 				1A57F9442D5EBC310086763C /* FullSavedLectures.swift in Sources */,
@@ -817,6 +839,7 @@
 				1A684EA32D5584A700FBDE32 /* ChannelInfo.swift in Sources */,
 				1AE7B5B92D4C2C6B00A601EB /* ResourceNativeView.swift in Sources */,
 				1A684E962D556A7900FBDE32 /* NewCourse.swift in Sources */,
+				1A6BD7FD2D612BFB00FA85C4 /* FamousCoursesList.swift in Sources */,
 				1A4F6EFF2D3E269E00A11D11 /* CategoryFilterPill.swift in Sources */,
 				1A7C33A02D3898D40009647E /* WatchedCourseCard.swift in Sources */,
 				1A21B98F2D34534C00A492D0 /* Collection.swift in Sources */,
@@ -824,6 +847,7 @@
 				1A684E9C2D5571DF00FBDE32 /* TabLectures.swift in Sources */,
 				1A4F6F182D441C7200A11D11 /* SearchLoadingView.swift in Sources */,
 				1A577AE72D288EC400BE27BF /* ExamAnswerController.swift in Sources */,
+				1A6BD7F92D612BE500FA85C4 /* CoursesForYouList.swift in Sources */,
 				1A4F6F062D3F153F00A11D11 /* Appearance.swift in Sources */,
 				1AAE23AC2D3DD90800E5DB9A /* ChannelSearchResult.swift in Sources */,
 				1A5685842D2B96E800CD3427 /* ResourceView.swift in Sources */,
@@ -979,7 +1003,6 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -1020,7 +1043,6 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";

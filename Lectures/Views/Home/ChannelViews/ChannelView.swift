@@ -19,6 +19,8 @@ struct ChannelView: View {
     
     @EnvironmentObject var subscriptionController: SubscriptionController
     
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    
     var channel: Channel
     
     @State private var isChannelFollowed = false
@@ -27,42 +29,37 @@ struct ChannelView: View {
         Group {
             if let id = channel.id, let title = channel.title, let numCourses = channel.numCourses, let numLectures = channel.numLectures, let channelDescription = channel.channelDescription {
                 VStack {
-                    // Course Cover Image?
                     ScrollView(showsIndicators: false) {
                         VStack {
                             HStack {
-                                // channel image not a nav link
                                 if let channelImage = courseController.channelThumbnails[id] {
                                     Image(uiImage: channelImage)
                                         .resizable()
-                                        .frame(width: 40, height: 40)
+                                        .frame(width: imageSize, height: imageSize)
                                 } else {
                                     Image("stanford")
                                         .resizable()
-                                        .frame(width: 40, height: 40)
+                                        .frame(width: imageSize, height: imageSize)
                                 }
                                 
-                                // channel title
                                 VStack {
                                     Text(title)
-                                        .font(.system(size: 18, design: .serif))
+                                        .font(.system(size: titleFontSize, design: .serif))
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                     
-                                    // channel stats
                                     HStack {
                                         Text("\(numCourses) Courses")
-                                            .font(.system(size: 12))
+                                            .font(.system(size: subtitleFontSize))
                                             .opacity(0.6)
                                         
                                         Text("\(numLectures) Lectures")
-                                            .font(.system(size: 12))
+                                            .font(.system(size: subtitleFontSize))
                                             .opacity(0.6)
                                         
                                         Spacer()
                                     }
                                 }
                                 
-                                // follow button
                                 Button(action: {
                                     // if the user isn't a PRO member, they can't follow accounts
                                     if subscriptionController.isPro {
@@ -84,13 +81,13 @@ struct ChannelView: View {
                                 }) {
                                     HStack(spacing: 8) {
                                         Image(systemName: isChannelFollowed ? "heart.fill" : "heart")
-                                            .font(.system(size: 14))
+                                            .font(.system(size: buttonIconSize))
                                         
                                         Text(isChannelFollowed ? "Following" : "Follow")
-                                            .font(.system(size: 14, weight: .semibold))
+                                            .font(.system(size: buttonTextSize, weight: .semibold))
                                     }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, buttonPadding)
+                                    .padding(.vertical, buttonPadding * 0.5)
                                     .foregroundColor(isChannelFollowed ? .white : .primary)
                                     .background(
                                         Capsule()
@@ -104,14 +101,12 @@ struct ChannelView: View {
                             }
                             .cornerRadius(5)
                             
-                            
-                            
-                            ExpandableText(text: channelDescription, maxLength: 150)
+                            ExpandableText(text: channelDescription, maxLength: descriptionMaxLength)
                             
                             CoursesByChannel(channel: channel)
                                 .padding(.top, 5)
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, horizontalPadding)
                     }
                 }
                 .sheet(isPresented: $isUpgradeAccountSheetShowing) {
@@ -139,6 +134,39 @@ struct ChannelView: View {
 //                Text("Back")
 //            }
 //        })
+    }
+    
+    // Computed properties for responsive sizing
+    private var imageSize: CGFloat {
+        horizontalSizeClass == .regular ? 60 : 40
+    }
+    
+    private var titleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 22 : 18
+    }
+    
+    private var subtitleFontSize: CGFloat {
+        horizontalSizeClass == .regular ? 14 : 12
+    }
+    
+    private var buttonIconSize: CGFloat {
+        horizontalSizeClass == .regular ? 16 : 14
+    }
+    
+    private var buttonTextSize: CGFloat {
+        horizontalSizeClass == .regular ? 16 : 14
+    }
+    
+    private var buttonPadding: CGFloat {
+        horizontalSizeClass == .regular ? 20 : 16
+    }
+    
+    private var horizontalPadding: CGFloat {
+        horizontalSizeClass == .regular ? 40 : 20
+    }
+    
+    private var descriptionMaxLength: Int {
+        horizontalSizeClass == .regular ? 250 : 150
     }
 }
 

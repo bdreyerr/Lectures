@@ -10,30 +10,45 @@ import SwiftUI
 
 
 class RateLimiter : ObservableObject {
-    @Published var numActionsInLastMinute: Int = 0
-    @Published var firstActionDate: Date?
+    @AppStorage("numActionsInLastMinute") private var numActionsInLastMinute: Int = 0
+    @AppStorage("firstActionDateTimeInterval") private var firstActionDateTimeInterval: Double? {
+        didSet {
+            firstActionDate = firstActionDateTimeInterval.map { Date(timeIntervalSince1970: $0) }
+        }
+    }
+    private var firstActionDate: Date?
     
-    // Count the number of times the user breaches the rate limit
-    @Published var numberBreach: Int = 0
-    
+    @AppStorage("numberBreach") private var numberBreach: Int = 0
+    @AppStorage("lastBreachTimeInterval") private var lastBreachTimeInterval: Double?
     @Published var shouldRateLimitPopupShow: Bool = false
     
     
+    init() {
+        self.firstActionDate = firstActionDateTimeInterval.map { Date(timeIntervalSince1970: $0) }
+        
+        if let lastBreachTime = lastBreachTimeInterval {
+            let lastBreachDate = Date(timeIntervalSince1970: lastBreachTime)
+            let timeoutDuration: TimeInterval
+            
+            switch numberBreach {
+            case 0, 1: timeoutDuration = 60
+            case 2: timeoutDuration = 300
+            case 3: timeoutDuration = 600
+            default: timeoutDuration = 300
+            }
+            
+            if Date() < lastBreachDate.addingTimeInterval(timeoutDuration) {
+                shouldRateLimitPopupShow = true
+            }
+        }
+    }
+    
     // Rate limiting - limits firestore writes and blocks spamming in a singular user session. app is still prone to attacks in multiple app sessions (closing and re-opening)
-    // Limits users to 5 writes in one minute
+    // Limits users to 10 writes in one minute
     func processWrite() -> String? {
-        // Cases:
-        // 1. This is the first action - first action date doesn't exist
-        // Set first action to Date()
-        // set num actions = 1
-        // 2. First action exists && currentAction is less than one minute from first action
-        // Allow action if numActions < 5
-        // set num actions += 1
-        // Block action if numActions >= 5
-        // 3. First action exists - current action is greater than one minute from first action
-        // allow action
-        // set first action date to Date()
-        // set num action = 1
+        if shouldRateLimitPopupShow {
+            return "Too many actions in one minute"
+        }
         
         if let firstActionDate = self.firstActionDate {
             
@@ -42,13 +57,14 @@ class RateLimiter : ObservableObject {
             
             if let oneMinFromFirst {
                 if Date() < oneMinFromFirst {
-                    if self.numActionsInLastMinute < 5 {
+                    if self.numActionsInLastMinute < 10 {
                         self.numActionsInLastMinute += 1
                     } else {
-                        numberBreach += 1
                         withAnimation(.spring()) {
                             self.shouldRateLimitPopupShow = true
                         }
+                        self.numberBreach += 1
+                        self.lastBreachTimeInterval = Date().timeIntervalSince1970
                         return "Too many actions in one minute"
                     }
                 } else {

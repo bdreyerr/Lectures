@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct RateLimitPopUp: View {
+    
+    @AppStorage("numberBreach") private var numberBreach: Int = 0
+    
     @EnvironmentObject var rateLimiter: RateLimiter
     
     
@@ -33,6 +36,9 @@ struct RateLimitPopUp: View {
     func stopTimer() {
         timer?.invalidate()
         timer = nil
+        if timeRemaining <= 0 {
+            numberBreach = 0  // Reset the breach counter when timeout completes
+        }
     }
     
     var body: some View {
@@ -80,7 +86,7 @@ struct RateLimitPopUp: View {
             .shadow(radius: 10)
         }
         .onAppear {
-            switch rateLimiter.numberBreach {
+            switch numberBreach {
             case 0: timeRemaining = 60
             case 1: timeRemaining = 60
             case 2: timeRemaining = 300

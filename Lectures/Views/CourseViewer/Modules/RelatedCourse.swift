@@ -23,10 +23,11 @@ struct RelatedCourse: View {
                     if let image = courseController.courseThumbnails[courseId] {
                         Image(uiImage: image)
                             .resizable()
-                            .frame(width: 60, height: 60)
-                            .aspectRatio(contentMode: .fill)
+                            .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
+                            .frame(width: 60, height: 40)
+                            .clipped() // Clip the image to the frame
                     } else {
-                        SkeletonLoader(width: 60, height: 60)
+                        SkeletonLoader(width: 60, height: 40)
                     }
                     
                     VStack {
@@ -70,9 +71,7 @@ struct RelatedCourse: View {
                             Spacer()
                         }
                     }
-                    
-                    
-                    
+                    .padding(.leading, 5)
                 }
                 .cornerRadius(5)
             }

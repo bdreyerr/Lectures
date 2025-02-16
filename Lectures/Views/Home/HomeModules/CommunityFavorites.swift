@@ -19,7 +19,7 @@ struct CommunityFavorites: View {
                     .font(.system(size: 10))
                     .opacity(0.8)
                 
-                Text("Community Favorites")
+                Text("Famous Lectures")
                     .font(.system(size: 10))
                     .opacity(0.8)
                 
