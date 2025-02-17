@@ -40,112 +40,132 @@ struct NewCourse: View {
     // Add this state variable at the top with other @State properties
     @State private var hasAppeared = false
     
+    // Add new state for tracking size
+    @State private var viewSize: CGSize = .zero
+    
+    var playerHeight: CGFloat {
+        // Calculate height based on 16:9 aspect ratio
+        // For iPad, limit the max width to maintain reasonable size
+        let maxWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 800 : UIScreen.main.bounds.width
+        let width = min(viewSize.width, maxWidth)
+        return width * 0.5625 // 9/16 = 0.5625 for standard video aspect ratio
+    }
+    
     var body: some View {
         if let courseId = course.id, let courseTitle = course.courseTitle, let channelId = course.channelId {
-            VStack {
-                // Course Image or Youtube Player
-                if isLecturePlaying {
-                    ZStack(alignment: .bottomLeading) {
-                        
-                        // make sure the youtube url is attatched to this lecture
-                        YouTubePlayerView(self.player) { state in
-                            // Overlay ViewBuilder closure to place an overlay View
-                            // for the current `YouTubePlayer.State`
-                            switch state {
-                            case .idle:
-                                ProgressView()
-                                //                                    SkeletonLoader(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
-                            case .ready:
-                                EmptyView()
-                            case .error(let error):
-                                Text(verbatim: "YouTube player couldn't be loaded: \(error)")
-                            }
-                        }
-                        .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.55)
-                        
-                    }
-                    .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.55)
-                    .shadow(radius: 2.5)
-                } else {
-                    if let image = courseController.courseThumbnails[courseId] {
-                        Button(action: {
-                            print("Course thumbnail tapped for course: \(courseTitle)")
-                            playFirstLecture()
-                        }) {
-                            ZStack {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill) // Fill the frame while maintaining aspect ratio
-                                    .frame(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.55)
-                                    .clipped() // Clip the image to the frame
-                                
-                                Image(systemName: "play.circle.fill")
-                                    .font(.system(size: 60))
-                                    .foregroundColor(.white)
-                                    .opacity(0.8)
-                            }
-                        }
-                        .buttonStyle(PlainButtonStyle()) // Removes default button styling
-                    }
-                }
-                
+            GeometryReader { geometry in
                 VStack {
-                    // Course Title & Like Button
-                    HStack {
-                        // Course title and University
-                        VStack {
-                            Text(courseTitle)
-                                .font(.system(size: 18, design: .serif))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        
-                        
-                        LikeCourseButton(courseId: courseId)
-                        
-                    }
-                    .padding(.top, 2)
-                    
-                    // Channel Info
-                    ChannelInfo(channelId: channelId)
-                    
-                    NewCourseTabSwitcher(course: course,
-                                         playingLecture: $playingLecture,
-                                         isLecturePlaying: $isLecturePlaying,
-                                         lastWatchedLectureNumber: lastWatchedLectureNumber,
-                                         player: player)
-                    .padding(.top, 5)
-                    
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 20)
-            }
-            .onAppear {
-                // Only execute this block on first appearance
-                guard !hasAppeared else { return }
-                hasAppeared = true
-                
-                // if last watched lecture was passed in, then autoplay
-                if let _ = lastWatchedLectureNumber, let lastWatchedLectureId = lastWatchedLectureId {
-                    print("The on appear getting called with a last watched lecture")
-                    playLastWatchedLecture(lectureId: lastWatchedLectureId)
-                } else {
-                    print("no last watched")
-                }
-                
-            }
-            .onChange(of: player.source) {
-                // when the video source changes, we know the user has watched a new video, and we should update course history accordingly.
-                print("video player source is changing and we're trying to update watch history")
-                
-                
-                if let user = userController.user, let userId = user.id {
-                    if subscriptionController.isPro {
-                        if let playingLecture = playingLecture {
-                            if course.id == nil {
-                                print("course id is nil for some readosn?")
+                    // Course Image or Youtube Player
+                    if isLecturePlaying {
+                        ZStack(alignment: .bottomLeading) {
+                            YouTubePlayerView(self.player) { state in
+                                // Overlay ViewBuilder closure to place an overlay View
+                                // for the current `YouTubePlayer.State`
+                                switch state {
+                                case .idle:
+                                    ProgressView()
+                                    //                                    SkeletonLoader(width: UIScreen.main.bounds.width * 1, height: UIScreen.main.bounds.width * 0.6)
+                                case .ready:
+                                    EmptyView()
+                                case .error(let error):
+                                    Text(verbatim: "YouTube player couldn't be loaded: \(error)")
+                                }
                             }
-                            myCourseController.updateWatchHistory(userId: userId, course: course, lecture: playingLecture)
+                            .frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 800 : nil)
+                            .frame(height: playerHeight)
+                            .frame(maxWidth: .infinity) // Center the player
+                        }
+                        .frame(height: playerHeight)
+                        .shadow(radius: 2.5)
+                    } else {
+                        if let image = courseController.courseThumbnails[courseId] {
+                            Button(action: {
+                                print("Course thumbnail tapped for course: \(courseTitle)")
+                                // make sure lectures are loaded first
+                                if let lectures = course.lectureIds {
+                                    playFirstLecture()
+                                }
+                            }) {
+                                ZStack {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 800 : nil)
+                                        .frame(height: playerHeight)
+                                        .frame(maxWidth: .infinity) // Center the image
+                                        .clipped()
+                                    
+                                    Image(systemName: "play.circle.fill")
+                                        .font(.system(size: 60))
+                                        .foregroundColor(.white)
+                                        .opacity(0.8)
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    
+                    VStack {
+                        // Course Title & Like Button
+                        HStack {
+                            // Course title and University
+                            VStack {
+                                Text(courseTitle)
+                                    .font(.system(size: 18, design: .serif))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            
+                            
+                            LikeCourseButton(courseId: courseId)
+                            
+                        }
+                        .padding(.top, 2)
+                        
+                        // Channel Info
+                        ChannelInfo(channelId: channelId)
+                        
+                        NewCourseTabSwitcher(course: course,
+                                             playingLecture: $playingLecture,
+                                             isLecturePlaying: $isLecturePlaying,
+                                             lastWatchedLectureNumber: lastWatchedLectureNumber,
+                                             player: player)
+                        .padding(.top, 5)
+                        
+                        
+                        Spacer()
+                    }
+                    .padding(.horizontal, 20)
+                }
+                .onAppear {
+                    viewSize = geometry.size
+                    // Only execute this block on first appearance
+                    guard !hasAppeared else { return }
+                    hasAppeared = true
+                    
+                    // if last watched lecture was passed in, then autoplay
+                    if let _ = lastWatchedLectureNumber, let lastWatchedLectureId = lastWatchedLectureId {
+                        print("The on appear getting called with a last watched lecture")
+                        playLastWatchedLecture(lectureId: lastWatchedLectureId)
+                    } else {
+                        print("no last watched")
+                    }
+                }
+                .onChange(of: geometry.size) { newSize in
+                    viewSize = newSize
+                }
+                .onChange(of: player.source) {
+                    // when the video source changes, we know the user has watched a new video, and we should update course history accordingly.
+                    print("video player source is changing and we're trying to update watch history")
+                    
+                    
+                    if let user = userController.user, let userId = user.id {
+                        if subscriptionController.isPro {
+                            if let playingLecture = playingLecture {
+                                if course.id == nil {
+                                    print("course id is nil for some readosn?")
+                                }
+                                myCourseController.updateWatchHistory(userId: userId, course: course, lecture: playingLecture)
+                            }
                         }
                     }
                 }

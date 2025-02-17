@@ -29,10 +29,10 @@ struct SettingsMainView: View {
                         .padding(.top, 10)
                         .padding(.bottom, 10)
                     
-                    SingleSettingsLink(iconName: "person", settingName: "Account Information", destination: AccountInformation(), disableIfSignedOut: true)
-                    SingleSettingsLink(iconName: "wallet.pass", settingName: "Subscription Type", destination: SubscriptionType(), disableIfSignedOut: true)
+                    SingleSettingsLink(iconName: "person", settingName: "Account Information", destination: AccountInformation(), disableIfSignedOut: false)
+                    SingleSettingsLink(iconName: "wallet.pass", settingName: "Subscription Type", destination: SubscriptionType(), disableIfSignedOut: false)
 //                    SingleSettingsLink(iconName: "dollarsign.square", settingName: "Purchase History", destination: PurchaseHistory())
-                    SingleSettingsLink(iconName: "moon", settingName: "Appearance", destination: Appearance(), disableIfSignedOut: true)
+                    SingleSettingsLink(iconName: "moon", settingName: "Appearance", destination: Appearance(), disableIfSignedOut: false)
 //                    SingleSettingsLink(iconName: "bell", settingName: "Notifications", destination: Notifications())
                     
                     Text("Support")
@@ -47,6 +47,11 @@ struct SettingsMainView: View {
                     SingleSettingsLink(iconName: "questionmark.app", settingName: "FAQ", destination: FAQ(), disableIfSignedOut: false)
                     SingleSettingsLink(iconName: "info.circle", settingName: "Licesne Information", destination: LicenseInformation(), disableIfSignedOut: false)
                     SingleSettingsLink(iconName: "hand.raised.circle", settingName: "Privacy Policy", destination: PrivacyPolicy(), disableIfSignedOut: false)
+                    ExternalSettingsLink(
+                        iconName: "filemenu.and.cursorarrow",
+                        settingName: "End User License Agreement (EULA)",
+                        url: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") ?? URL(fileURLWithPath: "")
+                    )
                     
                     
                     if !isSignedIn {
@@ -55,7 +60,7 @@ struct SettingsMainView: View {
                             .foregroundColor(.gray.opacity(0.3))
                             .padding(.top, 40)
                         
-                        Text("Logged in users can access settings")
+                        Text("You're not logged in")
                             .font(.system(size: 13, design: .serif))
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
@@ -130,6 +135,37 @@ struct SingleSettingsLink<Destination: View>: View {
                 .padding(.bottom, 5)
         }
         
+    }
+}
+
+struct ExternalSettingsLink: View {
+    @Environment(\.openURL) private var openURL
+    
+    var iconName: String
+    var settingName: String
+    var url: URL
+    
+    var body: some View {
+        VStack {
+            Button {
+                openURL(url)
+            } label: {
+                HStack {
+                    Image(systemName: iconName)
+                    
+                    Text(settingName)
+                        .font(.system(size: 14, design: .serif))
+                    
+                    Spacer()
+                    
+                    Image(systemName: "arrow.up.right.square")
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            Divider()
+                .padding(.bottom, 5)
+        }
     }
 }
 

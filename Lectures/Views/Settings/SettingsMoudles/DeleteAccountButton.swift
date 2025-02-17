@@ -58,7 +58,7 @@ struct DeleteAccountButton: View {
                 // delete auth
                 authController.deleteAuthUser()
                 
-                subscriptionController.logOutRevenueCat()
+//                subscriptionController.logOutRevenueCat()
             }
             
             Button("Cancel", role: .cancel) { }

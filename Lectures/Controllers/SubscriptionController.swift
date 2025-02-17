@@ -82,8 +82,11 @@ class SubscriptionController: NSObject, ObservableObject {
             isPro = result.customerInfo.entitlements["Lectura Pro"]?.isActive == true
             isLoading = false
             
-            // if purchase is successfull, change the account type on the user
-            changeUserMembershipTypeInFirestore(freeToPro: isPro)
+            // if purchase is successfull, change the account type on the user if the user is currently registered, if not don't do it
+            if let user = Auth.auth().currentUser {
+                changeUserMembershipTypeInFirestore(freeToPro: isPro)
+            }
+            
             return true
         } catch {
             self.error = error.localizedDescription
@@ -103,7 +106,9 @@ class SubscriptionController: NSObject, ObservableObject {
                 self.isPro = customerInfo.entitlements["Lectura Pro"]?.isActive == true
                 
                 // if purchase is successfull, change the account type on the user
-                changeUserMembershipTypeInFirestore(freeToPro: isPro)
+                if let user = Auth.auth().currentUser {
+                    changeUserMembershipTypeInFirestore(freeToPro: isPro)
+                }
             }
         } catch {
             await MainActor.run {
@@ -165,7 +170,9 @@ extension SubscriptionController: PurchasesDelegate {
             self.customerInfo = customerInfo
             self.isPro = customerInfo.entitlements["Lectura Pro"]?.isActive == true
             
-            changeUserMembershipTypeInFirestore(freeToPro: isPro)
+            if let user = Auth.auth().currentUser {
+                changeUserMembershipTypeInFirestore(freeToPro: isPro)
+            }
         }
     }
 }

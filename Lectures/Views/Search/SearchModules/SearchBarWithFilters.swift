@@ -99,9 +99,9 @@ struct SearchBarWithFilters: View {
                     .padding(.top, 10)
                     
                     HStack {
-                        if let accountType = accountType {
-                            FilterSearchResultType(accountType: accountType)
-                        }
+                        
+                        FilterSearchResultType(accountType: accountType)
+                        
                         
                         Spacer()
                     }

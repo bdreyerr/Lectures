@@ -36,7 +36,7 @@ struct ContentView: View {
     
     // Rate Limiter
     @StateObject var rateLimiter = RateLimiter()
-
+    
     // Created on December 15, 2024 - Main view controller managing tab bar navigation,
     // user authentication, course management, and various resource controllers
     
@@ -46,34 +46,29 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             
-            if hasUserSeenPaywall {
-                switch selectedTab {
-                case .home:
-                    HomeMainView()
-                case .trends:
-                    MyCoursesMainView()
-                case .search:
-                    SearchMainView()
-                case .settings:
-                    SettingsMainView()
+            
+            switch selectedTab {
+            case .home:
+                HomeMainView()
+            case .trends:
+                MyCoursesMainView()
+            case .search:
+                SearchMainView()
+            case .settings:
+                SettingsMainView()
+            }
+            
+            // show rate limit popup if applicable
+            if rateLimiter.shouldRateLimitPopupShow {
+                RateLimitPopUp()
+            }
+            
+            VStack {
+                Spacer()
+                if tabbarController.isTabbarShowing {
+                    CustomTabBar(selectedTab: $selectedTab)
                 }
                 
-                // show rate limit popup if applicable
-                if rateLimiter.shouldRateLimitPopupShow {
-                    RateLimitPopUp()
-                }
-                
-                VStack {
-                    Spacer()
-                    if tabbarController.isTabbarShowing {
-                        CustomTabBar(selectedTab: $selectedTab)
-                    } 
-                    
-                }
-            } else {
-//                OnboardingPaywallWithFreeTrial()
-                // this isn't a sheet so don't pass a binding
-                UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: .constant(false))
             }
         }
         .environmentObject(tabbarController)
@@ -94,9 +89,9 @@ struct ContentView: View {
             if isSignedIn == true {
                 if let user = Auth.auth().currentUser {
                     userController.retrieveUserFromFirestore(userId: user.uid)
-
+                    
                     // Sign in the user into RevenueCat
-                    subscriptionController.loginRevenueCat(userId: user.uid)
+//                    subscriptionController.loginRevenueCat(userId: user.uid)
                 } else {
                     print("no auth user yet lol nice try")
                 }

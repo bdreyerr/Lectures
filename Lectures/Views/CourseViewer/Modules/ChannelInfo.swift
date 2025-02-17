@@ -17,6 +17,7 @@ struct ChannelInfo: View {
     @State private var isChannelFollowed = false
     
     @State private var isUpgradeAccountSheetShowing: Bool = false
+    @State private var isProAccountButNotRegisteredSheetShowing: Bool = false
     
     var channelId: String
     var body: some View {
@@ -71,21 +72,22 @@ struct ChannelInfo: View {
             Button(action: {
                 // if the user isn't a PRO member, they can't follow accounts
                 if subscriptionController.isPro {
-                    if let rateLimit = rateLimiter.processWrite() {
-                        print(rateLimit)
-                        return
-                    }
-                    
                     if let user = userController.user, let userId = user.id {
+                        if let rateLimit = rateLimiter.processWrite() {
+                            print(rateLimit)
+                            return
+                        }
+                        
                         userController.followChannel(userId: userId, channelId: channelId)
                         withAnimation(.spring()) {
                             isChannelFollowed.toggle()
                         }
+                    } else {
+                        isProAccountButNotRegisteredSheetShowing = true
                     }
-                    return
+                } else {
+                    self.isUpgradeAccountSheetShowing = true
                 }
-                
-                self.isUpgradeAccountSheetShowing = true
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: isChannelFollowed ? "heart.fill" : "heart")
@@ -116,6 +118,9 @@ struct ChannelInfo: View {
             }
             .sheet(isPresented: $isUpgradeAccountSheetShowing) {
                 UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
+            }
+            .sheet(isPresented: $isProAccountButNotRegisteredSheetShowing) {
+                ProAccountButNotSignedInSheet(displaySheet: $isProAccountButNotRegisteredSheetShowing)
             }
             
         }

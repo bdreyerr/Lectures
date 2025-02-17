@@ -27,7 +27,7 @@ struct UpgradeAccountPaywallWithoutFreeTrial: View {
     
     @Binding var sheetShowingView: Bool
     
-    
+    @State var hasUserCompletedPurchase: Bool = false
     
     var body: some View {
         ZStack {
@@ -57,72 +57,126 @@ struct UpgradeAccountPaywallWithoutFreeTrial: View {
                     .padding(.top, 40)
                     
                     
-                    Button(action: {
-                        showProFeaturesSheet = true
-                    }) {
-                        HStack {
-                            Text("Discover the advantages with")
+                    if hasUserCompletedPurchase {
+                        Text("Your purchase has been completed!")
+                            .foregroundColor(.white)
+                            .font(.system(size: 16, design: .serif))
+                        
+                        
+                        if !isSignedIn {
+                            Text("Consider registering for an account in order to access features which require identification. Registering will also let your subscription status persist across all your devices.")
                                 .foregroundColor(.white)
-                                .font(.system(size: 16, design: .serif))
-                            
-                            Text("PRO")
-                                .foregroundColor(.orange)
                                 .font(.system(size: 14, design: .serif))
-                                .bold()
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Capsule().fill(Color.white))
+                                .padding(.top, 10)
+                                .padding(.horizontal, 20)
+                            
+                            Button(action: {
+                                showSignUpSheet = true
+                            }) {
+                                HStack {
+                                    Text("Register for an account")
+                                        .foregroundColor(.white)
+                                        .font(.system(size: 16, design: .serif))
+                                }
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
+                                .background(Color.orange.opacity(0.8))
+                                .cornerRadius(10)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .sheet(isPresented: $showSignUpSheet) {
+                                FirstOpenSignUpSheet(text: "Register to continue", displaySheet: $showSignUpSheet)
+                                    .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
+                            }
+                            .padding(.top, 10)
+                        } else {
+                            Text("You're signed in!")
+                                .foregroundColor(.green)
+                                .font(.system(size: 14, design: .serif))
                         }
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
-                        .background(Color.orange.opacity(0.8))
-                        .cornerRadius(10)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .sheet(isPresented: $showProFeaturesSheet) {
-                        ProFeaturesSheet()
-                    }
-                    .padding(.top, 10)
-                    
-                    Text("Select your plan")
-                        .font(.system(size: 16, design: .serif))
-                        .foregroundColor(.gray)
+                        
+                        // continue button
+                        Button(action: {
+                            hasUserSeenPaywall = true
+                            sheetShowingView = false
+                        }) {
+                            HStack {
+                                Text("Continue")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 16, design: .serif))
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .background(Color.green.opacity(0.8))
+                            .cornerRadius(10)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                         .padding(.top, 10)
-                    
-                    if subscriptionController.isLoading {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    } else if let error = subscriptionController.error {
-                        Text(error)
-                            .foregroundColor(.red)
-                            .padding()
+                        
                     } else {
-                        // Subscription plans
-                        VStack(spacing: 15) {
-                            ForEach(subscriptionController.packages, id: \.identifier) { package in
-//                                Text(package.identifier)
-                                SubscriptionPlanView(
-                                    title: package.storeProduct.subscriptionPeriod?.periodTitle ?? "",
-                                    price: package.localizedPriceString,
-                                    subPrice: calculateSubprice(for: package),
-                                    discount: calculateDiscount(for: package),
-                                    isSelected: selectedPackage?.identifier == package.identifier
-                                ) {
-                                    selectedPackage = package
+                        
+                        Button(action: {
+                            showProFeaturesSheet = true
+                        }) {
+                            HStack {
+                                Text("Discover the advantages with")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 16, design: .serif))
+                                
+                                Text("PRO")
+                                    .foregroundColor(.orange)
+                                    .font(.system(size: 14, design: .serif))
+                                    .bold()
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Capsule().fill(Color.white))
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .background(Color.orange.opacity(0.8))
+                            .cornerRadius(10)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .sheet(isPresented: $showProFeaturesSheet) {
+                            ProFeaturesSheet()
+                        }
+                        .padding(.top, 10)
+                        
+                        Text("Select your plan")
+                            .font(.system(size: 16, design: .serif))
+                            .foregroundColor(.gray)
+                            .padding(.top, 10)
+                        
+                        if subscriptionController.isLoading {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        } else if let error = subscriptionController.error {
+                            Text(error)
+                                .foregroundColor(.red)
+                                .padding()
+                        } else {
+                            // Subscription plans
+                            VStack(spacing: 15) {
+                                ForEach(subscriptionController.packages, id: \.identifier) { package in
+                                    //                                Text(package.identifier)
+                                    SubscriptionPlanView(
+                                        title: package.storeProduct.subscriptionPeriod?.periodTitle ?? "",
+                                        price: package.localizedPriceString,
+                                        subPrice: calculateSubprice(for: package),
+                                        discount: calculateDiscount(for: package),
+                                        isSelected: selectedPackage?.identifier == package.identifier
+                                    ) {
+                                        selectedPackage = package
+                                    }
                                 }
                             }
+                            .padding(.horizontal, 20)
                         }
-                        .padding(.horizontal, 20)
-                    }
-                    
-                    // Upgrade account
-                    Button(action: {
-                        // Before the user can complete a purchase, force them to authenticate
-                        if !isSignedIn {
-                            showSignUpSheet = true
-                        } else {
-                            // otherwise you are signed in, and we can make the purhcase
-                            print("auth'd user ready for purchase, user: ", userController.user!.id!)
+                        
+                        // Upgrade account
+                        Button(action: {
+                            
+                            print("purchasing, but we don't force auth here")
                             guard let package = selectedPackage else {
                                 showNoPackageSelectedAlert = true
                                 return
@@ -130,96 +184,75 @@ struct UpgradeAccountPaywallWithoutFreeTrial: View {
                             
                             Task {
                                 if await subscriptionController.purchase(package: package) {
-                                    // if this is first open, hide the paywall
-                                    hasUserSeenPaywall = true
-                                    
-                                    // if there was a binding passed which controlled whether or not upgrade sheet is shown, close the sheet.
-                                    sheetShowingView = false
+                                    hasUserCompletedPurchase = true
                                 }
                             }
-                        }
-                    }) {
-                        Text("Continue")
-                            .font(.system(size: 16, design: .serif))
-                            .bold()
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.orange.opacity(0.8))
-                            .cornerRadius(10)
-                    }
-                    .alert("No Plan Selected", isPresented: $showNoPackageSelectedAlert) {
-                        Button("OK", role: .cancel) { }
-                    } message: {
-                        Text("Please select a subscription plan to continue.")
-                    }
-                    .disabled(subscriptionController.isLoading)
-                    .padding(.horizontal, 30)
-                    .padding(.top, 10)
-                    .sheet(isPresented: $showSignUpSheet) {
-                        FirstOpenSignUpSheet(text: "Create an account to continue", displaySheet: $showSignUpSheet)
-                            .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
-                    }
-                    
-                    // Continue with free account - only show if there is no signed in user right now
-                    if (userController.user == nil || !isSignedIn) && !hasUserSeenPaywall  {
-                        Button(action: {
-                            hasUserSeenPaywall = true
                         }) {
-                            Text("Continue with Free Account")
+                            Text("Continue")
                                 .font(.system(size: 16, design: .serif))
                                 .bold()
                                 .foregroundColor(.white)
                                 .padding()
                                 .frame(maxWidth: .infinity)
-                                .background(Color.green.opacity(0.8))
+                                .background(Color.orange.opacity(0.8))
                                 .cornerRadius(10)
                         }
+                        .alert("No Plan Selected", isPresented: $showNoPackageSelectedAlert) {
+                            Button("OK", role: .cancel) { }
+                        } message: {
+                            Text("Please select a subscription plan to continue.")
+                        }
+                        .disabled(subscriptionController.isLoading)
                         .padding(.horizontal, 30)
                         .padding(.top, 10)
-                    }
-                    
-                    // Restore purchases button
-//                    Button(action: {
-//                        Task {
-//                            await subscriptionController.restorePurchases()
-//                            if subscriptionController.isPro {
-//                                hasUserSeenPaywall = true
-//                            }
-//                        }
-//                    }) {
-//                        Text("Restore Purchases")
-//                            .font(.system(size: 14, design: .serif))
-//                            .foregroundColor(.blue)
-//                    }
-//                    .padding(.top, 10)
-                    
-                    
-                    Text("You can cancel the subscription at any time from the app store at no additional cost. If you do not cancel it before the end of the current period, you will be charged.")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
-                    
-                    
-                    // already have an account
-                    if !isSignedIn {
-                        Button(action: {
-                            showAlreadCreatedAccountSignInSheet = true
-                        }) {
-                            Text("Already have an account? Sign in instead")
-                                .font(.system(size: 14, design: .serif))
-                                .foregroundColor(.blue)
+                        .sheet(isPresented: $showSignUpSheet) {
+                            FirstOpenSignUpSheet(text: "Create an account to continue", displaySheet: $showSignUpSheet)
+                                .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .sheet(isPresented: $showAlreadCreatedAccountSignInSheet) {
-                            VStack {
-                                SignInWithApple(displaySignInSheet: .constant(false), closePaywallOnSignIn: true)
-                                SignInWithGoogle(displaySignInSheet: .constant(false), closePaywallOnSignIn: true)
+                        
+                        // Restore purchases button
+                        //                    Button(action: {
+                        //                        Task {
+                        //                            await subscriptionController.restorePurchases()
+                        //                            if subscriptionController.isPro {
+                        //                                hasUserSeenPaywall = true
+                        //                            }
+                        //                        }
+                        //                    }) {
+                        //                        Text("Restore Purchases")
+                        //                            .font(.system(size: 14, design: .serif))
+                        //                            .foregroundColor(.blue)
+                        //                    }
+                        //                    .padding(.top, 10)
+                        
+                        
+                        Text("You can cancel the subscription at any time from the app store at no additional cost. If you do not cancel it before the end of the current period, you will be charged.")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 20)
+                        
+                        
+                        // already have an account
+                        if !isSignedIn {
+                            Button(action: {
+                                showAlreadCreatedAccountSignInSheet = true
+                            }) {
+                                Text("Already have an account? Sign in instead")
+                                    .font(.system(size: 14, design: .serif))
+                                    .foregroundColor(.blue)
                             }
-                            .presentationDetents([.fraction(0.4), .medium]) // User can drag between these heights
+                            .buttonStyle(PlainButtonStyle())
+                            .sheet(isPresented: $showAlreadCreatedAccountSignInSheet) {
+                                VStack {
+                                    SignInWithApple(displaySignInSheet: .constant(false), closePaywallOnSignIn: true)
+                                    SignInWithGoogle(displaySignInSheet: .constant(false), closePaywallOnSignIn: true)
+                                }
+                                .presentationDetents([.fraction(0.4), .medium]) // User can drag between these heights
+                            }
                         }
+                        
                     }
                 }
                 .foregroundColor(.white)

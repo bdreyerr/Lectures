@@ -21,6 +21,8 @@ struct AccountInformation: View {
     @State private var editNamePopover = false
     @State private var firstName = ""
     @State private var lastName = ""
+    
+    @State var signUpSheetShowing: Bool = false
     var body: some View {
         VStack {
             ScrollView(showsIndicators: false) {
@@ -135,7 +137,33 @@ struct AccountInformation: View {
                             Spacer()
                         }
                     }
+                } else {
                     
+                    Image(systemName: "person.crop.circle.fill")
+                        .font(.system(size: 30))
+                        .foregroundColor(.gray.opacity(0.3))
+                        .padding(.top, 40)
+                    
+                    Text("You're not logged in")
+                        .font(.system(size: 13, design: .serif))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                    
+                    Button(action: {
+                        signUpSheetShowing = true
+                    }) {
+                        Text("Sign Up / Sign In")
+                            .font(.system(size: 14))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(Color.blue)
+                            .cornerRadius(20)
+                    }
+                    .sheet(isPresented: $signUpSheetShowing) {
+                        FirstOpenSignUpSheet(text: "", displaySheet: $signUpSheetShowing)
+                            .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
+                    }
                 }
             }
         }

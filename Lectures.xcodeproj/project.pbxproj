@@ -89,6 +89,7 @@
 		1A6BD7FB2D612BED00FA85C4 /* ChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6BD7FA2D612BED00FA85C4 /* ChannelList.swift */; };
 		1A6BD7FD2D612BFB00FA85C4 /* FamousCoursesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6BD7FC2D612BFB00FA85C4 /* FamousCoursesList.swift */; };
 		1A6BD8012D6138D300FA85C4 /* TabMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6BD8002D6138D300FA85C4 /* TabMainView.swift */; };
+		1A6BD8032D63DDA000FA85C4 /* ProAccountButNotSignedInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6BD8022D63DDA000FA85C4 /* ProAccountButNotSignedInSheet.swift */; };
 		1A7C33A02D3898D40009647E /* WatchedCourseCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C339F2D3898D40009647E /* WatchedCourseCard.swift */; };
 		1A7C33A22D38C3EA0009647E /* CourseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C33A12D38C3EA0009647E /* CourseController.swift */; };
 		1A7E9A792D149E4C00CBEF99 /* CourseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E9A782D149E4C00CBEF99 /* CourseView.swift */; };
@@ -217,6 +218,7 @@
 		1A6BD7FA2D612BED00FA85C4 /* ChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList.swift; sourceTree = "<group>"; };
 		1A6BD7FC2D612BFB00FA85C4 /* FamousCoursesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamousCoursesList.swift; sourceTree = "<group>"; };
 		1A6BD8002D6138D300FA85C4 /* TabMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabMainView.swift; sourceTree = "<group>"; };
+		1A6BD8022D63DDA000FA85C4 /* ProAccountButNotSignedInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProAccountButNotSignedInSheet.swift; sourceTree = "<group>"; };
 		1A7C339F2D3898D40009647E /* WatchedCourseCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchedCourseCard.swift; sourceTree = "<group>"; };
 		1A7C33A12D38C3EA0009647E /* CourseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseController.swift; sourceTree = "<group>"; };
 		1A7E9A782D149E4C00CBEF99 /* CourseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseView.swift; sourceTree = "<group>"; };
@@ -487,6 +489,7 @@
 				1A7E9AB72D24920000CBEF99 /* OnboardingModules */,
 				1A7E9AAF2D2376BF00CBEF99 /* SignUpOrInOutsideOfPaywall.swift */,
 				1A4F8DF42D3777CF00F1E854 /* UpgradeAccountPaywallWithoutFreeTrial.swift */,
+				1A6BD8022D63DDA000FA85C4 /* ProAccountButNotSignedInSheet.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -819,6 +822,7 @@
 				1AAE23AE2D3E026D00E5DB9A /* FilterSearchResultType.swift in Sources */,
 				1A5685642D29FE5A00CD3427 /* NotesController.swift in Sources */,
 				1A5685792D2B395800CD3427 /* ChannelView.swift in Sources */,
+				1A6BD8032D63DDA000FA85C4 /* ProAccountButNotSignedInSheet.swift in Sources */,
 				1A577ADE2D28848000BE27BF /* ExamController.swift in Sources */,
 				1A4F8DF92D386F3D00F1E854 /* MyCourseController.swift in Sources */,
 				1AA40DA92D137D4400BB311F /* SearchMainView.swift in Sources */,
@@ -1003,6 +1007,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -1043,6 +1048,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";

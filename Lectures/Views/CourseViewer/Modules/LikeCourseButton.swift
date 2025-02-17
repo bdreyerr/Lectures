@@ -18,25 +18,29 @@ struct LikeCourseButton: View {
     
     @State private var isCourseLiked: Bool = false
     @State private var isUpgradeAccountSheetShowing: Bool = false
+    @State private var isProAccountButNotRegisteredSheetShowing: Bool = false
     
     var body: some View {
         Button(action: {
             // if the user isn't a PRO member, they can't like courses
             if subscriptionController.isPro {
-                if let rateLimit = rateLimiter.processWrite() {
-                    print(rateLimit)
-                    return
-                }
                 if let user = userController.user, let userId = user.id {
+                    if let rateLimit = rateLimiter.processWrite() {
+                        print(rateLimit)
+                        return
+                    }
+                    
                     userController.likeCourse(userId: userId, courseId: courseId)
                     withAnimation(.spring()) {
                         self.isCourseLiked.toggle()
                     }
+                } else {
+                    isProAccountButNotRegisteredSheetShowing = true
                 }
-                return
+            } else {
+                // show the upgrade account sheet
+                self.isUpgradeAccountSheetShowing = true
             }
-            // show the upgrade account sheet
-            self.isUpgradeAccountSheetShowing = true
         }) {
             Image(systemName: isCourseLiked ? "heart.fill" : "heart")
                 .font(.system(size: 18, design: .serif))
@@ -44,6 +48,9 @@ struct LikeCourseButton: View {
         }
         .sheet(isPresented: $isUpgradeAccountSheetShowing) {
             UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
+        }
+        .sheet(isPresented: $isProAccountButNotRegisteredSheetShowing) {
+            ProAccountButNotSignedInSheet(displaySheet: $isProAccountButNotRegisteredSheetShowing)
         }
         .onAppear {
             // Determine if the user has already liked this course or not, if they have, set the button to liked

@@ -25,6 +25,7 @@ struct ChannelView: View {
     
     @State private var isChannelFollowed = false
     @State private var isUpgradeAccountSheetShowing: Bool = false
+    @State private var isProAccountButNotRegisteredSheetShowing: Bool = false
     var body: some View {
         Group {
             if let id = channel.id, let title = channel.title, let numCourses = channel.numCourses, let numLectures = channel.numLectures, let channelDescription = channel.channelDescription {
@@ -73,11 +74,12 @@ struct ChannelView: View {
                                             withAnimation(.spring()) {
                                                 isChannelFollowed.toggle()
                                             }
+                                        } else {
+                                            isProAccountButNotRegisteredSheetShowing = true
                                         }
-                                        return
+                                    } else {
+                                        self.isUpgradeAccountSheetShowing = true
                                     }
-                                    
-                                    self.isUpgradeAccountSheetShowing = true
                                 }) {
                                     HStack(spacing: 8) {
                                         Image(systemName: isChannelFollowed ? "heart.fill" : "heart")
@@ -97,6 +99,9 @@ struct ChannelView: View {
                                                     .strokeBorder(isChannelFollowed ? Color.red : Color.gray, lineWidth: 1)
                                             )
                                     )
+                                }
+                                .sheet(isPresented: $isProAccountButNotRegisteredSheetShowing) {
+                                    ProAccountButNotSignedInSheet(displaySheet: $isProAccountButNotRegisteredSheetShowing)
                                 }
                             }
                             .cornerRadius(5)

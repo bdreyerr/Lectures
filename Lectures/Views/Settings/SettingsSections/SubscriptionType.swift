@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SubscriptionType: View {
     @EnvironmentObject var userController: UserController
+    @EnvironmentObject var rateLimiter: RateLimiter
     
     @EnvironmentObject var subscriptionController: SubscriptionController
     
@@ -81,6 +82,12 @@ struct SubscriptionType: View {
                     // text
                     
                     Button(action: {
+                        // rate limit
+                        if let rateLimit = rateLimiter.processWrite() {
+                            print(rateLimit)
+                            return
+                        }
+                        
                         Task {
                             await subscriptionController.restorePurchases()
                         }

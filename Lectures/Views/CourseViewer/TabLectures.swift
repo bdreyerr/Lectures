@@ -247,6 +247,7 @@ struct LectureInCourse: View {
     @State var isLectureLiked: Bool = false
     
     @State private var isUpgradeAccountSheetShowing: Bool = false
+    @State private var isProAccountButNotRegisteredSheetShowing: Bool = false
     
     var body: some View {
         if let lectureId = lecture.id, let lectureTitle = lecture.lectureTitle, let lectureNumberInCourse = lecture.lectureNumberInCourse, let viewsOnYouTube = lecture.viewsOnYouTube {
@@ -279,11 +280,12 @@ struct LectureInCourse: View {
                                     withAnimation(.spring()) {
                                         self.isLectureLiked.toggle()
                                     }
+                                } else {
+                                    isProAccountButNotRegisteredSheetShowing = true
                                 }
-                                return
+                            } else {
+                                self.isUpgradeAccountSheetShowing = true
                             }
-
-                            self.isUpgradeAccountSheetShowing = true
                         }) {
                             Image(systemName: isLectureLiked ? "heart.fill" : "heart")
                                 .font(.system(size: 12, design: .serif))
@@ -291,6 +293,9 @@ struct LectureInCourse: View {
                         }
                         .sheet(isPresented: $isUpgradeAccountSheetShowing) {
                             UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
+                        }
+                        .sheet(isPresented: $isProAccountButNotRegisteredSheetShowing) {
+                            ProAccountButNotSignedInSheet(displaySheet: $isProAccountButNotRegisteredSheetShowing)
                         }
                         .padding(.trailing, 10)
                     }

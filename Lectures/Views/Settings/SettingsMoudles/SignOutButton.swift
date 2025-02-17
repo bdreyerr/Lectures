@@ -21,7 +21,7 @@ struct SignOutButton: View {
             // Sign out of account - auth
             authController.logOut()
             userController.logOut()
-            subscriptionController.logOutRevenueCat()
+//            subscriptionController.logOutRevenueCat()
             
             // clear any local vars in the app
             

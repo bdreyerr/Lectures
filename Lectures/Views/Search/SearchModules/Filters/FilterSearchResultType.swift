@@ -18,51 +18,51 @@ struct FilterSearchResultType: View {
     var body: some View {
         Group {
             // settings for signed out users (button's don't do anything)
-            if accountType == nil {
-                HStack {
-                    Image(systemName: "newspaper")
-                        .font(.system(size: 11, weight: .medium))
-                    
-                    Text("Lecture")
-                        .font(.system(size: 11, weight: .medium))
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color(UIColor.systemGray5))
-                .foregroundColor(.primary)
-                .clipShape(Capsule())
-                
-                
-                // Course
-                
-                HStack {
-                    Image(systemName: "mail.stack")
-                        .font(.system(size: 11, weight: .medium))
-                    
-                    Text("Course")
-                        .font(.system(size: 11, weight: .medium))
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.orange.opacity(0.6))
-                .foregroundColor(.primary)
-                .clipShape(Capsule())
-                
-                // Channel
-                
-                HStack {
-                    Image(systemName: "graduationcap")
-                        .font(.system(size: 11, weight: .medium))
-                    
-                    Text("Channel")
-                        .font(.system(size: 11, weight: .medium))
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background( searchController.isChannelFilterSelected ? Color.orange.opacity(0.6) : Color(UIColor.systemGray5))
-                .foregroundColor(.primary)
-                .clipShape(Capsule())
-            }
+//            if accountType == nil {
+//                HStack {
+//                    Image(systemName: "newspaper")
+//                        .font(.system(size: 11, weight: .medium))
+//                    
+//                    Text("Lecture")
+//                        .font(.system(size: 11, weight: .medium))
+//                }
+//                .padding(.horizontal, 16)
+//                .padding(.vertical, 8)
+//                .background(Color(UIColor.systemGray5))
+//                .foregroundColor(.primary)
+//                .clipShape(Capsule())
+//                
+//                
+//                // Course
+//                
+//                HStack {
+//                    Image(systemName: "mail.stack")
+//                        .font(.system(size: 11, weight: .medium))
+//                    
+//                    Text("Course")
+//                        .font(.system(size: 11, weight: .medium))
+//                }
+//                .padding(.horizontal, 16)
+//                .padding(.vertical, 8)
+//                .background(Color.orange.opacity(0.6))
+//                .foregroundColor(.primary)
+//                .clipShape(Capsule())
+//                
+//                // Channel
+//                
+//                HStack {
+//                    Image(systemName: "graduationcap")
+//                        .font(.system(size: 11, weight: .medium))
+//                    
+//                    Text("Channel")
+//                        .font(.system(size: 11, weight: .medium))
+//                }
+//                .padding(.horizontal, 16)
+//                .padding(.vertical, 8)
+//                .background( searchController.isChannelFilterSelected ? Color.orange.opacity(0.6) : Color(UIColor.systemGray5))
+//                .foregroundColor(.primary)
+//                .clipShape(Capsule())
+//            }
             
             
             
