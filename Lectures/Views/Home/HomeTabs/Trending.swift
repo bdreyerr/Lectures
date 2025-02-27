@@ -41,6 +41,8 @@ struct Trending: View {
 
 // Create a new view to handle the content
 private struct TrendingContent: View {
+    @AppStorage("isSignedIn") private var isSignedIn = false
+    
     @EnvironmentObject var courseController: CourseController
     @EnvironmentObject var myCourseController: MyCourseController
     @EnvironmentObject var subscriptionController: SubscriptionController
@@ -50,7 +52,7 @@ private struct TrendingContent: View {
     var body: some View {
         Group {
             VStack(alignment: .leading, spacing: 0) {
-                if subscriptionController.isPro {
+                if isSignedIn {
                     ContinueWatchingSection(localWatchHistories: $localWatchHistories, isViewActive: $isViewActive)
                 }
                 

@@ -269,22 +269,18 @@ struct LectureInCourse: View {
                         
                         // Like Lecture Button
                         Button(action: {
-                            if subscriptionController.isPro {
-                                if let user = userController.user, let userId = user.id {
-                                    if let rateLimit = rateLimiter.processWrite() {
-                                        print(rateLimit)
-                                        return
-                                    }
-                                    
-                                    userController.likeLecture(userId: userId, lectureId: lectureId)
-                                    withAnimation(.spring()) {
-                                        self.isLectureLiked.toggle()
-                                    }
-                                } else {
-                                    isProAccountButNotRegisteredSheetShowing = true
+                            if let user = userController.user, let userId = user.id {
+                                if let rateLimit = rateLimiter.processWrite() {
+                                    print(rateLimit)
+                                    return
+                                }
+                                
+                                userController.likeLecture(userId: userId, lectureId: lectureId)
+                                withAnimation(.spring()) {
+                                    self.isLectureLiked.toggle()
                                 }
                             } else {
-                                self.isUpgradeAccountSheetShowing = true
+                                isProAccountButNotRegisteredSheetShowing = true
                             }
                         }) {
                             Image(systemName: isLectureLiked ? "heart.fill" : "heart")
@@ -303,14 +299,16 @@ struct LectureInCourse: View {
                     HStack {
                         if let lectureDuration = lecture.lectureDuration  {
                             // Duration
-                            Text("\(lectureDuration)")
-                                .font(.system(size: 12))
-                                .opacity(0.6)
+                            
+                            StatItem(icon: "play.circle", text: "\(lectureDuration)")
+                            
+                            
+                            //                            Text("\(lectureDuration)")
+                            //                                .font(.system(size: 12))
+                            //                                .opacity(0.6)
                         }
                         
-                        Text("\(formatIntViewsToString(numViews: viewsOnYouTube)) Views")
-                            .font(.system(size: 12))
-                            .opacity(0.6)
+                        StatItem(icon: "eye", text: "\(formatIntViewsToString(numViews: viewsOnYouTube)) Views")
                         Spacer()
                     }
                 }

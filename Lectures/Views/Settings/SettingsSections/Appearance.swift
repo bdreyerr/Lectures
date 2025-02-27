@@ -33,64 +33,34 @@ struct Appearance: View {
                     .bold()
                     .padding(.bottom, 10)
                 
-                if !subscriptionController.isPro {
-                    HStack {
-                        // icon
-                        Image(systemName: "wallet.pass")
-                        
-                        // text
-                        
-                        Text("Upgrade to customize app appearance")
-                            .font(.system(size: 14, design: .serif))
-                        
-                        
-                        
-                        Spacer()
-                        
-                        // edit button
-                        Button(action: {
-                            isUpgradeSheetShowing = true
-                        }) {
-                            Text("Upgrade")
-                                .foregroundColor(.white)
-                                .padding(5)
-                                .background(Color.orange)
-                                .cornerRadius(5)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
+                // Dark Mode
+                HStack {
+                    // icon
+                    Image(systemName: "moon")
                     
-                    Divider()
-                } else {
-                    // Dark Mode
-                    HStack {
-                        // icon
-                        Image(systemName: "moon")
-                        
-                        // text
-                        
-                        Text("Dark Mode")
-                            .font(.system(size: 14, design: .serif))
-                        
-                        
-                        Toggle("", isOn: $isDarkMode)
-                            .padding(.trailing, 5)
-                            .onChange(of: isDarkMode) { newValue in
-                                // Code to run when the toggle changes
-                                if newValue {
-                                    isDarkMode = true
-                                } else {
-                                    isDarkMode = false
-                                }
+                    // text
+                    
+                    Text("Dark Mode")
+                        .font(.system(size: 14, design: .serif))
+                    
+                    
+                    Toggle("", isOn: $isDarkMode)
+                        .padding(.trailing, 5)
+                        .onChange(of: isDarkMode) { newValue in
+                            // Code to run when the toggle changes
+                            if newValue {
+                                isDarkMode = true
+                            } else {
+                                isDarkMode = false
                             }
-                            
-                        
-                        Spacer()
-                        
-                        
-                    }
-                    Divider()
+                        }
+                    
+                    
+                    Spacer()
+                    
+                    
                 }
+                Divider()
             }
         }
         .padding(.horizontal, 20)

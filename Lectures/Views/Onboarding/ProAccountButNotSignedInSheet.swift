@@ -30,10 +30,10 @@ struct ProAccountButNotSignedInSheet: View {
                     .font(.title2)
                     .bold()
                 
-                Text("You have a Pro subscription, but we need you to create an account or sign in to save your preferences and history.")
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
+//                Text("You have a Pro subscription, but we need you to create an account or sign in to save your preferences and history.")
+//                    .multilineTextAlignment(.center)
+//                    .foregroundColor(.secondary)
+//                    .padding(.horizontal)
                     
                 SignInWithApple(displaySignInSheet: $displaySheet)
                 SignInWithGoogle(displaySignInSheet: $displaySheet)

@@ -197,58 +197,8 @@ private struct RecommendedCoursesSection: View {
                 }
                 .frame(maxWidth: .infinity)
             } else {
-                if !subscriptionController.isPro {
-                    VStack(alignment: .center) {
-                        Image(systemName: "crown.fill")
-                            .font(.system(size: 30))
-                            .foregroundColor(.gray.opacity(0.3))
-                            .padding(.top, 40)
-                        
-                        Text("Pro users have access to course recommendations")
-                            .font(.system(size: 13, design: .serif))
-                            .foregroundColor(.gray)
-                            .multilineTextAlignment(.center)
-
-                        Button(action: {
-                            isUpgradeAccountSheetShowing = true
-                        }) {
-                            Text("Upgrade")
-                                .font(.system(size: 14))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 10)
-                                .background(Color.orange.opacity(0.8))
-                                .cornerRadius(20)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                } else {
-                    
-                    ForEach(self.localCourseRecommendations, id: \.id) { course in
-                        RelatedCourse(course: course)
-                    }
-                    
-                    // Skeleton Loader
-//                    if courseController.isRelatedCourseLoading {
-//                        VStack {
-//                            HStack {
-//                                SkeletonLoader(width: 350, height: 60)
-//                                Spacer()
-//                            }
-//                            HStack {
-//                                SkeletonLoader(width: 350, height: 60)
-//                                Spacer()
-//                            }
-//                            HStack {
-//                                SkeletonLoader(width: 350, height: 60)
-//                                Spacer()
-//                            }
-//                        }
-//                    } else {
-//                        ForEach(self.localCourseRecommendations, id: \.id) { course in
-//                            RelatedCourse(course: course)
-//                        }
-//                    }
+                ForEach(self.localCourseRecommendations, id: \.id) { course in
+                    RelatedCourse(course: course)
                 }
             }
         }
@@ -259,8 +209,7 @@ private struct RecommendedCoursesSection: View {
             }
         }
         .sheet(isPresented: $isSignInSheetShowing) {
-            FirstOpenSignUpSheet(text: "Sign In", displaySheet: $isSignInSheetShowing)
-                .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
+            ProAccountButNotSignedInSheet(displaySheet: $isSignInSheetShowing)
         }
         .sheet(isPresented: $isUpgradeAccountSheetShowing) {
             UpgradeAccountPaywallWithoutFreeTrial(sheetShowingView: $isUpgradeAccountSheetShowing)
@@ -269,7 +218,7 @@ private struct RecommendedCoursesSection: View {
 }
 
 // MARK: - Helper Views
-private struct StatItem: View {
+struct StatItem: View {
     let icon: String
     let text: String
     

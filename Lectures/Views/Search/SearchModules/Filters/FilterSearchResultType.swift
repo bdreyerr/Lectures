@@ -69,13 +69,9 @@ struct FilterSearchResultType: View {
             
             // Lecture
             Button(action: {
-                if !subscriptionController.isPro {
-                    isUpgradeAccountPopupShowing = true
-                } else {
-                    // Action for the button
-                    withAnimation(.spring()) {
-                        searchController.isLectureFilterSelected.toggle()
-                    }
+                // Action for the button
+                withAnimation(.spring()) {
+                    searchController.isLectureFilterSelected.toggle()
                 }
             }) {
                 HStack {
@@ -95,13 +91,9 @@ struct FilterSearchResultType: View {
             
             // Course
             Button(action: {
-                if !subscriptionController.isPro {
-                    isUpgradeAccountPopupShowing = true
-                } else {
-                    // Action for the button
-                    withAnimation(.spring()) {
-                        searchController.isCourseFilterSelected.toggle()
-                    }
+                // Action for the button
+                withAnimation(.spring()) {
+                    searchController.isCourseFilterSelected.toggle()
                 }
             }) {
                 HStack {
@@ -121,13 +113,9 @@ struct FilterSearchResultType: View {
             
             // Channel
             Button(action: {
-                if !subscriptionController.isPro {
-                    isUpgradeAccountPopupShowing = true
-                } else {
-                    // Action for the button
-                    withAnimation(.spring()) {
-                        searchController.isChannelFilterSelected.toggle()
-                    }
+                // Action for the button
+                withAnimation(.spring()) {
+                    searchController.isChannelFilterSelected.toggle()
                 }
             }) {
                 HStack {

@@ -99,14 +99,6 @@ Visit our [internal wiki](https://wiki.example.com) for more details.\n
                     
                     // share button
                     Button(action: {
-                        // case where no user
-                        
-                        // only check is pro
-                        if !subscriptionController.isPro {
-                            self.showingUpgradeSheet = true
-                            return
-                        }
-                        
                         showingShare = true
                     }) {
                         Image(systemName: "square.and.arrow.up")

@@ -30,7 +30,7 @@ struct SettingsMainView: View {
                         .padding(.bottom, 10)
                     
                     SingleSettingsLink(iconName: "person", settingName: "Account Information", destination: AccountInformation(), disableIfSignedOut: false)
-                    SingleSettingsLink(iconName: "wallet.pass", settingName: "Subscription Type", destination: SubscriptionType(), disableIfSignedOut: false)
+//                    SingleSettingsLink(iconName: "wallet.pass", settingName: "Subscription Type", destination: SubscriptionType(), disableIfSignedOut: false)
 //                    SingleSettingsLink(iconName: "dollarsign.square", settingName: "Purchase History", destination: PurchaseHistory())
                     SingleSettingsLink(iconName: "moon", settingName: "Appearance", destination: Appearance(), disableIfSignedOut: false)
 //                    SingleSettingsLink(iconName: "bell", settingName: "Notifications", destination: Notifications())
@@ -43,6 +43,8 @@ struct SettingsMainView: View {
                         .padding(.bottom, 10)
                     
                     
+                    // Leave a tip
+                    SingleSettingsLink(iconName: "heart", settingName: "Support Developer", destination: SupportDeveloper(), disableIfSignedOut: false)
                     SingleSettingsLink(iconName: "exclamationmark.circle", settingName: "Report Issues", destination: ReportIssues(), disableIfSignedOut: false)
                     SingleSettingsLink(iconName: "questionmark.app", settingName: "FAQ", destination: FAQ(), disableIfSignedOut: false)
                     SingleSettingsLink(iconName: "info.circle", settingName: "Licesne Information", destination: LicenseInformation(), disableIfSignedOut: false)
@@ -77,8 +79,7 @@ struct SettingsMainView: View {
                                 .cornerRadius(20)
                         }
                         .sheet(isPresented: $signUpSheetShowing) {
-                            FirstOpenSignUpSheet(text: "", displaySheet: $signUpSheetShowing)
-                                .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
+                            ProAccountButNotSignedInSheet(displaySheet: $signUpSheetShowing)
                         }
                     }
                     
@@ -123,10 +124,11 @@ struct SingleSettingsLink<Destination: View>: View {
                         .font(.system(size: 14, design: .serif))
                     
                     Spacer()
-                    // arrow
                     
+                    // arrow
                     Image(systemName: "chevron.right")
                 }
+                .contentShape(Rectangle())
             }
             .disabled(disableIfSignedOut && !isSignedIn)
             .buttonStyle(PlainButtonStyle())
@@ -134,7 +136,6 @@ struct SingleSettingsLink<Destination: View>: View {
             Divider()
                 .padding(.bottom, 5)
         }
-        
     }
 }
 

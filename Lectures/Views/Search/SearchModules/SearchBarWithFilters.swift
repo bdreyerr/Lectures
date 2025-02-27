@@ -143,44 +143,32 @@ struct SearchBarWithFilters: View {
                     
                     HStack {
                         PlainSearchFilterPill(text: "<5 lecture", isSelected: $searchController.lessThanFiveLectures, onTap: { isSelected in
-                            if !subscriptionController.isPro {
-                                isUpgradeAccountPopupShowing = true
+                            if isSelected {
+                                searchController.lessThanFiveLectures = false
                             } else {
-                                if isSelected {
-                                    searchController.lessThanFiveLectures = false
-                                } else {
-                                    searchController.lessThanFiveLectures = true
-                                    searchController.greaterThanFiveLectures = false
-                                    searchController.greaterThanTenLectures = false
-                                }
+                                searchController.lessThanFiveLectures = true
+                                searchController.greaterThanFiveLectures = false
+                                searchController.greaterThanTenLectures = false
                             }
                         })
                         
                         
                         PlainSearchFilterPill(text: ">5 lecture", isSelected: $searchController.greaterThanFiveLectures, onTap: { isSelected in
-                            if !subscriptionController.isPro {
-                                isUpgradeAccountPopupShowing = true
+                            if isSelected {
+                                searchController.greaterThanFiveLectures = false
                             } else {
-                                if isSelected {
-                                    searchController.greaterThanFiveLectures = false
-                                } else {
-                                    searchController.lessThanFiveLectures = false
-                                    searchController.greaterThanFiveLectures = true
-                                    searchController.greaterThanTenLectures = false
-                                }
+                                searchController.lessThanFiveLectures = false
+                                searchController.greaterThanFiveLectures = true
+                                searchController.greaterThanTenLectures = false
                             }
                         })
                         PlainSearchFilterPill(text: ">10 lecture", isSelected: $searchController.greaterThanTenLectures, onTap: { isSelected in
-                            if !subscriptionController.isPro {
-                                isUpgradeAccountPopupShowing = true
+                            if isSelected {
+                                searchController.greaterThanTenLectures = false
                             } else {
-                                if isSelected {
-                                    searchController.greaterThanTenLectures = false
-                                } else {
-                                    searchController.lessThanFiveLectures = false
-                                    searchController.greaterThanFiveLectures = false
-                                    searchController.greaterThanTenLectures = true
-                                }
+                                searchController.lessThanFiveLectures = false
+                                searchController.greaterThanFiveLectures = false
+                                searchController.greaterThanTenLectures = true
                             }
                         })
                         
@@ -189,7 +177,7 @@ struct SearchBarWithFilters: View {
                 }
                 
                 
-                // Sory By
+                // Sort By
                 Group {
                     HStack {
                         Text("Sory By")
@@ -200,13 +188,9 @@ struct SearchBarWithFilters: View {
                     
                     HStack {
                         PlainSearchFilterPill(text: "Most Watched", isSelected: $searchController.sortByMostWatched, onTap: { isSelected in
-                            if !subscriptionController.isPro {
-                                isUpgradeAccountPopupShowing = true
-                            } else {
-                                if !isSelected {
-                                    searchController.sortByMostWatched = true
-                                    searchController.sortByMostLiked = false
-                                }
+                            if !isSelected {
+                                searchController.sortByMostWatched = true
+                                searchController.sortByMostLiked = false
                             }
                         })
                         

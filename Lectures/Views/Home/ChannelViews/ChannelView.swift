@@ -62,23 +62,19 @@ struct ChannelView: View {
                                 }
                                 
                                 Button(action: {
-                                    // if the user isn't a PRO member, they can't follow accounts
-                                    if subscriptionController.isPro {
-                                        if let user = userController.user, let userId = user.id {
-                                            if let rateLimit = rateLimiter.processWrite() {
-                                                print(rateLimit)
-                                                return
-                                            }
-                                            
-                                            userController.followChannel(userId: userId, channelId: id)
-                                            withAnimation(.spring()) {
-                                                isChannelFollowed.toggle()
-                                            }
-                                        } else {
-                                            isProAccountButNotRegisteredSheetShowing = true
+                                    // A signed in user can follow channels
+                                    if let user = userController.user, let userId = user.id {
+                                        if let rateLimit = rateLimiter.processWrite() {
+                                            print(rateLimit)
+                                            return
+                                        }
+                                        
+                                        userController.followChannel(userId: userId, channelId: id)
+                                        withAnimation(.spring()) {
+                                            isChannelFollowed.toggle()
                                         }
                                     } else {
-                                        self.isUpgradeAccountSheetShowing = true
+                                        isProAccountButNotRegisteredSheetShowing = true
                                     }
                                 }) {
                                     HStack(spacing: 8) {

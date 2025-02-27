@@ -22,24 +22,19 @@ struct LikeCourseButton: View {
     
     var body: some View {
         Button(action: {
-            // if the user isn't a PRO member, they can't like courses
-            if subscriptionController.isPro {
-                if let user = userController.user, let userId = user.id {
-                    if let rateLimit = rateLimiter.processWrite() {
-                        print(rateLimit)
-                        return
-                    }
-                    
-                    userController.likeCourse(userId: userId, courseId: courseId)
-                    withAnimation(.spring()) {
-                        self.isCourseLiked.toggle()
-                    }
-                } else {
-                    isProAccountButNotRegisteredSheetShowing = true
+            // User can liked course if they are signed in, otherwise show sign in sheet
+            if let user = userController.user, let userId = user.id {
+                if let rateLimit = rateLimiter.processWrite() {
+                    print(rateLimit)
+                    return
+                }
+                
+                userController.likeCourse(userId: userId, courseId: courseId)
+                withAnimation(.spring()) {
+                    self.isCourseLiked.toggle()
                 }
             } else {
-                // show the upgrade account sheet
-                self.isUpgradeAccountSheetShowing = true
+                isProAccountButNotRegisteredSheetShowing = true
             }
         }) {
             Image(systemName: isCourseLiked ? "heart.fill" : "heart")

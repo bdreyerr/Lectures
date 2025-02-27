@@ -46,12 +46,13 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             
-            
             switch selectedTab {
             case .home:
                 HomeMainView()
             case .trends:
                 MyCoursesMainView()
+//            case .reels:
+//                ReelCarosel()
             case .search:
                 SearchMainView()
             case .settings:

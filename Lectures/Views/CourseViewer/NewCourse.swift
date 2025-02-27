@@ -84,6 +84,8 @@ struct NewCourse: View {
                                 // make sure lectures are loaded first
                                 if let lectures = course.lectureIds {
                                     playFirstLecture()
+                                } else {
+                                    print("no lectures to play")
                                 }
                             }) {
                                 ZStack {
@@ -158,14 +160,13 @@ struct NewCourse: View {
                     print("video player source is changing and we're trying to update watch history")
                     
                     
+                    // If the user is signed in, we'll save their watch history.
                     if let user = userController.user, let userId = user.id {
-                        if subscriptionController.isPro {
-                            if let playingLecture = playingLecture {
-                                if course.id == nil {
-                                    print("course id is nil for some readosn?")
-                                }
-                                myCourseController.updateWatchHistory(userId: userId, course: course, lecture: playingLecture)
+                        if let playingLecture = playingLecture {
+                            if course.id == nil {
+                                print("course id is nil for some readosn?")
                             }
+                            myCourseController.updateWatchHistory(userId: userId, course: course, lecture: playingLecture)
                         }
                     }
                 }
@@ -180,9 +181,18 @@ struct NewCourse: View {
         if let lectureIds = course.lectureIds {
             if lectureIds.count == 0 { return }
             
-            let firstLectureId = lectureIds[0]
+            // Find the lecture where numLectureInCourse == 1
+            var firstLecture: Lecture?
+            for lectureId in lectureIds {
+                if let loadedLecture = courseController.cachedLectures[lectureId] {
+                    if loadedLecture.lectureNumberInCourse == 1 {
+                        firstLecture = loadedLecture
+                    }
+                }
+            }
+    
             
-            if let firstLecture = courseController.cachedLectures[firstLectureId] {
+            if let firstLecture = firstLecture {
                 if let youtubeVideoUrl = firstLecture.youtubeVideoUrl {
                     isLecturePlaying = true
                     self.player.source = .url(youtubeVideoUrl)

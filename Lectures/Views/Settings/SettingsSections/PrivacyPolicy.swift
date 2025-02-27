@@ -87,7 +87,11 @@ struct PrivacyPolicy: View {
                 
                 SectionHeader(title: "Contact Us")
                 VStack(alignment: .leading, spacing: 8) {
-                    BulletPoint(text: "Email: lecturalearning@gmail.com")
+                    HStack {
+                        Text("Email: ")
+                        Link("lecturalearning@gmail.com", destination: URL(string: "mailto:lecturalearning@gmail.com") ?? URL(string: "https://")!)
+                            .foregroundColor(.blue)
+                    }
                 }
                 
                 SectionHeader(title: "Educational Institution Partnerships")

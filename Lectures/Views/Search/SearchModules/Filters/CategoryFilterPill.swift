@@ -19,22 +19,18 @@ struct CategoryFilterPill: View {
     
     var body: some View {
         Button(action: {
-            if !subscriptionController.isPro {
-                isUpgradeAccountPopupShowing = true
-            } else {
-                // Action for the button
-                withAnimation(.spring()) {
-                    // either add or remove this category from the list in the controller
-                    if isSelected {
-                        // remove
-                        searchController.activeCategories.removeAll { $0 == text }
-                    } else {
-                        // add
-                        searchController.activeCategories.append(text)
-                    }
-                    
-                    isSelected.toggle()
+            // Action for the button
+            withAnimation(.spring()) {
+                // either add or remove this category from the list in the controller
+                if isSelected {
+                    // remove
+                    searchController.activeCategories.removeAll { $0 == text }
+                } else {
+                    // add
+                    searchController.activeCategories.append(text)
                 }
+                
+                isSelected.toggle()
             }
         }) {
             HStack {

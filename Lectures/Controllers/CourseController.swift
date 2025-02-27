@@ -398,50 +398,7 @@ class CourseController : ObservableObject {
     }
     
     func getLectureThumnbnail(lectureId: String) {
-        
-        // check if request was already made for this course
-        if let request = self.lectureThumbnailRequestQueue[lectureId] {
-            // make sure it's set to true, if we failed to retrieve thumbnail, we'll set the bool val back to false
-            if request {
-//                print("we already requested this lecture thumbnail")
-                return
-            }
-        }
-        
-        // first time requesting this thumbnail, process the request
-        self.lectureThumbnailRequestQueue[lectureId] = true
-        
-        // check cache
-        if let _ = self.lectureThumbnails[lectureId] {
-            //            print("lecture thumbnail already cached")
-            return
-        }
-        
-        Task {
-            let storage = Storage.storage()
-
-            // Create a storage reference from our storage service
-            let storageRef = storage.reference()
-            
-            // Fetch the prompts image from storage
-            let imageRef = storageRef.child("lectures/" + lectureId + ".jpeg")
-            
-            // download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
-            imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
-                if let error = error {
-                    print("error downloading image from storage: ", error.localizedDescription)
-                    // There was an issue with the image or the image doesn't exist, either way set both prompt and promptImage back to nil
-                    return
-                } else {
-                    if let data = data {
-                        // Data for image is returned
-                        let image = UIImage(data: data)
-                        // Add image to cache
-                        self.lectureThumbnails[lectureId] = image
-                    }
-                }
-            }
-        }
+        // Do nothing, we don't use lecture thumbnails anymore, just the course.
     }
     
     func getChannelThumbnail(channelId: String) {

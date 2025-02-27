@@ -318,7 +318,6 @@ class SearchController : ObservableObject {
     func getMoreCourses(courseController: CourseController) {
         // return early if last doc isn't populated
         if let lastDocCourse = self.lastDocCourse {
-            
             Task { @MainActor in
                 // build search terms
                 var searchTerms = searchText.lowercased().split(separator: " ").map(String.init)

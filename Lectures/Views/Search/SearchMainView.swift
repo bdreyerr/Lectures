@@ -138,23 +138,12 @@ struct SearchMainView: View {
                                 
                                 HStack {
                                     if let user = userController.user, let accountType = user.accountType {
-                                        if accountType == 1 {
-                                            NavigationLink(destination: FullChannelSearchResults()) {
-                                                Text("View all")
-                                                    .font(.system(size: 10))
-                                                    .opacity(0.8)
-                                            }
-                                            .buttonStyle(PlainButtonStyle())
-                                        } else {
-                                            Button(action: {
-                                                isUpgradeAccountPopupShowing = true
-                                            }) {
-                                                Text("View all")
-                                                    .font(.system(size: 10))
-                                                    .opacity(0.8)
-                                            }
-                                            .buttonStyle(PlainButtonStyle())
+                                        NavigationLink(destination: FullChannelSearchResults()) {
+                                            Text("View all")
+                                                .font(.system(size: 10))
+                                                .opacity(0.8)
                                         }
+                                        .buttonStyle(PlainButtonStyle())
                                     }
                                     Spacer()
                                 }
@@ -194,23 +183,12 @@ struct SearchMainView: View {
                                 }
                                 HStack {
                                     if let user = userController.user, let accountType = user.accountType {
-                                        if accountType == 1 {
-                                            NavigationLink(destination: FullCourseSearchResults()) {
-                                                Text("View all")
-                                                    .font(.system(size: 10))
-                                                    .opacity(0.8)
-                                            }
-                                            .buttonStyle(PlainButtonStyle())
-                                        } else {
-                                            Button(action: {
-                                                isUpgradeAccountPopupShowing = true
-                                            }) {
-                                                Text("View all")
-                                                    .font(.system(size: 10))
-                                                    .opacity(0.8)
-                                            }
-                                            .buttonStyle(PlainButtonStyle())
+                                        NavigationLink(destination: FullCourseSearchResults()) {
+                                            Text("View all")
+                                                .font(.system(size: 10))
+                                                .opacity(0.8)
                                         }
+                                        .buttonStyle(PlainButtonStyle())
                                     }
                                     Spacer()
                                 }
@@ -259,23 +237,12 @@ struct SearchMainView: View {
                                 
                                 HStack {
                                     if let user = userController.user, let accountType = user.accountType {
-                                        if accountType == 1 {
-                                            NavigationLink(destination: FullLecturSearchResults()) {
-                                                Text("View all")
-                                                    .font(.system(size: 10))
-                                                    .opacity(0.8)
-                                            }
-                                            .buttonStyle(PlainButtonStyle())
-                                        } else {
-                                            Button(action: {
-                                                isUpgradeAccountPopupShowing = true
-                                            }) {
-                                                Text("View all")
-                                                    .font(.system(size: 10))
-                                                    .opacity(0.8)
-                                            }
-                                            .buttonStyle(PlainButtonStyle())
+                                        NavigationLink(destination: FullLecturSearchResults()) {
+                                            Text("View all")
+                                                .font(.system(size: 10))
+                                                .opacity(0.8)
                                         }
+                                        .buttonStyle(PlainButtonStyle())
                                     }
                                     Spacer()
                                 }
@@ -298,20 +265,6 @@ struct SearchMainView: View {
         // Needed for iPad compliance
         .navigationViewStyle(StackNavigationViewStyle())
         .environmentObject(searchController)
-        .onAppear {
-            // set filters depending on user status
-            if let user = userController.user, let accountType = user.accountType {
-                if accountType == 1 {
-                    searchController.isCourseFilterSelected = true
-                    searchController.isLectureFilterSelected = true
-                    searchController.isChannelFilterSelected = true
-                } else {
-                    searchController.isCourseFilterSelected = true
-                    searchController.isLectureFilterSelected = false
-                    searchController.isChannelFilterSelected = false
-                }
-            }
-        }
     }
 }
 

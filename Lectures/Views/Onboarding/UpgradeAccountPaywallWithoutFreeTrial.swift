@@ -210,21 +210,6 @@ struct UpgradeAccountPaywallWithoutFreeTrial: View {
                                 .presentationDetents([.fraction(0.25), .medium]) // User can drag between these heights
                         }
                         
-                        // Restore purchases button
-                        //                    Button(action: {
-                        //                        Task {
-                        //                            await subscriptionController.restorePurchases()
-                        //                            if subscriptionController.isPro {
-                        //                                hasUserSeenPaywall = true
-                        //                            }
-                        //                        }
-                        //                    }) {
-                        //                        Text("Restore Purchases")
-                        //                            .font(.system(size: 14, design: .serif))
-                        //                            .foregroundColor(.blue)
-                        //                    }
-                        //                    .padding(.top, 10)
-                        
                         
                         Text("You can cancel the subscription at any time from the app store at no additional cost. If you do not cancel it before the end of the current period, you will be charged.")
                             .font(.footnote)
