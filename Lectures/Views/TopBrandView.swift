@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct TopBrandView: View {
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack {
-            Image("lectura-icon")
+            Image(colorScheme == .light ? "LecturaBlueBlue" : "LecturaBlueBlue")
                 .resizable()
                 .frame(width: 35, height: 35)
 //                .clipShape(RoundedRectangle(cornerRadius: 10))

@@ -30,7 +30,7 @@ struct HomeMainView: View {
                             ForEach(Array(tabs.enumerated()), id: \.element) { index, tab in
                                 VStack {
                                     Text(tab)
-                                        .foregroundColor(selectedTab == index ? .orange : .gray)
+                                        .foregroundColor(selectedTab == index ? .blue : .gray)
                                         .font(.system(size: 11, design: .serif))
                                         .bold()
                                         .lineLimit(1)                    // Ensure single line
@@ -40,7 +40,7 @@ struct HomeMainView: View {
                                     
                                     // Blue line indicator for selected tab
                                     Rectangle()
-                                        .fill(selectedTab == index ? Color.orange : Color.clear)
+                                        .fill(selectedTab == index ? Color.blue : Color.clear)
                                         .frame(height: 2)
                                         .animation(.spring(response: 0.5, dampingFraction: 0.7), value: selectedTab) // Animate underline
                                 }
