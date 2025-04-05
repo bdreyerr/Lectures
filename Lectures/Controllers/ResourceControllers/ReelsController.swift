@@ -40,9 +40,24 @@ class ReelsController: NSObject, ObservableObject {
     // Add this property to track our random number threshold
     private var currentRandomThreshold: Int = 0
     
+    // Add audio session property
+    private var audioSession: AVAudioSession?
+    
     override init() {
         super.init()
+        setupAudioSession()
         fetchReelsFromFirebase()
+    }
+    
+    // Add this new method to configure the audio session
+    private func setupAudioSession() {
+        do {
+            audioSession = AVAudioSession.sharedInstance()
+            try audioSession?.setCategory(.playback, mode: .default)
+            try audioSession?.setActive(true)
+        } catch {
+            print("Failed to set up audio session: \(error.localizedDescription)")
+        }
     }
     
     private func fetchReelsFromFirebase() {
@@ -512,6 +527,15 @@ class ReelsController: NSObject, ObservableObject {
         // Then pause all videos
         pauseAllVideos()
         
+        // Ensure audio session is active before playing
+        do {
+            try audioSession?.setActive(true)
+            // Print debug info
+            debugAudioSessionStatus()
+        } catch {
+            print("Failed to activate audio session: \(error.localizedDescription)")
+        }
+        
         // Finally play the current video with full volume
         if let player = playerForCurrentReel() {
             player.volume = 1.0
@@ -840,5 +864,29 @@ class ReelsController: NSObject, ObservableObject {
             // Reload the first few videos
             self.downloadVideosFromStorage()
         }
+    }
+    
+    // Add a method to clean up audio session when needed
+    func cleanupAudioSession() {
+        do {
+            try audioSession?.setActive(false)
+        } catch {
+            print("Failed to deactivate audio session: \(error.localizedDescription)")
+        }
+    }
+    
+    // Add this method to debug audio issues
+    private func debugAudioSessionStatus() {
+        guard let session = audioSession else { return }
+        
+        print("Audio Session Status:")
+        print("- Category: \(session.category.rawValue)")
+        print("- Mode: \(session.mode.rawValue)")
+        print("- Is Active: \(session.isOtherAudioPlaying)")
+        print("- Output Volume: \(session.outputVolume)")
+        print("- Silent mode: \(!UserDefaults.standard.bool(forKey: "silent_mode_check"))")
+        
+        // Store if we've checked for silent mode
+        UserDefaults.standard.set(true, forKey: "silent_mode_check")
     }
 }

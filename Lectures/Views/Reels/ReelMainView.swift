@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVKit
+import AVFoundation
 
 struct ReelMainView: View {
     @EnvironmentObject var rateLimiter: RateLimiter
@@ -28,6 +29,25 @@ struct ReelMainView: View {
     
     enum TransitionDirection {
         case up, down, none
+    }
+    
+    // Add this method to handle app state changes
+    private func configureNotifications() {
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main) { [weak reelsController] _ in
+                // Reactivate audio session when app becomes active
+                reelsController?.playCurrentVideo()
+            }
+        
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willResignActiveNotification,
+            object: nil,
+            queue: .main) { [weak reelsController] _ in
+                // Pause playback when app is backgrounded
+                reelsController?.pauseCurrentVideo()
+            }
     }
     
     var body: some View {
@@ -210,6 +230,13 @@ struct ReelMainView: View {
                                                 .frame(width: geometry.size.width)
                                                 // .clipShape(RoundedRectangle(cornerRadius: 12))
                                                 .disabled(true) // Disable video player controls but allow hit testing
+                                                .onAppear {
+                                                    // Ensure player has correct audio settings
+                                                    currentPlayer.volume = 1.0
+                                                    
+                                                    // Make sure player's audio is routed through speaker
+                                                    try? AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
+                                                }
                                         }
                                     }
                                     .padding(.bottom, 50)
@@ -468,6 +495,15 @@ struct ReelMainView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            // Set up notifications when the view appears
+            configureNotifications()
+        }
+        .onDisappear {
+            // Remove observers when the view disappears
+            NotificationCenter.default.removeObserver(self)
+            reelsController.pauseCurrentVideo()
+        }
     }
     
     private func currentVideoOffset(for geometry: GeometryProxy) -> CGFloat {
