@@ -16,7 +16,7 @@ struct CustomTabBar: View {
     
     case home = 0
     case trends
-//    case reels
+    case reels
     case search
     case settings
   }
@@ -29,7 +29,7 @@ struct CustomTabBar: View {
   private let items = [
     TabItem(imageName: "house", type: .home),
     TabItem(imageName: "book.pages", type: .trends),
-//    TabItem(imageName: "film.stack", type: .reels),
+    TabItem(imageName: "play.square.stack", type: .reels),
     TabItem(imageName: "magnifyingglass", type: .search),
     TabItem(imageName: "gearshape", type: .settings)
   ]

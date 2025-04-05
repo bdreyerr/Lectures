@@ -51,8 +51,8 @@ struct ContentView: View {
                 HomeMainView()
             case .trends:
                 MyCoursesMainView()
-//            case .reels:
-//                ReelCarosel()
+            case .reels:
+                ReelMainView()
             case .search:
                 SearchMainView()
             case .settings:
