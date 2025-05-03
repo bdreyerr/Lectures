@@ -18,9 +18,6 @@
 		1A21B9982D345FA200A492D0 /* ComputerScience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A21B9972D345FA200A492D0 /* ComputerScience.swift */; };
 		1A273CF52D7E8A54008EE3FA /* ReelMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A273CF42D7E8A54008EE3FA /* ReelMainView.swift */; };
 		1A273CF72D7E8A8B008EE3FA /* ReelsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A273CF62D7E8A8B008EE3FA /* ReelsController.swift */; };
-		1A273CFB2D7E8C4E008EE3FA /* sample2.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 1A273CF92D7E8C4E008EE3FA /* sample2.mp4 */; };
-		1A273CFC2D7E8C4E008EE3FA /* sample1.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 1A273CF82D7E8C4E008EE3FA /* sample1.mp4 */; };
-		1A273CFD2D7E8C4E008EE3FA /* sample3.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 1A273CFA2D7E8C4E008EE3FA /* sample3.mp4 */; };
 		1A42A7522D3C417800C1CFB8 /* ResourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A42A7512D3C417800C1CFB8 /* ResourceController.swift */; };
 		1A42A7542D3C88AB00C1CFB8 /* CourseHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A42A7532D3C88AB00C1CFB8 /* CourseHistory.swift */; };
 		1A42A7562D3C88E800C1CFB8 /* FollowedChannels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A42A7552D3C88E800C1CFB8 /* FollowedChannels.swift */; };
@@ -154,9 +151,6 @@
 		1A21B9972D345FA200A492D0 /* ComputerScience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerScience.swift; sourceTree = "<group>"; };
 		1A273CF42D7E8A54008EE3FA /* ReelMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReelMainView.swift; sourceTree = "<group>"; };
 		1A273CF62D7E8A8B008EE3FA /* ReelsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReelsController.swift; sourceTree = "<group>"; };
-		1A273CF82D7E8C4E008EE3FA /* sample1.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = sample1.mp4; sourceTree = "<group>"; };
-		1A273CF92D7E8C4E008EE3FA /* sample2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = sample2.mp4; sourceTree = "<group>"; };
-		1A273CFA2D7E8C4E008EE3FA /* sample3.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = sample3.mp4; sourceTree = "<group>"; };
 		1A42A7512D3C417800C1CFB8 /* ResourceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceController.swift; sourceTree = "<group>"; };
 		1A42A7532D3C88AB00C1CFB8 /* CourseHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseHistory.swift; sourceTree = "<group>"; };
 		1A42A7552D3C88E800C1CFB8 /* FollowedChannels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowedChannels.swift; sourceTree = "<group>"; };
@@ -542,9 +536,6 @@
 		1AA40D762D0FE56700BB311F /* Lectures */ = {
 			isa = PBXGroup;
 			children = (
-				1A273CF82D7E8C4E008EE3FA /* sample1.mp4 */,
-				1A273CF92D7E8C4E008EE3FA /* sample2.mp4 */,
-				1A273CFA2D7E8C4E008EE3FA /* sample3.mp4 */,
 				1A5685872D2B989700CD3427 /* test-pdf-doc.pdf */,
 				1A0EC3E12D24A7840098AD26 /* Info.plist */,
 				1AA40D882D0FE8B400BB311F /* Controllers */,
@@ -751,9 +742,6 @@
 			files = (
 				1AE7B5C62D4D6A3D00A601EB /* .gitignore in Resources */,
 				1AA40D802D0FE56A00BB311F /* Preview Assets.xcassets in Resources */,
-				1A273CFB2D7E8C4E008EE3FA /* sample2.mp4 in Resources */,
-				1A273CFC2D7E8C4E008EE3FA /* sample1.mp4 in Resources */,
-				1A273CFD2D7E8C4E008EE3FA /* sample3.mp4 in Resources */,
 				1AA40D7C2D0FE56A00BB311F /* Assets.xcassets in Resources */,
 				1A5685882D2B989700CD3427 /* test-pdf-doc.pdf in Resources */,
 				1A0EC3E02D24A42C0098AD26 /* GoogleService-Info.plist in Resources */,
@@ -1032,7 +1020,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bendreyer.Lectura;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1073,7 +1061,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bendreyer.Lectura;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
